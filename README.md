@@ -12,11 +12,11 @@ Facilitators, Partner M&E Officers, and Donor (Mastercard Foundation) Staff.
 
 ## FEATURES
 ### Authentication
-Register
+#### Register
 - UI form for register that contains Names, Email and Password 
-Login
+#### Login
 - UI form for login form that contains fields: Email, Password, Remember me checkbox and login button that directs a user to their repsective Dashboards
-Password Reset
+### Password Reset
 - Forgot-password UI with email input and send a reset link button. the reset link directs a user to reset password page that contains New password field, confirm password field and Reset password button
 
 
