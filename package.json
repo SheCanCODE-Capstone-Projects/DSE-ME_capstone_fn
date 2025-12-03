@@ -14,13 +14,6 @@
     "react-dom": "19.2.0"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "eslint": "8.56.0",
-    "eslint-config-next": "14.1.0",
-    "husky": "9.0.10",
-    "lint-staged": "15.2.0",
-    "prettier": "^3.7.3"
-=======
     "@eslint/js": "^9.39.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -35,6 +28,5 @@
     "tailwindcss": "^4",
     "typescript": "^5",
     "typescript-eslint": "^8.48.1"
->>>>>>> 7620c1c936dafcd177812c5dd6d1489556e048b2
   }
 }
