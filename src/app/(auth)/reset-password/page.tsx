@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import PasswordInput from '@/components/ui/password';
 import PrimaryButton from '@/components/PrimaryButton';
 import { Lock } from 'lucide-react';
@@ -10,17 +11,20 @@ function ResetPasswordPage() {
     confirmPassword: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match');
       return;
     }
+    // TODO: Replace with actual API call
+    // await fetch('/api/reset-password', { method: 'POST', body: JSON.stringify(formData) });
     console.log('Reset password:', formData);
     setIsSubmitted(true);
   };
@@ -45,7 +49,7 @@ function ResetPasswordPage() {
         <div className="flex justify-center">
           <PrimaryButton 
             label="Sign In" 
-            onClick={() => window.location.href = '/login'} 
+            onClick={() => router.push('/login')} 
           />
         </div>
       </div>

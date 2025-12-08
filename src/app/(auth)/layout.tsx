@@ -1,5 +1,6 @@
 "use client";
 import AuthLayout from "@/components/ui/AuthLayout";
+import Link from "next/link";
 import React from "react";
 import { usePathname } from "next/navigation";
 
@@ -17,9 +18,9 @@ const getLeftContent = (pathname: string) => {
           </p>
           <div className="text-base">
             <p>Don&apos;t have an account?</p>
-            <a href="/signup" className="text-white underline hover:text-gray-200 font-medium">
+            <Link href="/signup" className="text-white underline hover:text-gray-200 font-medium">
               Sign up
-            </a>
+            </Link>
           </div>
         </div>
       );
@@ -35,9 +36,9 @@ const getLeftContent = (pathname: string) => {
           </p>
           <div className="text-base">
             <p>Already have an account?</p>
-            <a href="/login" className="text-white underline hover:text-gray-200 font-medium">
+            <Link href="/login" className="text-white underline hover:text-gray-200 font-medium">
               Login
-            </a>
+            </Link>
           </div>
         </div>
       );
@@ -45,13 +46,15 @@ const getLeftContent = (pathname: string) => {
       return (
         <div>
           <p className="text-xl mb-8 leading-relaxed">
-            Provide the email associated with your account <br/>  to receive  a password reset code.
+            Create a new password<br/>
+            for your account.<br/>
+            Make it strong and secure.
           </p>
           <div className="text-base">
             <p>Remember your password?</p>
-            <a href="/login" className="text-white underline hover:text-gray-200 font-medium">
+            <Link href="/login" className="text-white underline hover:text-gray-200 font-medium">
               Back to Login
-            </a>
+            </Link>
           </div>
         </div>
       );
@@ -65,9 +68,9 @@ const getLeftContent = (pathname: string) => {
           </p>
           <div className="text-base">
             <p>Remember your password?</p>
-            <a href="/login" className="text-white underline hover:text-gray-200 font-medium">
+            <Link href="/login" className="text-white underline hover:text-gray-200 font-medium">
               Back to Login
-            </a>
+            </Link>
           </div>
         </div>
       );
@@ -80,10 +83,10 @@ const getLeftContent = (pathname: string) => {
             to verify your identity.
           </p>
           <div className="text-base">
-            <p>Didn&apos;t receive the code?</p>
-            <a href="/reset-password" className="text-white underline hover:text-gray-200 font-medium">
-              Resend Code
-            </a>
+            <p>Need to change your email?</p>
+            <Link href="/forgot-password" className="text-white underline hover:text-gray-200 font-medium">
+              Go Back
+            </Link>
           </div>
         </div>
       );
@@ -97,9 +100,9 @@ const getLeftContent = (pathname: string) => {
           </p>
           <div className="text-base">
             <p>Remember your password?</p>
-            <a href="/login" className="text-white underline hover:text-gray-200 font-medium">
+            <Link href="/login" className="text-white underline hover:text-gray-200 font-medium">
               Back to Login
-            </a>
+            </Link>
           </div>
         </div>
       );

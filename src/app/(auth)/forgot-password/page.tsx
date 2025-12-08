@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Email from '@/components/ui/InputEmail';
 import PrimaryButton from '@/components/PrimaryButton';
 import { KeyRound } from 'lucide-react';
@@ -7,6 +8,7 @@ import { KeyRound } from 'lucide-react';
 function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -36,7 +38,7 @@ function ForgotPasswordPage() {
         <div className="flex justify-center">
           <PrimaryButton 
             label="Back to Login" 
-            onClick={() => window.location.href = '/login'} 
+            onClick={() => router.push('/login')} 
           />
         </div>
         

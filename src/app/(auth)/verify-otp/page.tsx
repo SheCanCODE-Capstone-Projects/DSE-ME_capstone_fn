@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import PrimaryButton from '@/components/PrimaryButton';
 import { Shield } from 'lucide-react';
 
@@ -7,6 +8,8 @@ function VerifyOtpPage() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const router = useRouter();
 
   const handleChange = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -16,8 +19,7 @@ function VerifyOtpPage() {
     setOtp(newOtp);
     
     if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
-      nextInput?.focus();
+      inputRefs.current[index + 1]?.focus();
     }
     
     if (error) setError('');
@@ -25,8 +27,7 @@ function VerifyOtpPage() {
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`);
-      prevInput?.focus();
+      inputRefs.current[index - 1]?.focus();
     }
   };
 
@@ -42,8 +43,10 @@ function VerifyOtpPage() {
     setIsLoading(true);
     
     try {
+      // TODO: Replace with actual API call
+      // const response = await fetch('/api/verify-otp', { method: 'POST', body: JSON.stringify({ otp: otpCode }) });
       await new Promise(resolve => setTimeout(resolve, 2000));
-      window.location.href = '/reset-password';
+      router.push('/reset-password');
     } catch (error) {
       setError('Invalid code. Please try again.');
     } finally {
@@ -71,7 +74,7 @@ function VerifyOtpPage() {
             {otp.map((digit, index) => (
               <input 
                 key={index} 
-                id={`otp-${index}`} 
+                ref={(el) => inputRefs.current[index] = el}
                 type="text" 
                 maxLength={1}
                 value={digit}
@@ -101,7 +104,10 @@ function VerifyOtpPage() {
       <div className="flex justify-center items-center space-x-4 text-sm">
         <button 
           type="button"
-          onClick={() => window.location.href = '/forgot-password'}
+          onClick={() => {
+            // TODO: Implement resend OTP API call
+            console.log('Resend OTP');
+          }}
           className="text-[#0B609D] hover:underline font-medium"
         >
           Resend OTP
@@ -109,7 +115,7 @@ function VerifyOtpPage() {
         <div className="text-gray-400">|</div>
         <button 
           type="button"
-          onClick={() => window.location.href = '/forgot-password'}
+          onClick={() => router.push('/forgot-password')}
           className="text-[#0B609D] hover:underline font-medium"
         >
           Change Email
