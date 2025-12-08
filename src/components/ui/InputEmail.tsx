@@ -8,10 +8,11 @@ import { FiMail } from 'react-icons/fi'
 type EmailProps = {
  value: string
  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+ required?: boolean
 }
 
 
-const Email: React.FC<EmailProps> = ({ value, onChange }) => {
+const Email: React.FC<EmailProps> = ({ value, onChange, required }) => {
  return (
    <div className="flex flex-col w-72">
      {/* Label on top */}
@@ -36,6 +37,7 @@ const Email: React.FC<EmailProps> = ({ value, onChange }) => {
          placeholder="your email@gmail.com"
          value={value}
          onChange={onChange}
+         required={required}
          className="flex-1 text-black text-base bg-transparent outline-none placeholder-black"
        />
      </div>
