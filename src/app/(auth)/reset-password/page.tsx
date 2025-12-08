@@ -32,7 +32,7 @@ function ResetPasswordPage() {
     return (
       <div className="text-center space-y-6">
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-green-600 to-green-500 rounded-full flex items-center justify-center mb-4">
+          <div className="w-16 h-16 bg-gradient-to-r from-sky-600 to-gray-500 rounded-full flex items-center justify-center mb-4">
             <Lock className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-black">Password Reset</h2>
