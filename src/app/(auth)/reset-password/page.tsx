@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import PasswordInput from '@/components/ui/password';
 import PrimaryButton from '@/components/PrimaryButton';
 import { Lock } from 'lucide-react';
@@ -10,18 +11,18 @@ function ResetPasswordPage() {
     confirmPassword: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       alert('Passwords do not match');
       return;
     }
-    console.log('Reset password:', formData);
     setIsSubmitted(true);
   };
 
@@ -32,7 +33,7 @@ function ResetPasswordPage() {
     return (
       <div className="text-center space-y-6">
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-green-600 to-green-500 rounded-full flex items-center justify-center mb-4">
+          <div className="w-16 h-16 bg-gradient-to-r from-sky-600 to-gray-500 rounded-full flex items-center justify-center mb-4">
             <Lock className="w-8 h-8 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-black">Password Reset</h2>
@@ -45,7 +46,7 @@ function ResetPasswordPage() {
         <div className="flex justify-center">
           <PrimaryButton 
             label="Sign In" 
-            onClick={() => window.location.href = '/login'} 
+            onClick={() => router.push('/login')} 
           />
         </div>
       </div>
