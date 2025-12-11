@@ -1,12 +1,41 @@
+
 import React from 'react'
 
-function PrimaryButton({ label }: { label: string }) {
-    return (
-        <div className="p-4 bg-gradient-to-r from-[#0B609D] to-gray-500 rounded-full text-white flex items-center justify-center 
-w-40 sm:w-48 md:w-60 lg:w-72 h-8 sm:h-9 md:h-10 lg:h-12 text-sm sm:text-base md:text-lg">
-          <h1>{label}</h1>  
-        </div>
-    )
+interface PrimaryButtonProps {
+  label: string
+  type?: 'button' | 'submit' | 'reset'
+  onClick?: () => void
+  disabled?: boolean
+  icon?: React.ReactNode 
+}
+
+function PrimaryButton({
+  label,
+  type = 'button',
+  onClick,
+  disabled = false,
+  icon,
+}: PrimaryButtonProps) {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={`
+        px-6 py-3 bg-gradient-to-r from-[#0B609D] to-gray-500 
+        rounded-full text-white flex items-center justify-center 
+        gap-2.5 font-medium
+        w-44 sm:w-52 md:w-64 lg:w-72 
+        h-11 sm:h-12 md:h-14 
+        text-sm sm:text-base md:text-lg 
+        transition-all duration-200
+        ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 hover:scale-105 active:scale-100'}
+      `}
+    >
+      {icon && <span className="flex-shrink-0">{icon}</span>}
+      <span>{label}</span>
+    </button>
+  )
 }
 
 export default PrimaryButton
