@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
 type ProgressProps = {
@@ -38,7 +38,7 @@ export default function TopProgress({ steps, active }: ProgressProps) {
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ type: "spring", stiffness: 100, damping: 15 }}
-          className="h-3 rounded-full bg-linear-to-r from-sky-500 to-sky-600 shadow-sm"
+          className="h-3 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 shadow-sm"
         />
       </div>
 
@@ -80,7 +80,7 @@ export default function TopProgress({ steps, active }: ProgressProps) {
                   {step}
                 </div>
 
-                
+                <AnimatePresence>
                 {hoveredIndex === index && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
@@ -91,6 +91,7 @@ export default function TopProgress({ steps, active }: ProgressProps) {
                     {step}
                   </motion.div>
                 )}
+                </AnimatePresence>
               </motion.div>
             );
           })}

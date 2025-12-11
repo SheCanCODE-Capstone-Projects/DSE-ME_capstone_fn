@@ -42,7 +42,7 @@ export default function RoleStep({ onNext }: { onNext: (role: string) => void })
           onClick={() => selected && onNext(selected)}
           className={`px-8 py-3 rounded-full flex items-center gap-2 font-medium transition-all ${
             selected
-              ? "bg-linear-to-r from-gray-600 to-sky-700 text-white"
+              ? "bg-gradient-to-r from-gray-600 to-sky-700 text-white"
               : "bg-gray-200 text-gray-400"
           }`}
         >

@@ -164,7 +164,7 @@ export default function DetailsStep({ role, onNext, onBack }: DetailsStepProps) 
             onClick={onNext}
             className={`px-8 py-4 rounded-full flex items-center gap-2 font-semibold transition-all ${
               isValid
-                ? "bg-linear-to-r from-gray-600 to-sky-700 text-white shadow-lg hover:shadow-xl"
+                ? "bg-gradient-to-r from-gray-600 to-sky-700 text-white shadow-lg hover:shadow-xl"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >

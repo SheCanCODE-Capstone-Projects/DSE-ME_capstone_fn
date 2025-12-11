@@ -9,7 +9,7 @@ export default function LandingStep({ onNext }: { onNext: () => void }) {
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        className="w-20 h-20 mx-auto mb-6 bg-linear-to-r from-gray-400 to-sky-600 rounded-full flex items-center justify-center text-white shadow-lg"
+        className="w-20 h-20 mx-auto mb-6 bg-gradient-to-r from-gray-400 to-sky-600 rounded-full flex items-center justify-center text-white shadow-lg"
       >
         <Sparkles size={32} />
       </motion.div>
@@ -22,7 +22,7 @@ export default function LandingStep({ onNext }: { onNext: () => void }) {
 
       <button
         onClick={onNext}
-        className="group inline-flex items-center gap-2 px-8 py-4 rounded-full bg-linear-to-r from-gray-600 to-sky-700 text-white font-semibold transition-all"
+        className="group inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-gray-600 to-sky-700 text-white font-semibold transition-all"
       >
         Start Setup
         <ArrowRight size={20} className="group-hover:translate-x-1 transition" />
