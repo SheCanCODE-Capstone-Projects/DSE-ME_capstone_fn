@@ -24,15 +24,15 @@ function LoginPage() {
   const isFormValid = formData.email && formData.password;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col items-center mb-6">
-        <div className="w-12 h-12 bg-gradient-to-r from-[#0B609D] to-gray-500 rounded-full flex items-center justify-center mb-3">
-          <LogIn className="w-6 h-6 text-white" />
+    <div className="space-y-1">
+      <div className="flex flex-col items-center mb-2">
+        <div className="w-10 h-10 bg-gradient-to-r from-[#0B609D] to-gray-500 rounded-full flex items-center justify-center mb-3">
+          <LogIn className="w-5 h-5 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-center text-black">Sign In</h2>
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-2">
         <Email value={formData.email} onChange={handleChange} required />
         <PasswordInput name="password" value={formData.password} onChange={handleChange} required />
         
@@ -47,7 +47,7 @@ function LoginPage() {
         </div>
       </form>
       
-      <div className="flex items-center my-6">
+      <div className="flex items-center my-3">
         <div className="flex-1 border-t border-gray-300"></div>
         <span className="px-2 text-xs text-gray-500">or</span>
         <div className="flex-1 border-t border-gray-300"></div>
