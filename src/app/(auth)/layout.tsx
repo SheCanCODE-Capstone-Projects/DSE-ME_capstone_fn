@@ -26,7 +26,7 @@ const getLeftContent = (pathname: string) => {
       );
     case '/signup':
       return (
-        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6 space-x-4 md:space-x-0">
+        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6  md:space-x-0">
           <p className="text-sm md:text-xl leading-relaxed">
             Track learner progress,<br/>
             monitor cohorts,<br/>
@@ -44,7 +44,7 @@ const getLeftContent = (pathname: string) => {
       );
     case '/reset-password':
       return (
-        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6 space-x-4 md:space-x-0">
+        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6  md:space-x-0">
           <p className="text-sm md:text-xl leading-relaxed">
             Create a new password<br/>
             for your account.<br/>
@@ -60,7 +60,7 @@ const getLeftContent = (pathname: string) => {
       );
     case '/forgot-password':
       return (
-        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6 space-x-4 md:space-x-0">
+        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6  md:space-x-0">
           <p className="text-sm md:text-xl leading-relaxed">
             Enter your email address<br/>
             and we&apos;ll send you an OTP<br/>
@@ -76,7 +76,7 @@ const getLeftContent = (pathname: string) => {
       );
     case '/verify-otp':
       return (
-        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6 space-x-4 md:space-x-0">
+        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6  md:space-x-0">
           <p className="text-sm md:text-xl leading-relaxed">
             Enter the 6-digit code<br/>
             sent to your email<br/>
@@ -92,7 +92,7 @@ const getLeftContent = (pathname: string) => {
       );
     case '/new-password':
       return (
-        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6 space-x-4 md:space-x-0">
+        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6  md:space-x-0">
           <p className="text-sm md:text-xl leading-relaxed">
             Create a new password<br/>
             for your account.<br/>

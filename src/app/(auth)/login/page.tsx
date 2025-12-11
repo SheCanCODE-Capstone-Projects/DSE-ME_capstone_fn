@@ -47,7 +47,7 @@ function LoginPage() {
         </div>
       </form>
       
-      <div className="flex items-center my-1">
+      <div className="flex items-center my-3">
         <div className="flex-1 border-t border-gray-300"></div>
         <span className="px-2 text-xs text-gray-500">or</span>
         <div className="flex-1 border-t border-gray-300"></div>
