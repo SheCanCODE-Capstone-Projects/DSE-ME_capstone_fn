@@ -7,34 +7,27 @@ interface AuthLayoutProps {
 
 function AuthLayout({ children, leftContent }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col md:flex-row w-full bg-sky-50">
-
-    
-      <div className="w-full md:w-1/2 h-64 md:h-auto relative rounded-br-[800px] rounded-tr-[800px] overflow-hidden">
+    <div className="flex flex-col md:flex-row w-full h-screen bg-sky-50 overflow-hidden">
      
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1521791136064-7986c2920216?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=100')] bg-cover bg-center"></div>
-        
-    
+      <div className="relative h-60 md:flex-1 md:h-auto rounded-b-[180px] md:rounded-b-none md:rounded-br-[800px] md:rounded-tr-[800px] overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/image/image.png')] bg-cover bg-center"></div>
+
+       
         <div className="absolute inset-0 bg-gradient-to-b from-sky-900/80 to-gray-700/80"></div>
-    
-    
-        <div className="relative z-10 flex items-center h-full pl-16 pr-2">
-          <div className="bg-white w-4 h-4 rounded-full absolute left-8 top-14"></div>
-          {leftContent && (
-            <div className="text-white text-left w-full">
-              {leftContent}
-            </div>
-          )}
+
+        <div className="relative z-10 flex items-center h-full justify-center text-center px-4 md:justify-start md:text-left md:pl-16 md:pr-2">
+          <div className="bg-white w-3 h-3 rounded-full absolute left-6 top-6 md:left-8 md:top-14"></div>
+
+          {leftContent && <div className="text-white w-full">{leftContent}</div>}
         </div>
       </div>
 
-      
-      <div className="w-full md:w-1/2 flex justify-center items-center relative p-8">
-        <div className="bg-gradient-to-b from-sky-900 to-gray-700 w-4 h-4 shadow-lg rounded-full absolute top-14 right-14"></div>
+
+      <div className="flex-1 relative flex justify-center items-center p-6 md:p-8">
         
-        <div className="w-full max-w-md">
-          {children}
-        </div>
+        <div className="bg-gradient-to-b from-sky-900 to-gray-700 w-4 h-4 shadow-lg rounded-full absolute top-10 right-10 md:top-14 md:right-14"></div>
+
+        <div className="w-full max-w-md">{children}</div>
       </div>
     </div>
   );
