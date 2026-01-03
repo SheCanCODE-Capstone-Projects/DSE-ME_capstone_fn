@@ -30,3 +30,19 @@ export enum ActivityType {
   SCORES = 'SCORES',
   
 }
+export type TabType = 'profile' | 'notification' | 'security' | 'preferences';
+
+export interface UserProfile {
+  fullName: string;
+  email: string;
+  phone: string;
+  role: string;
+  center: string;
+  joinDate: string;
+}
+
+export interface SettingsState {
+  theme: 'light' | 'dark' | 'system';
+  language: string;
+  timezone: string;
+}
