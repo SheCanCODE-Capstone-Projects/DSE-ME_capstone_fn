@@ -25,7 +25,7 @@ function DashboardPage() {
             title="Typing Practice"
             description="View weekly summaries and track typing progress"
             buttonText="View Typing Data"
-            href="/typing-practice"
+            href="grades/TypingSummary"
           />
 
           <GradeCards
@@ -41,7 +41,7 @@ function DashboardPage() {
             title="Grade Summary"
             description="View comprehensive grade reports and analytics"
             buttonText="View Summary"
-            href="/grade-summary"
+            href="grades/Summary"
           />
         </div>
       </div>
