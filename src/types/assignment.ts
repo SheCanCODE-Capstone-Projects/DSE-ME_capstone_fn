@@ -6,4 +6,10 @@ export interface Assignment {
   chapter: string;
   dueDate: string;
   maxScore: number;
+  grades?: Record<string, number>; // studentId => score
+}
+
+export interface Student {
+  id: string;
+  name: string;
 }

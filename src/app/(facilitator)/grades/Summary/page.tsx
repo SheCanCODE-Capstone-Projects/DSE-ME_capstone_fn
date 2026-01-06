@@ -70,7 +70,7 @@ export default function GradeSummaryPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#f7f9fc] flex">
+    <div className="min-h-screen bg-[#f0f4f8]  flex ml-22">
       <div className="flex-1 flex flex-col">
         <main className="px-4 sm:px-6 lg:px-8 py-6 space-y-8">
 

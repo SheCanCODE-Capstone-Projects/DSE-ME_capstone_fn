@@ -11,7 +11,7 @@ const stats = [
 
 function StatsCards() {
   return (
-    <div className="grid grid-cols-5 gap-4 px-8 mb-8">
+    <div className="grid grid-cols-5 gap-4 px-8 mb-8 ">
       {stats.map((stat, i) => (
         <div
           key={i}
@@ -102,7 +102,7 @@ function WeeklySummaryTable() {
 // page.tsx content
 export default function DashboardContentPage() {
   return (
-    <main className="flex-1 pb-10 bg-slate-50 min-h-screen">
+    <main className="flex-1 pt-4 pb-10 bg-[#f0f4f8] min-h-screen ml-20">
       <div className="px-8 mb-8">
         <h2 className="text-3xl font-bold text-slate-800 mb-2">Typing Practice Summary</h2>
         <p className="text-slate-500 mb-6">Weekly and overall typing practice statistics</p>

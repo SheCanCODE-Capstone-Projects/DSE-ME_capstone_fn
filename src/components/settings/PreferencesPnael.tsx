@@ -31,23 +31,23 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = ({ theme, onThemeChang
                 className={`
                   relative flex flex-col items-center p-8 rounded-[2.5rem] border-[3px] transition-all duration-500 text-center group
                   ${isActive 
-                    ? 'border-blue-600 bg-blue-50/50 shadow-[0_30px_60px_-15px_rgba(37,99,235,0.2)]' 
-                    : 'border-slate-100 bg-white/40 hover:border-blue-200'}
+                    ? 'border-sky-600 bg-sky-50/50 shadow-[0_30px_60px_-15px_rgba(37,99,235,0.2)]' 
+                    : 'border-slate-100 bg-white/40 hover:border-sky-200'}
                 `}
               >
                 <div className={`
                   mb-6 p-5 rounded-2xl transition-all duration-500
-                  ${isActive ? 'bg-blue-600 text-white shadow-2xl scale-110' : 'bg-white text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-500'}
+                  ${isActive ? 'bg-sky-600 text-white shadow-2xl scale-110' : 'bg-white text-slate-400 group-hover:bg-sky-50 group-hover:text-sky-500'}
                 `}>
                   <item.icon size={32} strokeWidth={isActive ? 2.5 : 2} />
                 </div>
-                <p className={`font-black text-lg tracking-tight ${isActive ? 'text-blue-900' : 'text-slate-900'}`}>
+                <p className={`font-black text-lg tracking-tight ${isActive ? 'text-sky-900' : 'text-slate-900'}`}>
                   {item.label}
                 </p>
                 <p className="text-[11px] font-black text-slate-400 mt-1 uppercase tracking-widest">{item.desc}</p>
                 
                 {isActive && (
-                  <div className="absolute top-4 right-4 text-blue-600 animate-in zoom-in duration-300">
+                  <div className="absolute top-4 right-4 text-sky-600 animate-in zoom-in duration-300">
                     <CheckCircle2 size={24} fill="currentColor" className="text-white" />
                   </div>
                 )}
@@ -63,13 +63,13 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = ({ theme, onThemeChang
             Display Language
           </label>
           <div className="relative group">
-            <select className="w-full appearance-none bg-white/50 border border-slate-200 rounded-2xl px-6 py-5 font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 transition-all cursor-pointer">
+            <select className="w-full appearance-none bg-white/50 border border-slate-200 rounded-2xl px-6 py-5 font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-600 transition-all cursor-pointer">
               <option>English (International)</option>
               <option>Français (Afrique)</option>
               <option>Swahili (Regional)</option>
               <option>Twi (Ghana)</option>
             </select>
-            <span className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
+            <span className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-sky-500 transition-colors">
               <ChevronDown size={20} />
             </span>
           </div>
@@ -80,12 +80,12 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = ({ theme, onThemeChang
             Primary Timezone
           </label>
           <div className="relative group">
-            <select className="w-full appearance-none bg-white/50 border border-slate-200 rounded-2xl px-6 py-5 font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 transition-all cursor-pointer">
+            <select className="w-full appearance-none bg-white/50 border border-slate-200 rounded-2xl px-6 py-5 font-bold text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-600 transition-all cursor-pointer">
               <option>GMT (UTC+00:00) Accra</option>
               <option>CAT (UTC+02:00) Johannesburg</option>
               <option>WAT (UTC+01:00) Lagos</option>
             </select>
-            <span className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
+            <span className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-sky-500 transition-colors">
               <ChevronDown size={20} />
             </span>
           </div>

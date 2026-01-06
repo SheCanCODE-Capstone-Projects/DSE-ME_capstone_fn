@@ -9,7 +9,7 @@ import React from 'react';
 function DashboardPage() {
   return (
     <div className='font-sans ml-28'>
-      
+      <h1 className='text-[20px] pb-4 pl-3'>Manage Particapnts's Grades</h1>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-2">
         <StatCard icon={<BarChart2 size={32} />} title="Total Assignments" value={1} subtext="Currently running" />
         <StatCard icon={<UserMinus size={32} />} title="Class Average" value={1} subtext="Currently running" />
@@ -25,7 +25,7 @@ function DashboardPage() {
             title="Typing Practice"
             description="View weekly summaries and track typing progress"
             buttonText="View Typing Data"
-            href="/typing-practice"
+            href="grades/TypingSummary"
           />
 
           <GradeCards
@@ -41,7 +41,7 @@ function DashboardPage() {
             title="Grade Summary"
             description="View comprehensive grade reports and analytics"
             buttonText="View Summary"
-            href="/grade-summary"
+            href="grades/Summary"
           />
         </div>
       </div>

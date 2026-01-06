@@ -73,7 +73,7 @@ function SecurityPanel() {
               value={currentPasswordInput}
               onChange={(e) => setCurrentPasswordInput(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all"
             />
           </div>
           <div className="hidden md:block"></div>
@@ -84,7 +84,7 @@ function SecurityPanel() {
               value={newPasswordInput}
               onChange={(e) => setNewPasswordInput(e.target.value)}
               placeholder="At least 8 characters"
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all"
             />
           </div>
           <div className="space-y-2">
@@ -94,14 +94,14 @@ function SecurityPanel() {
               value={confirmPasswordInput}
               onChange={(e) => setConfirmPasswordInput(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 transition-all"
             />
           </div>
         </div>
         <div className="flex justify-end pt-4">
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md"
+            className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-lg shadow-md"
           >
             <Save size={16} />
             Save Changes
@@ -118,7 +118,7 @@ function SecurityPanel() {
           {sessions.map((session, i) => (
             <div key={i} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
               <div className="flex items-center gap-4">
-                <div className={`p-2.5 rounded-lg ${session.status === 'current' ? 'bg-blue-100 text-blue-600' : 'bg-white text-slate-400'}`}>
+                <div className={`p-2.5 rounded-lg ${session.status === 'current' ? 'bg-sky-100 text-sky-600' : 'bg-white text-slate-400'}`}>
                   <session.icon size={20} />
                 </div>
                 <div>

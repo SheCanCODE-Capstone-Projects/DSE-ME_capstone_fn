@@ -4,14 +4,22 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import AssignmentCard from "@/components/GradesComponents/AssignmentCard";
 import CreateAssignmentModal from "@/components/GradesComponents/CreateAssignmentModal";
+import GradeStudentsModal from "@/components/GradesComponents/GradeStudentsModal";
 import { Assignment } from "@/types/assignment";
 
 export default function AssignmentsPage() {
   const router = useRouter();
+
+  
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
+ 
+  const [openGrade, setOpenGrade] = useState(false);
+  const [gradeIndex, setGradeIndex] = useState<number | null>(null);
+
+  
   const [assignments, setAssignments] = useState<Assignment[]>([
     {
       title: "HTML Structure Assignment",
@@ -31,13 +39,13 @@ export default function AssignmentsPage() {
     },
   ]);
 
-  // Add assignment
+  
   const addAssignment = (newAssignment: Assignment) => {
     setAssignments(prev => [...prev, newAssignment]);
     setOpenCreate(false);
   };
 
-  // Update assignment
+ 
   const updateAssignment = (updated: Assignment) => {
     if (editIndex === null) return;
     const newList = [...assignments];
@@ -47,13 +55,23 @@ export default function AssignmentsPage() {
     setEditIndex(null);
   };
 
-  // Delete assignment
+
   const deleteAssignment = (index: number) => {
     if (confirm("Are you sure you want to delete this assignment?")) {
       const newList = [...assignments];
       newList.splice(index, 1);
       setAssignments(newList);
     }
+  };
+
+
+  const saveGrades = (grades: Record<string, number>) => {
+    if (gradeIndex === null) return;
+    const newList = [...assignments];
+    newList[gradeIndex] = { ...newList[gradeIndex], grades };
+    setAssignments(newList);
+    setOpenGrade(false);
+    setGradeIndex(null);
   };
 
   return (
@@ -68,11 +86,11 @@ export default function AssignmentsPage() {
         </button>
         <div>
           <h1 className="text-xl font-bold text-sky-700">Assignments</h1>
-          <p className="text-xs text-gray-600">Create and manage student assignments</p>
+          <p className="text-xs text-gray-600">Create, manage, and grade student assignments</p>
         </div>
       </div>
 
-     
+      
       <div className="flex justify-end mb-4">
         <button
           onClick={() => setOpenCreate(true)}
@@ -88,7 +106,10 @@ export default function AssignmentsPage() {
           <AssignmentCard
             key={idx}
             {...a}
-            onGradeClick={() => {}}
+            onGradeClick={() => {
+              setGradeIndex(idx);
+              setOpenGrade(true);
+            }}
             onEditClick={() => {
               setEditIndex(idx);
               setOpenEdit(true);
@@ -105,13 +126,23 @@ export default function AssignmentsPage() {
         onCreate={addAssignment}
       />
 
-     
+      
       {editIndex !== null && (
         <CreateAssignmentModal
           isOpen={openEdit}
           onClose={() => setOpenEdit(false)}
           onCreate={updateAssignment}
           assignment={assignments[editIndex]}
+        />
+      )}
+
+     
+      {gradeIndex !== null && (
+        <GradeStudentsModal
+          isOpen={openGrade}
+          onClose={() => setOpenGrade(false)}
+          assignment={assignments[gradeIndex]}
+          onSaveGrades={saveGrades}
         />
       )}
     </div>

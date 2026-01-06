@@ -73,7 +73,7 @@ function ProfilePanel() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="absolute -bottom-2 -right-2 p-2.5 bg-blue-600 text-white rounded-xl shadow-xl hover:bg-blue-700 border-2 border-white"
+            className="absolute -bottom-2 -right-2 p-2.5 bg-sky-600 text-white rounded-xl shadow-xl hover:bg-sky-700 border-2 border-white"
           >
             <Camera size={18} />
           </button>
@@ -123,14 +123,14 @@ function ProfilePanel() {
           value={profile.bio}
           onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
           className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700
-            focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 resize-none"
+            focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 resize-none"
         />
       </div>
       <div className="flex justify-end pt-4">
         <button
           onClick={handleSave}
           className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white
-            bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md"
+            bg-sky-600 hover:bg-sky-700 rounded-lg shadow-md"
         >
           <Save size={16} />
           Save Changes
@@ -166,7 +166,7 @@ function Input({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700
-            focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500"
+            focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500"
         />
       </div>
     </div>
