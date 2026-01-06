@@ -96,11 +96,64 @@ function AddParticipantModal({ onClose }: { onClose: () => void }) {
     </div>
   );
 }
+/* ================= VIEW PARTICIPANT MODAL ================= */
+function ViewParticipantModal({
+  participant,
+  onClose,
+}: {
+  participant: any;
+  onClose: () => void;
+}) {
+  if (!participant) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-lg">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Participant Details</h2>
+          <button onClick={onClose} className="text-gray-500 text-xl">
+            ×
+          </button>
+        </div>
+
+        {/* Details */}
+        <div className="space-y-3 text-sm">
+          <p><span className="font-medium">ID:</span> {participant.id}</p>
+          <p><span className="font-medium">Name:</span> {participant.name}</p>
+          <p><span className="font-medium">Gender:</span> {participant.gender}</p>
+          <p><span className="font-medium">Age:</span> {participant.age}</p>
+          <p><span className="font-medium">Phone:</span> {participant.phone}</p>
+          <p><span className="font-medium">Email:</span> example@email.com</p>
+          <p><span className="font-medium">Enrollment Date:</span> {participant.enrollmentDate}</p>
+          <p>
+            <span className="font-medium">Status:</span>{" "}
+            <span
+              className={`px-2 py-1 text-xs rounded-full ${
+                participant.status === "Active"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {participant.status}
+            </span>
+          </p>
+        </div>
+
+      
+      </div>
+    </div>
+  );
+}
+
 
 /* ================= MAIN PAGE ================= */
 function Participant() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
+const [selectedParticipant, setSelectedParticipant] = useState<any>(null);
+
 
   const stats = [
     { title: "Total Active", value: 41, icon: Users },
@@ -158,9 +211,10 @@ function Participant() {
       },
     ]);
 
-    const handleView = (id: string) => {
-      console.log("View clicked for participant:", id);
-    };
+  const handleView = (participant: any) => {
+  setSelectedParticipant(participant);
+  setViewOpen(true);
+};
 
     return (
       <div className="overflow-x-auto">
@@ -228,11 +282,12 @@ function Participant() {
                 </td>
                 <td className="px-6 py-4 text-sm">
                   <button
-                    onClick={() => handleView(participant.id)}
-                    className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded"
-                  >
-                    View
-                  </button>
+              onClick={() => handleView(participant)}
+             className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded"
+              >
+              View
+               </button>
+
                 </td>
               </tr>
             ))}
@@ -264,6 +319,13 @@ function Participant() {
       </div>
 
       {open && <AddParticipantModal onClose={() => setOpen(false)} />}
+        
+ {viewOpen && (
+  <ViewParticipantModal
+    participant={selectedParticipant}
+    onClose={() => setViewOpen(false)}
+  />
+)}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => {
