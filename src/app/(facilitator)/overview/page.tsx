@@ -8,9 +8,9 @@ import QuickActivities from '@/components/overview/QuickActivities';
 
 function FacilitatorDashboard () {
   return (
-    <div className="min-h-screen bg-[#f0f4f8] text-gray-800 font-sans relative">
+    <div className="min-h-screen bg-[#f0f4f8] text-gray-800 font-sans relative" >
 
-      <main className="pl-32 pr-8 py-8 min-h-screen max-w-7xl mx-auto">
+      <main className="pl-32 pr-8 py-8 min-h-screen">
       
 
         <div className="space-y-6">

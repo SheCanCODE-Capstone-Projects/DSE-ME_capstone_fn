@@ -18,9 +18,9 @@ function Settings() {
   ] as const;
 
   return (
-    <div className="flex min-h-screen w-full bg-[#f8fafc] font-sans selection:bg-blue-100 selection:text-blue-700">
+    <div className="flex ml-28 min-h-screen  bg-[#f0f4f8] font-sans selection:bg-sky-100 selection:text-sky-700">
       <div className="flex-1 flex flex-col">
-        <main className="flex-1 p-4 md:p-8 lg:p-12 max-w-7xl mx-auto w-full">
+        <main className="flex-1 p-2 md:p-6 lg:p-8 ">
           <header className="mb-10 space-y-1">
             <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
               Settings
@@ -43,11 +43,11 @@ function Settings() {
                     onClick={() => setActiveTab(tab.id as TabType)}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all
                       ${isActive
-                        ? 'bg-white text-blue-600 shadow-sm border border-slate-200'
+                        ? 'bg-white text-sky-600 shadow-sm border border-slate-200'
                         : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/50'
                       }`}
                   >
-                    <Icon size={20} className={isActive ? 'text-blue-600' : 'text-slate-400'} />
+                    <Icon size={20} className={isActive ? 'text-sky-600' : 'text-slate-400'} />
                     <span className="font-semibold text-sm">{tab.label}</span>
                   </button>
                 );

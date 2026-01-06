@@ -100,7 +100,7 @@ export default function AssignmentsPage() {
         </button>
       </div>
 
-      {/* Assignments Grid */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {assignments.map((a, idx) => (
           <AssignmentCard
@@ -119,14 +119,14 @@ export default function AssignmentsPage() {
         ))}
       </div>
 
-      {/* Create Assignment Modal */}
+      
       <CreateAssignmentModal
         isOpen={openCreate}
         onClose={() => setOpenCreate(false)}
         onCreate={addAssignment}
       />
 
-      {/* Edit Assignment Modal */}
+      
       {editIndex !== null && (
         <CreateAssignmentModal
           isOpen={openEdit}
@@ -136,7 +136,7 @@ export default function AssignmentsPage() {
         />
       )}
 
-      {/* Grade Students Modal */}
+     
       {gradeIndex !== null && (
         <GradeStudentsModal
           isOpen={openGrade}

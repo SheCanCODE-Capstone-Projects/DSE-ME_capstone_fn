@@ -35,14 +35,14 @@ function NotificationsPanel() {
         {notificationTypes.map((type) => (
           <div
             key={type.id}
-            className="group flex items-center justify-between p-5 bg-white border border-slate-200 rounded-2xl hover:border-blue-200 hover:bg-blue-50/10 transition-all shadow-sm hover:shadow-md"
+            className="group flex items-center justify-between p-5 bg-white border border-slate-200 rounded-2xl hover:border-sky-200 hover:bg-sky-50/10 transition-all shadow-sm hover:shadow-md"
           >
             <div className="flex items-center gap-5">
               <div
                 className={`p-3 rounded-xl transition-colors
                   ${
                     toggles[type.id]
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-sky-600 text-white'
                       : 'bg-slate-100 text-slate-400 group-hover:bg-slate-200'
                   }`}
               >
@@ -62,8 +62,8 @@ function NotificationsPanel() {
             <button
               onClick={() => toggle(type.id)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all
-                focus:outline-none focus:ring-2 focus:ring-blue-500 ring-offset-2 ring-offset-white
-                ${toggles[type.id] ? 'bg-blue-600' : 'bg-slate-200'}
+                focus:outline-none focus:ring-2 focus:ring-sky-500 ring-offset-2 ring-offset-white
+                ${toggles[type.id] ? 'bg-sky-600' : 'bg-slate-200'}
               `}
             >
               <span
