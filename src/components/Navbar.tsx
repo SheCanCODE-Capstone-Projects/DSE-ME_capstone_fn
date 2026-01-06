@@ -1,7 +1,10 @@
 "use client"
 
-import { Bell, Menu } from "lucide-react"
+import { Bell, Menu, LogOut } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useAuth } from "@/context/AuthContext"
+import { useRouter } from "next/navigation"
+import { toast } from "react-hot-toast"
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -10,6 +13,14 @@ interface NavbarProps {
 export default function Navbar({ onMenuClick }: NavbarProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const { logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully!');
+    router.push('/login');
+  };
 
   useEffect(() => {
     const checkMobile = () => {
@@ -24,7 +35,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
   }, [mounted]);
 
   return (
-    <header className="px-4 md:px-8 py-4 md:py-8 flex items-center justify-between" >
+    <header className="ml-28 px-4 md:px-8 py-2 md:py-3 flex items-center justify-between" >
       <div className="flex items-center gap-2 md:gap-4">
         
         {mounted && isMobile && (
@@ -38,7 +49,6 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         
         <div>
           <h1 className="text-lg md:text-2xl font-bold" style={{ color: '#34597E' }}>Facilitator Dashboard</h1>
-          <p className="text-base md:text-xl py-1 md:py-2" style={{ color: '#796666' }}>Overview</p>
         </div>
       </div>
 
@@ -58,6 +68,20 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
             <p className="text-xs" style={{ color: '#0B609D' }}>diane@gmail.com</p>
           </div>
         </div>
+
+        
+        <button
+          onClick={handleLogout}
+          className="group flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+          style={{ 
+            background: 'linear-gradient(135deg, #0B609D, #666666)',
+            color: 'white'
+          }}
+          title="Logout"
+        >
+          <LogOut className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+          <span className="hidden md:block text-sm font-medium">Logout</span>
+        </button>
       </div>
     </header>
   )

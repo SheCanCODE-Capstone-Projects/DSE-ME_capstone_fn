@@ -13,7 +13,7 @@ export default function FacilitatorLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen" style={{ backgroundColor: '#EEF3FD' }}>
+    <div className="flex" style={{ backgroundColor: '#EEF3FD' }}>
       <Sidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 

@@ -6,6 +6,10 @@ import PasswordInput from '@/components/ui/password';
 import PrimaryButton from '@/components/PrimaryButton';
 import GoogleLoginButton from '@/components/GoogleLoginButton';
 import { LogIn } from 'lucide-react';
+import { useLogin } from '@/hooks/auth/useLogin';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -13,12 +17,26 @@ function LoginPage() {
     password: ''
   });
 
+  const loginMutation = useLogin();
+  const { login } = useAuth();
+  const router = useRouter();
+  const isLoading = loginMutation.status === 'pending';
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    try {
+      const response = await loginMutation.mutateAsync(formData);
+      login(response.token);
+      toast.success('Login successful!');
+      router.push('/dashboard');
+    } catch (err: any) {
+      toast.error(err.message || 'Login failed');
+    }
   };
 
   const isFormValid = formData.email && formData.password;
@@ -43,7 +61,11 @@ function LoginPage() {
         </div>
         
         <div className="flex justify-center pt-3">
-          <PrimaryButton label="Sign In" type="submit" disabled={!isFormValid} />
+          <PrimaryButton 
+            label={isLoading ? 'Signing In...' : 'Sign In'} 
+            type="submit" 
+            disabled={!isFormValid || isLoading} 
+          />
         </div>
       </form>
       
