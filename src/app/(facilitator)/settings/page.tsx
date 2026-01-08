@@ -18,7 +18,7 @@ function Settings() {
   ] as const;
 
   return (
-    <div className="flex ml-28 min-h-screen  bg-[#f0f4f8] font-sans selection:bg-sky-100 selection:text-sky-700">
+    <div className="flex  min-h-screen  bg-[#f0f4f8] font-sans selection:bg-sky-100 selection:text-sky-700">
       <div className="flex-1 flex flex-col">
         <main className="flex-1 p-2 md:p-6 lg:p-8 ">
           <header className="mb-10 space-y-1">
