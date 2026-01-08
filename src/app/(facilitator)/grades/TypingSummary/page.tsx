@@ -109,8 +109,8 @@ export default function DashboardContentPage() {
           <ArrowLeft size={18} />
         </button>
         <div>
-          <h2 className="text-3xl font-bold text-slate-800">Typing Practice Summary</h2>
-          <p className="text-slate-500">Weekly and overall typing practice statistics</p>
+          <h2 className="text-xl font-bold text-sky-700">Typing Practice Summary</h2>
+          <p className="text-sm text-gray-500">Weekly and overall typing practice statistics</p>
         </div>
       </div>
 

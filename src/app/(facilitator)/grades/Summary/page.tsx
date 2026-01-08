@@ -93,7 +93,7 @@ export default function GradeSummaryPage() {
               <ArrowLeft size={18} />
             </button>
             <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-[#34597E]">
+              <h1 className="text-xl font-bold text-sky-700">
                 Grade Summary
               </h1>
               <p className="text-sm text-gray-500">
