@@ -8,9 +8,10 @@ import { toast } from "react-hot-toast"
 
 interface NavbarProps {
   onMenuClick?: () => void;
+  pageTitle?: string;
 }
 
-export default function Navbar({ onMenuClick }: NavbarProps) {
+export default function Navbar({ onMenuClick, pageTitle = "Overview" }: NavbarProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { logout } = useAuth();
@@ -35,7 +36,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
   }, [mounted]);
 
   return (
-    <header className="ml-28 px-4 md:px-8 py-2 md:py-3 flex items-center justify-between" >
+    <header className="fixed top-0 md:pl-33 left-0 right-0 z-40 pr-4 md:pr-6 py-1 md:py-2 flex items-center justify-between bg-[#EEF3FD]" >
       <div className="flex items-center gap-2 md:gap-4">
         
         {mounted && isMobile && (
@@ -48,7 +49,8 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
         )}
         
         <div>
-          <h1 className="text-lg md:text-2xl font-bold" style={{ color: '#34597E' }}>Facilitator Dashboard</h1>
+          <h1 className="text-base md:text-xl font-bold" style={{ color: '#34597E' }}>Facilitator Dashboard</h1>
+          <p className="text-sm md:text-base py-0.5 md:py-1" style={{ color: '#796666' }}>{pageTitle}</p>
         </div>
       </div>
 

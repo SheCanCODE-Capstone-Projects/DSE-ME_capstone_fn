@@ -8,7 +8,7 @@ import React from 'react';
 
 function DashboardPage() {
   return (
-    <div className='font-sans ml-28'>
+    <div className='font-sans'>
       <h1 className='text-[20px] pb-4 pl-3'>Manage Particapnts's Grades</h1>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-2">
         <StatCard icon={<BarChart2 size={32} />} title="Total Assignments" value={1} subtext="Currently running" />

@@ -34,9 +34,9 @@ export default function Surveys() {
     filter === 'All' ? surveyData : surveyData.filter((s) => s.period === filter);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#EEF3FD' }}>
-      <div className="ml-28 flex flex-col">
-        <main className="flex-1 px-4 pt-1 pb-4" style={{ backgroundColor: '#EEF3FD' }}>
+    <div className="min-h-screen">
+      <div className="flex flex-col">
+        <main className="flex-1  pt-1 pb-4" >
           <h1 className="text-2xl font-bold mb-4" style={{ color: '#34597E'}}>Survey Management</h1>
 
          
