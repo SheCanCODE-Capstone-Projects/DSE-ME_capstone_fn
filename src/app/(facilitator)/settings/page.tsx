@@ -1,11 +1,11 @@
 'use client'
 import React, { useState } from 'react';
-import ProfilePanel from '@/components/settings/ProfilePanel';
-import SecurityPanel from '@/components/settings/SecurityPanel';
-import PreferencesPanel from '@/components/settings/PreferencesPnael';
-import NotificationsPanel from '@/components/settings/NotificationsPanel';
-import { TabType } from '@/app/facilitator';
-import { User, Bell, Shield, Palette, Save } from 'lucide-react';
+import ProfilePanel from '../../../components/settings/ProfilePanel';
+import SecurityPanel from '../../../components/settings/SecurityPanel';
+import PreferencesPanel from '../../../components/settings/PreferencesPnael';
+import NotificationsPanel from '../../../components/settings/NotificationsPanel';
+import { TabType } from '../../facilitator';
+import { User, Bell, Shield, Palette } from 'lucide-react';
 
 function Settings() {
   const [activeTab, setActiveTab] = useState<TabType>('profile');
@@ -30,9 +30,9 @@ function Settings() {
             </p>
           </header>
 
-          <div className="flex flex-col lg:flex-row gap-10">
-
-            <nav className="lg:w-72 flex flex-row lg:flex-col gap-1 pb-4 lg:pb-0">
+          <div className="flex flex-col lg:flex-row gap-5 flex-1 overflow-hidden">
+            {/* Sidebar Navigation - Compact widths and paddings */}
+            <nav className="lg:w-56 flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 shrink-0">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 const Icon = tab.icon;
@@ -41,32 +41,38 @@ function Settings() {
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as TabType)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all
+                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all whitespace-nowrap
                       ${isActive
                         ? 'bg-white text-sky-600 shadow-sm border border-slate-200'
                         : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/50'
                       }`}
                   >
-                    <Icon size={20} className={isActive ? 'text-sky-600' : 'text-slate-400'} />
-                    <span className="font-semibold text-sm">{tab.label}</span>
+                    <Icon size={16} className={isActive ? 'text-sky-600' : 'text-slate-400'} />
+                    <span className="font-semibold text-xs">{tab.label}</span>
                   </button>
                 );
               })}
             </nav>
-            <div className="flex-1 space-y-6">
-              <section className="bg-white border border-slate-200 rounded-2xl shadow-sm min-h-[500px]">
-                <div className="p-8">
+
+            {/* Content Area - Scroll restricted to this container */}
+            <div className="flex-1 flex flex-col min-h-0">
+              <section className="bg-white border border-slate-200 rounded-xl shadow-sm flex-1 overflow-y-auto">
+                <div className="p-5">
                   {activeTab === 'profile' && <ProfilePanel />}
                   {activeTab === 'notification' && <NotificationsPanel />}
                   {activeTab === 'security' && <SecurityPanel />}
-                  {activeTab === 'preferences' && <PreferencesPanel theme="light" onThemeChange={(newTheme) => {console.log('Selected theme:', newTheme);localStorage.setItem('userTheme', newTheme); }}/>}
+                  {activeTab === 'preferences' && (
+                    <PreferencesPanel 
+                      theme="light" 
+                      onThemeChange={(newTheme) => {
+                        console.log('Selected theme:', newTheme);
+                        localStorage.setItem('userTheme', newTheme); 
+                      }}
+                    />
+                  )}
                 </div>
               </section>
-              <div className="flex items-center justify-between pt-4">
-                <p className="text-sm text-slate-400 hidden sm:block italic">
-                  Changes stay local until saved
-                </p>
-              </div>
+
             </div>
           </div>
         </main>

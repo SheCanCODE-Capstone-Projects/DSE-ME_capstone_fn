@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { toast } from "react-hot-toast"
+import {useProfile} from "../context/profileContext"
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -16,6 +17,7 @@ export default function Navbar({ onMenuClick, pageTitle = "Overview" }: NavbarPr
   const [mounted, setMounted] = useState(false);
   const { logout } = useAuth();
   const router = useRouter();
+  const { profile } = useProfile();
 
   const handleLogout = () => {
     logout();
@@ -62,9 +64,20 @@ export default function Navbar({ onMenuClick, pageTitle = "Overview" }: NavbarPr
 
         
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="w-8 h-8 md:w-10 md:h-10 bg-sky-700 rounded-full flex items-center justify-center text-white font-semibold text-xs md:text-sm">
-            DI
-          </div>
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-full overflow-hidden bg-sky-700">
+  {profile.avatar ? (
+    <img
+      src={profile.avatar}
+      className="w-full h-full object-cover"
+      alt="avatar"
+    />
+  ) : (
+    <span className="flex items-center justify-center h-full text-white font-semibold">
+      DI
+    </span>
+  )}
+</div>
+
           <div className="text-right hidden sm:block">
             <p className="text-sm font-semibold text-gray-800">diane</p>
             <p className="text-xs" style={{ color: '#0B609D' }}>diane@gmail.com</p>

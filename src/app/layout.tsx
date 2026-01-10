@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
 
+import { ProfileProvider } from "../context/profileContext";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,21 +20,14 @@ export const metadata: Metadata = {
   description: "A secure, multi-tenant Monitoring & Evaluation platform for tracking training, employment outcomes, and impact across donor-funded programs.",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning={true}
-      >
-        <Providers>
-          {children}
-        </Providers>
+    <html>
+      <body>
+        <ProfileProvider>{children}</ProfileProvider>
       </body>
     </html>
   );
 }
+

@@ -1,34 +1,55 @@
 'use client'
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Camera, Mail, Phone, MapPin, Briefcase, Save, User } from 'lucide-react';
+import { useProfile } from "../../context/profileContext";
 
+function Input({
+  label,
+  icon: Icon,
+  value,
+  onChange,
+}: {
+  label: string;
+  icon: any;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+        {label}
+      </label>
+      <div className="relative">
+        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+          <Icon size={18} />
+        </span>
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700
+            focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500"
+        />
+      </div>
+    </div>
+  );
+}
 function ProfilePanel() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [profile, setProfile] = useState({
-    fullName: 'Debz Tt',
-    email: 'debtz@gmail.com',
-    phone: '+250 7912345678',
-    location: 'Accra West Regional Hub',
-    bio: 'Passionate facilitator with 10+ years experience in community engagement and public health education. Leading the West Regional Hub since 2021.',
-    avatar: '', 
-  });
+  const { profile, setProfile } = useProfile();
 
-  
   useEffect(() => {
     const storedProfile = localStorage.getItem('profileData');
     if (storedProfile) {
       setProfile(JSON.parse(storedProfile));
     }
-  }, []);
+  }, [setProfile]);
 
-  
   const handleSave = () => {
     localStorage.setItem('profileData', JSON.stringify(profile));
     alert('Profile saved successfully!');
   };
 
-  
   const handleAvatarChange = (file: File) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -43,7 +64,6 @@ function ProfilePanel() {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-2 duration-500">
 
-      
       <div className="flex flex-col sm:flex-row items-center gap-8 pb-8 border-b border-slate-100">
         <div className="relative group">
           <div className="w-32 h-32 rounded-2xl overflow-hidden ring-4 ring-slate-50 shadow-lg bg-slate-100 flex items-center justify-center">
@@ -84,10 +104,11 @@ function ProfilePanel() {
             {profile.fullName}
           </h2>
           <p className="text-slate-500 font-medium">
-            Lead Facilitator • Community Health Center
+            Facilitator • SheCanCode
           </p>
         </div>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Input
           label="Full Name"
@@ -114,6 +135,7 @@ function ProfilePanel() {
           onChange={(v) => setProfile({ ...profile, location: v })}
         />
       </div>
+
       <div className="space-y-3">
         <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
           Short Bio
@@ -126,6 +148,7 @@ function ProfilePanel() {
             focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500 resize-none"
         />
       </div>
+
       <div className="flex justify-end pt-4">
         <button
           onClick={handleSave}
@@ -141,34 +164,3 @@ function ProfilePanel() {
 }
 
 export default ProfilePanel;
-
-function Input({
-  label,
-  icon: Icon,
-  value,
-  onChange,
-}: {
-  label: string;
-  icon: any;
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="space-y-2">
-      <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
-        {label}
-      </label>
-      <div className="relative">
-        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-          <Icon size={18} />
-        </span>
-        <input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700
-            focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500"
-        />
-      </div>
-    </div>
-  );
-}
