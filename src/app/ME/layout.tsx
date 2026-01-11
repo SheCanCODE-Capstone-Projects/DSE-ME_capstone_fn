@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
 import SidebarME from "@/components/SidebarME";
 import NavbarME from "@/components/NavbarME";
-
+import { AuthProvider } from "@/context/AuthContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 export default function MELayout({
   children,
 }: {
@@ -26,21 +28,20 @@ export default function MELayout({
   };
 
   return (
-    <div className="flex bg-[#f0f4f8]">
-      <SidebarME
-        isOpen={sidebarOpen} 
-        onClose={() => setSidebarOpen(false)} 
-      />
-      <div className="flex-1 flex flex-col min-w-0">
-        <NavbarME 
-          onMenuClick={() => setSidebarOpen(true)} 
-          pageTitle={getPageTitle(pathname)}
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <div className="flex bg-[#f0f4f8]">
+        <SidebarME
+          isOpen={sidebarOpen} 
+          onClose={() => setSidebarOpen(false)} 
         />
         <main className="flex-1 md:ml-28 p-4 md:p-6 overflow-auto mt-16 pb-24 min-h-screen">
           {children}
         </main>
         <Footer />
       </div>
-    </div>
-  );
+    </AuthProvider>
+  </QueryClientProvider>
+);
+
 }
