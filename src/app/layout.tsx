@@ -24,8 +24,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html>
-      <body>
-        <ProfileProvider>{children}</ProfileProvider>
+      <body suppressHydrationWarning={true}>
+        <Providers>
+          <ProfileProvider>{children}</ProfileProvider>
+        </Providers>
       </body>
     </html>
   );

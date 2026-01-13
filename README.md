@@ -2,7 +2,7 @@
 
 A comprehensive educational management system built with Next.js, designed to streamline academic operations for facilitators and administrators in educational institutions.
 
-## 🎯 MVP Overview
+##  MVP Overview
 
 This system provides two main user interfaces:
 
@@ -19,7 +19,7 @@ An administrative interface for institutional oversight:
 - **Course Administration**: Create and manage courses with level classifications and participant tracking
 - **System Analytics**: Monitor institutional performance and resource allocation
 
-## 🚀 Key Features
+## Key Features
 
 ### **Assignment System**
 - CRUD operations for assignments
@@ -46,7 +46,7 @@ An administrative interface for institutional oversight:
 - Access request handling
 - Professional UI with modal overlays
 
-## 🛠️ Technical Stack
+##  Technical Stack
 
 - **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
@@ -55,7 +55,7 @@ An administrative interface for institutional oversight:
 - **State Management**: React Hooks
 - **UI Components**: Custom component library
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 src/
@@ -80,7 +80,7 @@ src/
 └── utils/                     # Utility functions and helpers
 ```
 
-## 🎨 Design System
+##  Design System
 
 - **Primary Color**: #0B609D (Professional blue)
 - **Consistent Card Design**: Unified styling across all components
@@ -88,7 +88,7 @@ src/
 - **Professional UI**: Clean, modern interface with proper spacing and typography
 - **Status Indicators**: Color-coded system for different states (green/yellow/red)
 
-## 🚀 Getting Started
+## Getting Started
 
 1. **Clone the repository**
    ```bash
@@ -113,7 +113,7 @@ src/
 4. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 📱 Usage
+##  Usage
 
 ### **For Facilitators**
 1. Access the facilitator dashboard
@@ -127,14 +127,14 @@ src/
 3. Create and oversee course offerings
 4. Monitor institutional performance
 
-## 🔧 Development
+## Development
 
 - **Component Architecture**: Modular, reusable components with separation of concerns
 - **Type Safety**: Full TypeScript implementation with proper type definitions
 - **Code Organization**: Clean file structure with logical component grouping
 - **Responsive Design**: Mobile-first approach with consistent breakpoints
 
-## 📊 Future Enhancements
+##  Future Enhancements
 
 - Database integration for persistent data storage
 - Real-time notifications and updates
@@ -142,14 +142,3 @@ src/
 - Mobile application development
 - Integration with external educational platforms
 
-## 🤝 Contributing
-
-This project follows professional development practices:
-- Consistent code formatting and naming conventions
-- Component-based architecture
-- TypeScript for type safety
-- Responsive design principles
-
----
-
-**Built with Next.js** | **Designed for Educational Excellence**

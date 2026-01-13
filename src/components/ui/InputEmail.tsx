@@ -26,6 +26,7 @@ const Email: React.FC<EmailProps> = ({ label = 'Email', ...inputProps }) => {
 
         <input
           type="email"
+          name="email"
           className="flex-1 text-black text-base bg-transparent outline-none placeholder-gray-500"
           {...inputProps}
         />
