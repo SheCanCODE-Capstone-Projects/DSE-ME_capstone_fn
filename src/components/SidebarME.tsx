@@ -14,7 +14,7 @@ import { usePathname } from 'next/navigation';
 
 const navItems = [
   { label: 'Overview', icon: Home, href: '/ME/overviews' },
-  { label: 'Participants', icon: Users, href: '/ME/participants' },
+  { label: 'Participants', icon: Users, href: '/ME/participantslist' },
   { label: 'Facilitators', icon: UserCog, href: '/ME/facilitators' },
   { label: 'Courses', icon:  BookOpen , href: '/ME/courses' },
   { label: 'Reports', icon:  FileBarChart, href: '/ME/reports' },
