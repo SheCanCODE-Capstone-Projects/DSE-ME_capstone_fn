@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { label: 'Overview', icon: Home, href: '/ME/overview' },
+  { label: 'Overview', icon: Home, href: '/ME/overviews' },
   { label: 'Participants', icon: Users, href: '/ME/participants' },
   { label: 'Facilitators', icon: UserCog, href: '/ME/facilitators' },
   { label: 'Courses', icon:  BookOpen , href: '/ME/courses' },

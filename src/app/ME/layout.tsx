@@ -17,7 +17,7 @@ export default function MELayout({
   const pathname = usePathname();
 
   const getPageTitle = (path: string) => {
-    if (path.includes('ME/overview')) return 'Overview';
+    if (path.includes('ME/overviews')) return 'Overview';
     if (path.includes('ME/participants')) return 'Participants';
     if (path.includes('ME/attendance')) return 'Attendance';
     if (path.includes('ME/grades')) return 'Grades';
@@ -30,14 +30,20 @@ export default function MELayout({
   return (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <div className="flex bg-[#f0f4f8]">
-        <SidebarME
-          isOpen={sidebarOpen} 
-          onClose={() => setSidebarOpen(false)} 
+      <div className="flex flex-col min-h-screen bg-[#f0f4f8]">
+        <NavbarME 
+          onMenuClick={() => setSidebarOpen(true)} 
+          pageTitle={getPageTitle(pathname)} 
         />
-        <main className="flex-1 md:ml-28 p-4 md:p-6 overflow-auto mt-16 pb-24 min-h-screen">
-          {children}
-        </main>
+        <div className="flex flex-1">
+          <SidebarME
+            isOpen={sidebarOpen} 
+            onClose={() => setSidebarOpen(false)} 
+          />
+          <main className="flex-1 md:ml-28 p-4 md:p-6 overflow-auto mt-16 pb-24">
+            {children}
+          </main>
+        </div>
         <Footer />
       </div>
     </AuthProvider>
