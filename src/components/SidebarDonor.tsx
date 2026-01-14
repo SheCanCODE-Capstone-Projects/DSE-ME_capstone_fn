@@ -13,10 +13,10 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
-  { label: 'Dashboard', icon: Home, href: '/ME/dashboard' },
-  { label: 'Partners', icon: Users, href: '/ME/partners' },
-  { label: 'Analytics', icon: UserCog, href: '/ME/analytics' },
-  { label: 'Reports', icon:  BookOpen , href: '/ME/reports' },
+  { label: 'Dashboard', icon: Home, href: '/donor/dashboard' },
+  { label: 'Partners', icon: Users, href: '/donor/partners' },
+  { label: 'Analytics', icon: UserCog, href: '/donor/analytics' },
+  { label: 'Reports', icon:  BookOpen , href: '/donor/reports' },
  
 ];
 

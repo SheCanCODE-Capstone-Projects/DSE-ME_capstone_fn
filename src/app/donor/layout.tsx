@@ -17,13 +17,11 @@ export default function MELayout({
   const pathname = usePathname();
 
   const getPageTitle = (path: string) => {
-    if (path.includes('ME/overviews')) return 'Overview';
-    if (path.includes('ME/participants')) return 'Participants';
-    if (path.includes('ME/attendance')) return 'Attendance';
-    if (path.includes('ME/grades')) return 'Grades';
-    if (path.includes('ME/surveys')) return 'Survey';
-    if (path.includes('ME/facilitators')) return 'Facilitators';
-    if (path.includes('ME/settings')) return 'Settings';
+    if (path.includes('donor/dashboard')) return 'Dashboard';
+    if (path.includes('donor/partners')) return 'Partners';
+    if (path.includes('donor/analytics')) return 'Analytics';
+    if (path.includes('donor/reports')) return 'Reports';
+  
     return 'Overview';
   };
 
