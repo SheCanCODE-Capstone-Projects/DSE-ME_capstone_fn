@@ -1,22 +1,21 @@
- "use client";
+"use client";
 
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DetailsStep from "@/components/onboarding/steps/DetailsStep";
 import type { UserRole } from "@/types/profile";
 
-export default function Page() {
+function DetailsContent() {
   const router = useRouter();
   const params = useSearchParams();
 
   const rawRole = params.get("role") ?? "";
 
- 
   const role: UserRole | null = ["Partner", "ME", "Facilitator"].includes(rawRole)
     ? (rawRole as UserRole)
     : null;
 
   if (!role) {
-    
     router.push("/request-access/role");
     return null;
   }
@@ -27,5 +26,13 @@ export default function Page() {
       onNext={() => router.push("/request-access/finish")}
       onBack={() => router.back()}
     />
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DetailsContent />
+    </Suspense>
   );
 }

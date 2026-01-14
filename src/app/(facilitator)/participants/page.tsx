@@ -81,15 +81,13 @@ function AddParticipantModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* Actions */}
-          <div className=" gap-3 pt-4">
-          
-  <IconButton
-    
-    label="Add Participant"
-    type="submit"
-  />
-
-
+          <div className="gap-3 pt-4">
+            <button
+              type="submit"
+              className="w-full p-4 bg-gradient-to-r from-[#0B609D] to-gray-500 rounded-full text-white hover:opacity-90"
+            >
+              Add Participant
+            </button>
           </div>
         </form>
       </div>
