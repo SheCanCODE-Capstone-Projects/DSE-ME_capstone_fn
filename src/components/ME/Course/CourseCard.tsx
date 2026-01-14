@@ -48,7 +48,7 @@ export default function CourseCard({ course, onToggleActive }: CourseCardProps) 
               </span>
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 <Clock size={12} />
-                {course.duration}
+                {course.duration} weeks
               </div>
             </div>
           </div>

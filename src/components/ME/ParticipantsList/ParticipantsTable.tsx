@@ -66,7 +66,7 @@ export default function ParticipantsTable({
               <th className="px-6 py-4">Gender</th>
               <th className="px-6 py-4">Employment</th>
               <th className="px-6 py-4 text-center">Score</th>
-              <th className="px-6 py-4 text-center">Annual Income</th>
+              <th className="px-6 py-4 text-center">Annual Income (RWF)</th>
               <th className="px-6 py-4 text-center">Status</th>
               <th className="px-6 py-4 text-center">Actions</th>
             </tr>
@@ -79,7 +79,7 @@ export default function ParticipantsTable({
                 <td className="px-6 py-6">{p.gender}</td>
                 <td className="px-6 py-6">{p.employment}</td>
                 <td className="px-6 py-6 text-center font-bold text-[#0057B8]">{p.score ?? '-'}</td>
-                <td className="px-6 py-6 text-center">{p.income}</td>
+                <td className="px-6 py-6 text-center">{p.employment === "Student" ? '-' : p.income}</td>
                 <td className="px-6 py-6 text-center">
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     p.status === "Completed" ? "bg-green-100 text-green-700" :

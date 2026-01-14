@@ -22,10 +22,10 @@ const initialCohorts: Cohort[] = [
 ];
 
 const initialParticipants: Participant[] = [
-  { id: "1", name: "Sarah Johnson", email: "sarah.johnson@email.com", cohort: "A-001", gender: "Female", employment: "Employed", score: 92, income: "$55,000", status: "Completed", joinDate: "2024-01-15" },
-  { id: "2", name: "Michael Brown", email: "michael.brown@email.com", cohort: "A-001", gender: "Male", employment: "Employed", score: 78, income: "$48,000", status: "In Progress", joinDate: "2024-01-20" },
-  { id: "3", name: "Emma Davis", email: "emma.davis@email.com", cohort: "A-002", gender: "Female", employment: "Self-Employed", score: 88, income: "$62,000", status: "Completed", joinDate: "2024-02-01" },
-  { id: "4", name: "James Wilson", email: "james.wilson@email.com", cohort: "A-002", gender: "Male", employment: "Unemployed", score: null, income: "$0", status: "Not Started", joinDate: "2024-02-10" },
+  { id: "1", name: "Sarah Johnson", email: "sarah.johnson@email.com", cohort: "A-001", gender: "Female", employment: "Employed", score: 92, income: "5,500,000", status: "Completed", joinDate: "2024-01-15" },
+  { id: "2", name: "Michael Brown", email: "michael.brown@email.com", cohort: "A-001", gender: "Male", employment: "Employed", score: 78, income: "4,800,000", status: "In Progress", joinDate: "2024-01-20" },
+  { id: "3", name: "Emma Davis", email: "emma.davis@email.com", cohort: "A-002", gender: "Female", employment: "Self-Employed", score: 88, income: "6,200,000", status: "Completed", joinDate: "2024-02-01" },
+  { id: "4", name: "James Wilson", email: "james.wilson@email.com", cohort: "A-002", gender: "Male", employment: "Unemployed", score: null, income: "0", status: "Not Started", joinDate: "2024-02-10" },
 ];
 
 export default function ParticipantsPage() {

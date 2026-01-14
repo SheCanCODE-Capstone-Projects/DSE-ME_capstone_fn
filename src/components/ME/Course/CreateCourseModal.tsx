@@ -88,14 +88,15 @@ export default function CreateCourseModal({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Duration
+              Duration (weeks)
             </label>
             <input
-              type="text"
+              type="number"
+              min="1"
               value={formData.duration}
               onChange={(e) => handleChange("duration", e.target.value)}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-              placeholder="e.g., 8 weeks"
+              placeholder="e.g., 8"
               required
             />
           </div>

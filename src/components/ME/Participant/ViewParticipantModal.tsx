@@ -81,7 +81,7 @@ export default function ViewParticipantModal({ isOpen, onClose, participant }: V
 
           {participant.employment !== "Student" && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Annual Income</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Annual Income (RWF)</label>
               <p className="text-gray-900">{participant.income}</p>
             </div>
           )}
