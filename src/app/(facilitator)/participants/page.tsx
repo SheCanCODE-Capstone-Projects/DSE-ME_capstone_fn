@@ -2,8 +2,8 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import StatusCard from "../../../components/ui/statuscard"
 import IconButton from "../../../components/IconButton";
+import StatusCard from "../../../components/ui/statuscard";
 import { Plus, Users, UserX, UserCheck, User, Download, Search } from "lucide-react";
 
 /* ================= TYPES ================= */
@@ -14,9 +14,10 @@ interface ParticipantData {
   age: number;
   phone: string;
   email?: string;
+  course: string;
+  cohort: string;
   enrollmentDate: string;
   status: string;
-  cohort: string;
 }
 
 /* ================= PARTICIPANT MODAL (ADD & EDIT) ================= */
@@ -36,9 +37,10 @@ function ParticipantModal({
     phone: initialData?.phone || "",
     email: initialData?.email || "",
     age: initialData?.age?.toString() || "",
+    cohort: initialData?.status || "",
+    course: initialData?.course || "",
     gender: initialData?.gender || "Female",
-    status: initialData?.status || "Active",
-    cohort: initialData?.status || ""
+    status: initialData?.status || "Active"
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -50,9 +52,11 @@ function ParticipantModal({
       phone: formData.phone,
       email: formData.email,
       age: parseInt(formData.age) || 0,
+      cohort: formData.cohort,
+      course: formData.course,
       gender: formData.gender,
-      status: formData.status,
-      cohort: formData.cohort
+      cohort: formData.cohort,
+      status: formData.status
     });
     onClose();
   };
@@ -130,6 +134,16 @@ function ParticipantModal({
               <option value="cohort-1">cohort-1</option>
               <option value="cohort-2">cohort-2</option>
             </select>
+            <label className="block text-sm font-medium text-gray-700">Course</label>
+            <select 
+              name="Course"
+              value={formData.gender}
+              onChange={handleChange}
+              className="mt-1 w-full px-4 py-2 border rounded-lg bg-white"
+            >
+              <option value="Web Fundamentals">Web Fundamentals</option>
+              <option value="Advanced Front-End Development">Advanced Front-End Development</option>
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Gender</label>
@@ -144,6 +158,18 @@ function ParticipantModal({
             </select>
           </div>
           <div>
+            <label className="block text-sm font-medium text-gray-700">Cohort</label>
+            <select 
+              name="Cohort"
+              value={formData.gender}
+              onChange={handleChange}
+              className="mt-1 w-full px-4 py-2 border rounded-lg bg-white"
+            >
+              <option value="Cohort-1">Cohort-1</option>
+              <option value="Cohort-1">Cohort-2</option>
+            </select>
+          </div>
+          <div>
             <label className="block text-sm font-medium text-gray-700">Status</label>
             <select 
               name="status"
@@ -153,8 +179,8 @@ function ParticipantModal({
             >
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
-              <option value="suspended">Suspended</option>
-              <option value="dropout">Dropout</option>
+              <option value="suspended">suspended</option>
+              <option value="dropout">dropout</option>
             </select>
           </div>
 
@@ -194,8 +220,10 @@ function ViewParticipantModal({
           <p><span className="font-medium">Age:</span> {participant.age}</p>
           <p><span className="font-medium">Phone:</span> {participant.phone}</p>
           <p><span className="font-medium">Email:</span> {participant.email || "example@email.com"}</p>
+          <p><span className="font-medium">Course:</span> {participant.course}</p>
           <p><span className="font-medium">Enrollment Date:</span> {participant.enrollmentDate}</p>
           <p><span className="font-medium">Cohort:</span> {participant.cohort}</p>
+          
           <p>
             <span className="font-medium">Status:</span>{" "}
             <span
@@ -237,6 +265,7 @@ const ParticipantsTable = ({
             <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Age</th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Phone</th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Enrollment Date</th>
+            <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Course</th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Cohort</th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Status</th>
             <th className="px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">Actions</th>
@@ -258,6 +287,7 @@ const ParticipantsTable = ({
                 <td className="px-6 py-4 text-sm whitespace-nowrap">{participant.age}</td>
                 <td className="px-6 py-4 text-sm whitespace-nowrap">{participant.phone}</td>
                 <td className="px-6 py-4 text-sm whitespace-nowrap">{participant.enrollmentDate}</td>
+                <td className="px-6 py-4 text-sm whitespace-nowrap">{participant.course}</td>
                 <td className="px-6 py-4 text-sm whitespace-nowrap">{participant.cohort}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
@@ -281,7 +311,7 @@ const ParticipantsTable = ({
                   </button>
                   <button
                     onClick={() => onEdit(participant)}
-                    className="px-3 py-1.5 bg-green-900 hover:bg-gray-600 text-white rounded-full transition-colors"
+                    className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded-full transition-colors"
                   >
                     Edit
                   </button>
@@ -304,8 +334,9 @@ export default function Participant() {
   
   // Search and Filter states
   const [searchQuery, setSearchQuery] = useState("");
-  const [cohortFilter, setcohortFilter]= useState("All");
   const [genderFilter, setGenderFilter] = useState("All");
+  const [courseFilter, setCourseFilter] = useState("All");
+  const [cohortFilter, setCohortFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
 
   const [participants, setParticipants] = useState<ParticipantData[]>([
@@ -316,8 +347,9 @@ export default function Participant() {
       age: 24,
       phone: "0781234567",
       enrollmentDate: "2025-01-01",
+      course: "Web Fundamentals",
+      cohort: "cohort-1",
       status: "Active",
-      cohort: "cohort-1"
     },
     {
       id: "002",
@@ -326,8 +358,9 @@ export default function Participant() {
       age: 29,
       phone: "0787654321",
       enrollmentDate: "2025-01-05",
+      course: "Web Fundamentals",
+      cohort: "cohort-1",
       status: "Inactive",
-      cohort: "cohort-1"
     },
     {
       id: "003",
@@ -336,8 +369,9 @@ export default function Participant() {
       age: 22,
       phone: "0781112223",
       enrollmentDate: "2025-01-10",
+      course: "Web Fundamentals",
+      cohort: "cohort-1",
       status: "Active",
-      cohort: "cohort-1"
     },
     {
       id: "004",
@@ -346,8 +380,9 @@ export default function Participant() {
       age: 31,
       phone: "0784445556",
       enrollmentDate: "2025-02-01",
+      course: "Web Fundamentals",
+      cohort: "cohort-1",
       status: "Active",
-      cohort: "cohort-1"
     },
     {
       id: "005",
@@ -356,8 +391,9 @@ export default function Participant() {
       age: 45,
       phone: "0789998887",
       enrollmentDate: "2025-02-15",
+      course: "Web Fundamentals",
+      cohort: "cohort-1",
       status: "Active",
-      cohort: "cohort-1"
     }
   ]);
 
@@ -366,19 +402,20 @@ export default function Participant() {
     return participants.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            p.id.includes(searchQuery);
-      const matchesCohort = cohortFilter === "All" || p.cohort === cohortFilter;
       const matchesGender = genderFilter === "All" || p.gender === genderFilter;
+      const matchesCourse = courseFilter === "All" || p.course === courseFilter;
+      const matchesCohort = cohortFilter === "All" || p.cohort === cohortFilter;
       const matchesStatus = statusFilter === "All" || p.status.toLowerCase() === statusFilter.toLowerCase();
-      return matchesSearch && matchesGender && matchesStatus && matchesCohort;
+      return matchesSearch && matchesGender && matchesCourse && matchesCohort && matchesStatus;
     });
-  }, [participants, searchQuery, genderFilter, statusFilter, cohortFilter]);
+  }, [participants, searchQuery, genderFilter, courseFilter, cohortFilter, statusFilter]);
 
   // Stats calculation
   const stats = [
-    { title: "Total Active", value: participants.filter(p => p.status === "Active").length, icon: Users },
-    { title: "Inactive", value: participants.filter(p => p.status === "Inactive").length, icon: UserX },
-    { title: "Female", value: participants.filter(p => p.gender === "Female").length, icon: UserCheck },
-    { title: "Male", value: participants.filter(p => p.gender === "Male").length, icon: User },
+    { title: "Total Active", value: participants.filter(p => p.status === "Active").length, icon: <Users size={28} />, subtext: "Participants" },
+    { title: "Inactive", value: participants.filter(p => p.status === "Inactive").length, icon: <UserX size={28} />, subtext: "Members" },
+    { title: "Female", value: participants.filter(p => p.gender === "Female").length, icon: <UserCheck size={28} />, subtext: "Students" },
+    { title: "Male", value: participants.filter(p => p.gender === "Male").length, icon: <User size={28} />, subtext: "Students" },
   ];
 
   const handleAddParticipant = (data: Omit<ParticipantData, 'id' | 'enrollmentDate'>) => {
@@ -411,7 +448,7 @@ export default function Participant() {
   const handleExport = () => {
     const header = "ID,Name,Gender,Age,Phone,Enrollment Date,Status\n";
     const csvData = participants.map(p => 
-      `${p.id},"${p.name}",${p.gender},${p.age},${p.phone},${p.enrollmentDate},${p.status},${p.cohort}`
+      `${p.id},"${p.name}",${p.gender},${p.age},${p.phone},${p.enrollmentDate},${p.status},${p.cohort}, ${p.course}`
     ).join("\n");
     
     const blob = new Blob([header + csvData], { type: "text/csv;charset=utf-8;" });
@@ -478,15 +515,15 @@ export default function Participant() {
             value={stat.value}
             icon={<Users size={32} />}
             subtext=""
+           
           />
         ))}
       </div>
-
-      <div className="bg-white rounded-lg shadow p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4 border border-gray-100">
+      <div className="bg-white rounded-lg shadow p-4 mb-6 flex flex-col xl:flex-row items-center justify-between gap-4 border border-gray-100">
         <div className="flex items-center gap-3 w-full md:w-auto">
           <label className="text-lg font-bold text-gray-700 hidden sm:block whitespace-nowrap">Search</label>
           <div className="relative w-full md:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4  text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               value={searchQuery}
@@ -500,23 +537,23 @@ export default function Participant() {
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
           <select 
             className="px-4 py-2 border rounded-full bg-white text-sm outline-none cursor-pointer"
-            value={cohortFilter}
-            onChange={(e) => setcohortFilter(e.target.value)}
+            value={courseFilter}
+            onChange={(e) => setCourseFilter(e.target.value)}
           >
-            <option value="All">Cohort</option>
-            <option value="cohort-1">cohort-1</option>
-            <option value="cohort-2">cohort-2</option>
+            <option value="All">All Courses</option>
+            <option value="Web Fundamentals">Web Fundamentals</option>
+            <option value="Advanced Front-End Development">Advanced Front-End Development</option>
           </select>
           <select 
             className="px-4 py-2 border rounded-full bg-white text-sm outline-none cursor-pointer"
-            value={genderFilter}
-            onChange={(e) => setGenderFilter(e.target.value)}
+            value={courseFilter}
+            onChange={(e) => setCohortFilter(e.target.value)}
           >
-            <option value="All">All Genders</option>
-            <option value="Female">Female</option>
-            <option value="Male">Male</option>
+            <option value="All">All Cohorts</option>
+            <option value="cohort-1">cohort-1</option>
+            <option value="cohort-2">cohort-2</option>
           </select>
-
+          
           <select 
             className="px-4 py-2 border rounded-full bg-white text-sm outline-none cursor-pointer"
             value={statusFilter}
