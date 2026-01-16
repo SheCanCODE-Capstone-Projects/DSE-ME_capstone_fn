@@ -51,7 +51,7 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate }: AddPa
         onClick={onClose}
       ></div>
 
-      <div className="bg-white rounded-2xl p-6 z-10 w-96 max-w-full shadow-2xl border border-gray-200 transform transition-all duration-200 scale-100">
+      <div className="bg-white rounded-2xl p-6 z-10 w-96 max-w-full shadow-2xl border border-gray-200 transform transition-all duration-200 scale-100 max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Add New Participant</h2>
           <button
@@ -62,7 +62,7 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate }: AddPa
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto pr-2">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <User size={16} className="inline mr-2" />

@@ -1,11 +1,7 @@
-import React from 'react'
+import { redirect } from 'next/navigation';
 
-function page() {
-  return (
-    <div className='min-h-screen'>
-      hello this is the ME 
-    </div>
-  )
+export default function page() {
+  redirect('/ME/overviews');
 }
+  
 
-export default page

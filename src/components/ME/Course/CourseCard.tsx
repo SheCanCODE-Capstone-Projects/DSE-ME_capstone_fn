@@ -32,7 +32,7 @@ export default function CourseCard({ course, onToggleActive }: CourseCardProps) 
     <div className={`bg-white rounded-2xl shadow-md overflow-hidden transition-opacity duration-200 ${
       !course.isActive ? "opacity-60" : "opacity-100"
     }`}>
-      {/* Header */}
+     
       <div className="p-6 flex items-start justify-between">
         <div className="flex gap-4">
           <div className="w-10 h-10 rounded-full bg-sky-50 text-sky-600 flex items-center justify-center">

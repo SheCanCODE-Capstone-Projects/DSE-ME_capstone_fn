@@ -1,24 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserCheck, Search, Filter } from "lucide-react";
 import FacilitatorCard from "@/components/ME/Facilitator/FacilitatorCard";
 import AssignCohortsModal from "@/components/ME/Facilitator/AssignCohortsModal";
 import AssignCoursesModal from "@/components/ME/Facilitator/AssignCoursesModal";
 import AccessRequestsModal from "@/components/ME/Facilitator/AccessRequestsModal";
 import { Facilitator } from "@/types/facilitator";
+import toast from "react-hot-toast";
 
 const facilitatorsData: Facilitator[] = [
   { id: "1", name: "John Smith", email: "john@example.com", region: "North Region", participantsCount: 45, isActive: true,
     cohorts: [{ id: "c1", name: "Cohort 2024-Q1" }], courses: [{ id: "cs1", name: "Business Skills" }] },
   { id: "2", name: "Jane Doe", email: "jane@example.com", region: "South Region", participantsCount: 30, isActive: false,
     cohorts: [{ id: "c2", name: "Cohort 2024-Q2" }], courses: [{ id: "cs2", name: "Leadership Dev" }] },
-];
-
-const mockAccessRequests = [
-  { id: "req1", name: "Sarah Wilson", email: "sarah.wilson@example.com", region: "East Region", requestDate: "2024-01-15", message: "5 years experience in training" },
-  { id: "req2", name: "Mike Johnson", email: "mike.j@example.com", region: "West Region", requestDate: "2024-01-14", message: "Business skills specialist" },
-  { id: "req3", name: "Lisa Chen", email: "lisa.chen@example.com", region: "North Region", requestDate: "2024-01-13" }
 ];
 
 const allCohorts = [
@@ -36,15 +31,34 @@ const allCourses = [
 
 export default function FacilitatorsPage() {
   const [facilitators, setFacilitators] = useState<Facilitator[]>(facilitatorsData);
-  const [accessRequests, setAccessRequests] = useState(mockAccessRequests);
+  const [accessRequests, setAccessRequests] = useState<any[]>([]);
   const [selectedFacilitator, setSelectedFacilitator] = useState<Facilitator | null>(null);
   const [cohortModalOpen, setCohortModalOpen] = useState(false);
   const [courseModalOpen, setCourseModalOpen] = useState(false);
   const [accessRequestsOpen, setAccessRequestsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [search, setSearch] = useState("");
   const [regionFilter, setRegionFilter] = useState("all");
   const [activeFilter, setActiveFilter] = useState<"all" | "active" | "inactive">("all");
+
+  useEffect(() => {
+    loadAccessRequests();
+    // Set up interval to check for new requests
+    const interval = setInterval(loadAccessRequests, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const loadAccessRequests = async () => {
+    try {
+      // Load from localStorage
+      const requests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
+      const pendingRequests = requests.filter((r: any) => r.status === 'pending');
+      setAccessRequests(pendingRequests);
+    } catch (error) {
+      console.error('Failed to load access requests:', error);
+    }
+  };
 
   const filteredFacilitators = facilitators.filter(f => {
     const matchesSearch = f.name.toLowerCase().includes(search.toLowerCase());
@@ -94,30 +108,59 @@ export default function FacilitatorsPage() {
     );
   };
 
-  const handleApproveRequest = (requestId: string) => {
-    const request = accessRequests.find(r => r.id === requestId);
-    if (!request) return;
+  const handleApproveRequest = async (requestId: string) => {
+    setLoading(true);
+    try {
+      const request = accessRequests.find(r => r.id === requestId);
+      if (!request) return;
 
-    const newFacilitator: Facilitator = {
-      id: `fac_${Date.now()}`,
-      name: request.name,
-      email: request.email,
-      region: request.region,
-      participantsCount: 0,
-      isActive: true,
-      cohorts: [],
-      courses: [allCourses[0]]
-    };
+      // Update request status in localStorage
+      const allRequests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
+      const updatedRequests = allRequests.map((r: any) => 
+        r.id === requestId ? { ...r, status: 'approved' } : r
+      );
+      localStorage.setItem('accessRequests', JSON.stringify(updatedRequests));
 
-    setFacilitators(prev => [...prev, newFacilitator]);
-    setAccessRequests(prev => prev.filter(r => r.id !== requestId));
-    alert(`${request.name} has been approved and added as a facilitator with default course assignment.`);
+      const newFacilitator: Facilitator = {
+        id: `fac_${Date.now()}`,
+        name: request.userEmail.split('@')[0],
+        email: request.userEmail,
+        region: "North Region",
+        participantsCount: 0,
+        isActive: true,
+        cohorts: [],
+        courses: [allCourses[0]]
+      };
+
+      setFacilitators(prev => [...prev, newFacilitator]);
+      await loadAccessRequests();
+      toast.success(`${request.userEmail} has been approved as ${request.requestedRole}!`);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to approve request');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleRejectRequest = (requestId: string) => {
-    const request = accessRequests.find(r => r.id === requestId);
-    setAccessRequests(prev => prev.filter(r => r.id !== requestId));
-    alert(`Access request from ${request?.name} has been rejected.`);
+  const handleRejectRequest = async (requestId: string) => {
+    setLoading(true);
+    try {
+      const request = accessRequests.find(r => r.id === requestId);
+      
+      // Update request status in localStorage
+      const allRequests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
+      const updatedRequests = allRequests.map((r: any) => 
+        r.id === requestId ? { ...r, status: 'rejected' } : r
+      );
+      localStorage.setItem('accessRequests', JSON.stringify(updatedRequests));
+      
+      await loadAccessRequests();
+      toast.success(`Access request from ${request?.userEmail} has been rejected.`);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to reject request');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -215,8 +258,10 @@ export default function FacilitatorsPage() {
       <AccessRequestsModal
         isOpen={accessRequestsOpen}
         onClose={() => setAccessRequestsOpen(false)}
+        requests={accessRequests}
         onApprove={handleApproveRequest}
         onReject={handleRejectRequest}
+        loading={loading}
       />
     </div>
   );

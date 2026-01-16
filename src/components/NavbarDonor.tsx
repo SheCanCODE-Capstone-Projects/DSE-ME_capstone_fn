@@ -63,11 +63,11 @@ export default function NavbarDonor({ onMenuClick, pageTitle = "Overview" }: Nav
         
         <div className="flex items-center gap-2 md:gap-3">
           <div className="w-8 h-8 md:w-10 md:h-10 bg-sky-700 rounded-full flex items-center justify-center text-white font-semibold text-xs md:text-sm">
-            UI
+           DT
           </div>
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-semibold text-gray-800">Umwali</p>
-            <p className="text-xs" style={{ color: '#0B609D' }}>Umwali@gmail.com</p>
+            <p className="text-sm font-semibold text-gray-800">teta</p>
+            <p className="text-xs" style={{ color: '#0B609D' }}>deborahteta@gmail.com</p>
           </div>
         </div>
 

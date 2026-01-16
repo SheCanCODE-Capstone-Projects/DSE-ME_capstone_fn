@@ -45,7 +45,7 @@ export default function FacilitatorLayout({
                 onMenuClick={() => setSidebarOpen(true)} 
                 pageTitle={getPageTitle(pathname)}
               />
-              <main className="flex-1 md:ml-28 p-4 md:p-6 overflow-auto mt-16 pb-24">
+              <main className="flex-1 md:ml-28 p-4 md:p-6 overflow-auto mt-20 pb-24 min-h-screen">
                 {children}
               </main>
               <Footer />

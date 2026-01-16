@@ -13,10 +13,12 @@ export interface LoginFormData {
 
 export interface AuthResponse {
   token: string; 
-  user: {
+  user?: {
     id: string;
     email: string;
-    role: string;
-    hasAccess: boolean; 
+    role?: 'facilitator' | 'me' | 'donor' | null;
+    status?: 'pending' | 'approved' | 'rejected';
+    hasAccess?: boolean; 
   };
+  message?: string;
 }

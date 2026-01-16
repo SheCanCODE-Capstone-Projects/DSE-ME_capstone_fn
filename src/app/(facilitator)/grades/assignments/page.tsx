@@ -5,8 +5,10 @@ import { ArrowLeft, Search, Filter, Users, CheckCircle, Clock, AlertCircle } fro
 import AssignmentCard from "@/components/GradesComponents/AssignmentCard";
 import CreateAssignmentModal from "@/components/GradesComponents/CreateAssignmentModal";
 import GradeStudentsModal from "@/components/GradesComponents/GradeStudentsModal";
+import ViewGradesModal from "@/components/GradesComponents/ViewGradesModal";
 import Pagination from "@/components/ui/Pagination";
 import { Assignment } from "@/types/assignment";
+import { getAllParticipants } from "@/lib/mockParticipants";
 
 export default function AssignmentsPage() {
   const router = useRouter();
@@ -22,16 +24,10 @@ export default function AssignmentsPage() {
   const itemsPerPage = 6;
 
 
-  const mockStudents = [
-    { id: "1", name: "Alice Johnson" },
-    { id: "2", name: "Bob Smith" },
-    { id: "3", name: "Carol Davis" },
-    { id: "4", name: "David Wilson" },
-    { id: "5", name: "Emma Brown" },
-    { id: "6", name: "Diane Brown" },
-    { id: "7", name: "Frank Miller" },
-    { id: "8", name: "Grace Lee" },
-  ];
+  const mockStudents = getAllParticipants().map(p => ({
+    id: p.id,
+    name: p.name
+  }));
   
   const totalStudents = mockStudents.length;
 
@@ -41,6 +37,9 @@ export default function AssignmentsPage() {
 
   const [openGrade, setOpenGrade] = useState(false);
   const [gradeIndex, setGradeIndex] = useState<number | null>(null);
+  
+  const [openViewGrades, setOpenViewGrades] = useState(false);
+  const [viewGradesIndex, setViewGradesIndex] = useState<number | null>(null);
 
   const [assignments, setAssignments] = useState<Assignment[]>([
     {
@@ -63,7 +62,7 @@ export default function AssignmentsPage() {
       maxScore: 200,
       totalStudents: totalStudents,
       gradedStudents: totalStudents,
-      grades: { "1": 180, "2": 195, "3": 165, "4": 188, "5": 172, "6": 190, "7": 175, "8": 185 }
+      grades: { "001": 180, "002": 195, "003": 165, "004": 188, "005": 172, "006": 190, "007": 175, "008": 185 }
     },
     {
       title: "CSS Flexbox Quiz",
@@ -188,7 +187,7 @@ export default function AssignmentsPage() {
         </div>
       </div>
 
-      {/* Search and Filter Section */}
+     
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
@@ -273,8 +272,13 @@ export default function AssignmentsPage() {
               {...a}
               status={status}
               onGradeClick={() => {
-                setGradeIndex(originalIndex);
-                setOpenGrade(true);
+                if (status === "completed") {
+                  setViewGradesIndex(originalIndex);
+                  setOpenViewGrades(true);
+                } else {
+                  setGradeIndex(originalIndex);
+                  setOpenGrade(true);
+                }
               }}
               onEditClick={() => {
                 setEditIndex(originalIndex);
@@ -325,6 +329,28 @@ export default function AssignmentsPage() {
           assignment={assignments[gradeIndex]}
           students={mockStudents}
           onSaveGrades={saveGrades}
+        />
+      )}
+
+      {viewGradesIndex !== null && (
+        <ViewGradesModal
+          isOpen={openViewGrades}
+          onClose={() => {
+            setOpenViewGrades(false);
+            setViewGradesIndex(null);
+          }}
+          assignment={assignments[viewGradesIndex]}
+          students={mockStudents}
+          onSaveGrades={(grades) => {
+            const newList = [...assignments];
+            const gradedCount = Object.keys(grades).length;
+            newList[viewGradesIndex] = { 
+              ...newList[viewGradesIndex], 
+              grades,
+              gradedStudents: gradedCount
+            };
+            setAssignments(newList);
+          }}
         />
       )}
     </div>
