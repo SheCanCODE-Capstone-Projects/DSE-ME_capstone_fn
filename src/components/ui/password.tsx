@@ -15,18 +15,19 @@ interface PasswordInputProps {
 
 const PasswordInput: FC<PasswordInputProps> = ({
   placeholder = "Type your password",
-  id = "password",
+  id,
   name,
   value,
   onChange,
   required = false,
   label = "Password",
 }) => {
+  const inputId = id || name;
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
     <div className="w-full">
-      <label htmlFor={id} className="mb-1 font-bold text-[#003366]">
+      <label htmlFor={inputId} className="mb-1 font-bold text-[#003366]">
         {label}{required && <Asterisk className="inline w-3 h-3 text-black ml-1 align-top" />}
       </label>
       <div className="relative">
@@ -38,7 +39,7 @@ const PasswordInput: FC<PasswordInputProps> = ({
      
         <input
           type={showPassword ? "text" : "password"}
-          id={id}
+          id={inputId}
           name={name}
           value={value}
           onChange={onChange}

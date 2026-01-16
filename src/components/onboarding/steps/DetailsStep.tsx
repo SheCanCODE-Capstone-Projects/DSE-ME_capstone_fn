@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 import { User, Mail, MapPin, Building2, MessageSquare, ArrowLeft, ArrowRight } from "lucide-react";
 import type { ProfileDetails, UserRole, Organization } from "@/types/profile";
 import { organizations as orgData } from "@/lib/onboardingData";
+import toast from "react-hot-toast";
 
 interface DetailsStepProps {
   role: UserRole;
@@ -13,6 +14,7 @@ interface DetailsStepProps {
 }
 
 export default function DetailsStep({ role, onNext, onBack }: DetailsStepProps) {
+  const router = useRouter();
   const [form, setForm] = useState<ProfileDetails>({
     name: "",
     email: "",
@@ -20,7 +22,7 @@ export default function DetailsStep({ role, onNext, onBack }: DetailsStepProps) 
     location: "",
     extra: "",
   });
-
+  const [submitting, setSubmitting] = useState(false);
   const [focusedField, setFocusedField] = useState<string>("");
 
 
@@ -49,6 +51,53 @@ export default function DetailsStep({ role, onNext, onBack }: DetailsStepProps) 
       return { ...prev, [name]: value };
     });
   }
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        toast.error('Please login first');
+        router.push('/login');
+        return;
+      }
+
+      // Get user from token
+      const userEmail = localStorage.getItem('userEmail');
+      if (!userEmail) {
+        toast.error('User not found');
+        return;
+      }
+
+      // Create access request
+      const requestedRole = role.toLowerCase() === 'facilitator' ? 'facilitator' : 'me';
+      const requestId = `req_${Date.now()}`;
+      const request = {
+        id: requestId,
+        userEmail: userEmail,
+        requestedRole: requestedRole,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        profileDetails: form
+      };
+
+      // Store request in localStorage (simulating API)
+      const existingRequests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
+      existingRequests.push(request);
+      localStorage.setItem('accessRequests', JSON.stringify(existingRequests));
+      
+      // Store profile details
+      localStorage.setItem('profileDetails', JSON.stringify(form));
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      onNext();
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to submit request');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
   
@@ -160,15 +209,15 @@ export default function DetailsStep({ role, onNext, onBack }: DetailsStepProps) 
           </button>
 
           <button
-            disabled={!isValid}
-            onClick={onNext}
+            disabled={!isValid || submitting}
+            onClick={handleSubmit}
             className={`px-8 py-4 rounded-full flex items-center gap-2 font-semibold transition-all ${
-              isValid
+              isValid && !submitting
                 ? "bg-gradient-to-r from-gray-600 to-sky-700 text-white shadow-lg hover:shadow-xl"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >
-            Submit <ArrowRight size={20} />
+            {submitting ? 'Submitting...' : 'Submit'} <ArrowRight size={20} />
           </button>
         </div>
       </div>

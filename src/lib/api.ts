@@ -8,7 +8,7 @@ if (!BASE_URL) {
 
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -61,6 +61,9 @@ export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): P
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
+      if (error.code === 'ECONNABORTED') {
+        throw new Error('Request timeout - backend is not responding. Please check if your backend service is running.');
+      }
       const message = error.response?.data?.message || error.message;
       throw new Error(message);
     }

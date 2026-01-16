@@ -32,8 +32,44 @@ function LoginPage() {
     try {
       const response = await loginMutation.mutateAsync(formData);
       login(response.token);
-      toast.success('Login successful!');
-      router.push('/dashboard');
+      
+      
+      localStorage.setItem('userEmail', formData.email);
+      
+     
+      const allRequests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
+      const userRequest = allRequests.find((r: any) => r.userEmail === formData.email);
+      
+      if (userRequest) {
+        if (userRequest.status === 'pending') {
+          toast('Your access request is pending approval', { icon: '⏳' });
+          router.push('/request-access/finish');
+          return;
+        } else if (userRequest.status === 'rejected') {
+          toast.error('Your access request was rejected. Please contact support.');
+          return;
+        }
+      }
+      
+      
+      const user = response.user;
+      
+      if (!user?.role || user?.status === 'pending') {
+        toast('Your access request is pending approval', { icon: '⏳' });
+        router.push('/request-access/finish');
+      } else if (user.role === 'me') {
+        toast.success('Welcome back, ME Admin!');
+        router.push('/ME');
+      } else if (user.role === 'facilitator') {
+        toast.success('Welcome back, Facilitator!');
+        router.push('/overview');
+      } else if (user.role === 'donor') {
+        toast.success('Welcome back, Donor!');
+        router.push('/donor');
+      } else {
+        toast.success('Login successful!');
+        router.push('/dashboard');
+      }
     } catch (err: any) {
       toast.error(err.message || 'Login failed');
     }

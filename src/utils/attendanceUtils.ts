@@ -1,15 +1,12 @@
 import { Student, AttendanceRecord, DailyAttendance } from '@/types/attendance';
+import { getAllParticipants } from '@/lib/mockParticipants';
 
-export const mockStudents: Student[] = [
-  { id: '1', name: 'Alice Johnson', email: 'alice.j@example.com', studentId: 'STU001' },
-  { id: '2', name: 'Bob Smith', email: 'bob.s@example.com', studentId: 'STU002' },
-  { id: '3', name: 'Carol Davis', email: 'carol.d@example.com', studentId: 'STU003' },
-  { id: '4', name: 'David Wilson', email: 'david.w@example.com', studentId: 'STU004' },
-  { id: '5', name: 'Emma Brown', email: 'emma.b@example.com', studentId: 'STU005' },
-  { id: '6', name: 'Frank Miller', email: 'frank.m@example.com', studentId: 'STU006' },
-  { id: '7', name: 'Grace Lee', email: 'grace.l@example.com', studentId: 'STU007' },
-  { id: '8', name: 'Henry Taylor', email: 'henry.t@example.com', studentId: 'STU008' },
-];
+export const mockStudents: Student[] = getAllParticipants().map(p => ({
+  id: p.id,
+  name: p.name,
+  email: p.email || `${p.name.toLowerCase().replace(' ', '.')}@example.com`,
+  studentId: `STU${p.id}`
+}));
 
 export const exportAttendance = (attendanceRecords: {[date: string]: DailyAttendance}, students: Student[]) => {
   const csvContent = [

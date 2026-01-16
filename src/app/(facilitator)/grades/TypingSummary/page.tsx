@@ -2,6 +2,7 @@
 import { Keyboard, Target, Clock, TrendingUp, Award, Calendar, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation";
 import StatCard from '@/components/ui/statuscard';
+import { getAllParticipants } from '@/lib/mockParticipants';
 
 const stats = [
   { title: "Average WPM", value: "45", subtext: "+3 this week", icon: <Keyboard size={32} /> },
@@ -27,13 +28,15 @@ function StatsCards() {
 }
 
 
-const students = [
-  { rank: 1, name: "John Smith", email: "john.smith@example.com", wpm: 0, accuracy: "0%", sessions: 0, duration: "0 min" },
-  { rank: 2, name: "Sarah Johnson", email: "sarah.j@example.com", wpm: 0, accuracy: "0%", sessions: 0, duration: "0 min" },
-  { rank: 3, name: "Michael Brown", email: "m.brown@example.com", wpm: 0, accuracy: "0%", sessions: 0, duration: "0 min" },
-  { rank: 4, name: "Emily Davis", email: "emily.d@example.com", wpm: 0, accuracy: "0%", sessions: 0, duration: "0 min" },
-  { rank: 5, name: "David Wilson", email: "d.wilson@example.com", wpm: 0, accuracy: "0%", sessions: 0, duration: "0 min" },
-]
+const students = getAllParticipants().map((p, index) => ({
+  rank: index + 1,
+  name: p.name,
+  email: p.email || `${p.name.toLowerCase().replace(' ', '.')}@example.com`,
+  wpm: 0,
+  accuracy: "0%",
+  sessions: 0,
+  duration: "0 min"
+}));
 
 function WeeklySummaryTable() {
   return (

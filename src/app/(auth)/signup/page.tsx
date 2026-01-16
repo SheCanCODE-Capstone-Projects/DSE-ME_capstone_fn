@@ -39,10 +39,14 @@ export default function SignupPage() {
     }
 
     try {
-      const message = await signupMutation.mutateAsync(formData);
+      const response = await signupMutation.mutateAsync(formData);
 
-      toast.success('Account created successfully! Please login.');
-      router.push('/login');
+      // Store token and email
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('userEmail', formData.email);
+
+      toast.success('Account created successfully!');
+      router.push('/request-access/start');
     } catch (err: any) {
       toast.error(err.message || 'Signup failed');
     }

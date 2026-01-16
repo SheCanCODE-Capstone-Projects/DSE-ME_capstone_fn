@@ -10,6 +10,7 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import StatCard from '@/components/ui/statuscard';
+import { getAllParticipants } from '@/lib/mockParticipants';
 
 type Category = 'assignment' | 'capstone' | 'quiz';
 
@@ -21,29 +22,13 @@ interface Student {
   quiz: number;
 }
 
-const studentsData: Student[] = [
-  {
-    name: 'John Smith',
-    email: 'john.smith@example.com',
-    assignment: 0,
-    capstone: 0,
-    quiz: 0,
-  },
-  {
-    name: 'Sarah Johnson',
-    email: 'sarah.j@example.com',
-    assignment: 0,
-    capstone: 0,
-    quiz: 0,
-  },
-  {
-    name: 'Michael Brown',
-    email: 'm.brown@example.com',
-    assignment: 0,
-    capstone: 0,
-    quiz: 0,
-  },
-];
+const studentsData: Student[] = getAllParticipants().map(p => ({
+  name: p.name,
+  email: p.email || `${p.name.toLowerCase().replace(' ', '.')}@example.com`,
+  assignment: 0,
+  capstone: 0,
+  quiz: 0,
+}));
 
 const getGrade = (percentage: number) => {
   if (percentage >= 90) return 'A';
