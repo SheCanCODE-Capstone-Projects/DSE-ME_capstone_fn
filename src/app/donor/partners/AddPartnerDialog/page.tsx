@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Plus, X } from "lucide-react"
 
@@ -106,7 +105,7 @@ export function AddPartnerDialog({ open, onOpenChange }: { open: boolean; onOpen
               <div className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Organization Name</label>
-                  <Input
+                  <input
                     name="name"
                     value={orgForm.name}
                     onChange={handleOrgChange}
@@ -118,7 +117,7 @@ export function AddPartnerDialog({ open, onOpenChange }: { open: boolean; onOpen
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Email</label>
-                  <Input
+                  <input
                     type="email"
                     name="email"
                     value={orgForm.email}
@@ -131,7 +130,7 @@ export function AddPartnerDialog({ open, onOpenChange }: { open: boolean; onOpen
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Phone</label>
-                  <Input
+                  <input
                     type="tel"
                     name="phone"
                     value={orgForm.phone}
@@ -143,7 +142,7 @@ export function AddPartnerDialog({ open, onOpenChange }: { open: boolean; onOpen
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Head Office Address</label>
-                  <Input
+                  <input
                     name="address"
                     value={orgForm.address}
                     onChange={handleOrgChange}
@@ -171,7 +170,7 @@ export function AddPartnerDialog({ open, onOpenChange }: { open: boolean; onOpen
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Total Staff Members</label>
-                  <Input
+                  <input
                     type="number"
                     name="staff"
                     value={orgForm.staff}
@@ -210,87 +209,87 @@ export function AddPartnerDialog({ open, onOpenChange }: { open: boolean; onOpen
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-1">
                       <label className="block text-sm font-medium text-gray-700">Branch Name</label>
-                      <Input
+                      <input
                         name="name"
                         value={branchForm.name}
                         onChange={handleBranchChange}
                         placeholder="e.g., Main Branch"
-                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border"
                       />
                     </div>
                     
                     <div className="space-y-1">
                       <label className="block text-sm font-medium text-gray-700">City</label>
-                      <Input
+                      <input
                         name="city"
                         value={branchForm.city}
                         onChange={handleBranchChange}
                         placeholder="City"
-                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border"
                       />
                     </div>
                     
                     <div className="space-y-1 md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700">Address</label>
-                      <Input
+                      <input
                         name="address"
                         value={branchForm.address}
                         onChange={handleBranchChange}
                         placeholder="Full address"
-                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border"
                       />
                     </div>
                     
                     <div className="space-y-1">
                       <label className="block text-sm font-medium text-gray-700">Manager Name</label>
-                      <Input
+                      <input
                         name="managerName"
                         value={branchForm.managerName}
                         onChange={handleBranchChange}
                         placeholder="Manager's full name"
-                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border"
                       />
                     </div>
                     
                     <div className="space-y-1">
                       <label className="block text-sm font-medium text-gray-700">Manager Phone</label>
-                      <Input
+                      <input
                         name="managerPhone"
                         value={branchForm.managerPhone}
                         onChange={handleBranchChange}
                         placeholder="+250-XXX-XXX"
-                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border"
                       />
                     </div>
                     
                     <div className="space-y-1">
                       <label className="block text-sm font-medium text-gray-700">Manager Email</label>
-                      <Input
+                      <input
                         type="email"
                         name="managerEmail"
                         value={branchForm.managerEmail}
                         onChange={handleBranchChange}
                         placeholder="manager@example.com"
-                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border"
                       />
                     </div>
                     
                     <div className="space-y-1">
                       <label className="block text-sm font-medium text-gray-700">Enrollment</label>
-                      <Input
+                      <input
                         type="number"
                         name="enrollment"
                         value={branchForm.enrollment}
                         onChange={handleBranchChange}
                         placeholder="Number of students"
-                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full text-sm border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 px-3 py-2 border"
                       />
                     </div>
                     
                     <div className="space-y-1">
                       <label className="block text-sm font-medium text-gray-700">Attendance Rate</label>
                       <div className="relative">
-                        <Input
+                        <input
                           type="number"
                           name="attendanceRate"
                           value={branchForm.attendanceRate}
@@ -298,7 +297,7 @@ export function AddPartnerDialog({ open, onOpenChange }: { open: boolean; onOpen
                           placeholder="0"
                           min="0"
                           max="100"
-                          className="w-full text-sm pl-8 pr-3 py-2 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full text-sm pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                         />
                         <span className="absolute left-3 top-2 text-gray-500 text-sm">%</span>
                       </div>
@@ -339,6 +338,7 @@ export function AddPartnerDialog({ open, onOpenChange }: { open: boolean; onOpen
                     </div>
                   </div>
                 )}
+                </div>
               </div>
               
               <div className="flex justify-end space-x-3 pt-4 border-t mt-6">
