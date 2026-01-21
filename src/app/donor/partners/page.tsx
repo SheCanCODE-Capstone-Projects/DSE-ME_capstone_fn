@@ -1,105 +1,54 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Plus, Search, Filter } from "lucide-react";
 import AddPartnerModal from "@/components/PartnersComponents/AddPartnerModal";
 import PartnersTable from "@/components/PartnersComponents/PartnersTable";
 import PartnersStats from "@/components/PartnersComponents/PartnersStats";
 import PartnersChart from "@/components/PartnersComponents/PartnersChart";
-
-interface Partner {
-  id: string;
-  name: string;
-  type: string;
-  email: string;
-  phone: string;
-  region: string;
-  staff: string;
-  status: string;
-  joinDate: string;
-  participants: number;
-  programs: number;
-}
-
-const initialPartners: Partner[] = [
-  {
-    id: "1",
-    name: "Klab Rwanda",
-    type: "Organization",
-    email: "info@klab.rw",
-    phone: "+250-788-123-456",
-    region: "Africa",
-    staff: "45",
-    status: "Active",
-    joinDate: "2023-01-15",
-    participants: 120,
-    programs: 3
-  },
-  {
-    id: "2",
-    name: "Tech4Good Foundation",
-    type: "NGO",
-    email: "contact@tech4good.org",
-    phone: "+250-788-654-321",
-    region: "Africa",
-    staff: "28",
-    status: "Active",
-    joinDate: "2023-03-20",
-    participants: 85,
-    programs: 2
-  },
-  {
-    id: "3",
-    name: "Digital Skills Initiative",
-    type: "Government",
-    email: "info@dsi.gov.rw",
-    phone: "+250-788-987-654",
-    region: "Africa",
-    staff: "67",
-    status: "Active",
-    joinDate: "2023-02-10",
-    participants: 200,
-    programs: 4
-  }
-];
+import { partnersData } from "@/data/partnersData";
+import { type Partner } from "@/types/partners";
 
 export default function PartnersPage() {
-  const [partners, setPartners] = useState<Partner[]>(initialPartners);
+  const router = useRouter();
+  const [partners, setPartners] = useState<Partner[]>(partnersData);
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [provinceFilter, setProvinceFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const handleAddPartner = (newPartner: Partner) => {
-    setPartners(prev => [...prev, newPartner]);
+  const handleAddPartner = (newPartner: Partner): void => {
+    setPartners((prev) => [...prev, newPartner]);
   };
 
-  const handleViewPartner = (id: string) => {
-    console.log("View partner:", id);
-    // Navigate to partner details page
+  const handleViewPartner = (id: string): void => {
+    router.push(`/donor/partners/${id}`);
   };
 
-  const handleEditPartner = (id: string) => {
-    console.log("Edit partner:", id);
-    // Open edit modal or navigate to edit page
+  const handleEditPartner = (id: string): void => {
+    console.log('Edit partner:', id);
   };
 
-  const filteredPartners = partners.filter(partner => {
+  const filteredPartners = partners.filter((partner) => {
     const matchesSearch = partner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         partner.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === "all" || partner.type === typeFilter;
-    const matchesStatus = statusFilter === "all" || partner.status === statusFilter;
+                         partner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         partner.district.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === 'all' || partner.type === typeFilter;
+    const matchesStatus = statusFilter === 'all' || partner.status === statusFilter;
+    const matchesProvince = provinceFilter === 'all' || partner.province === provinceFilter;
     
-    return matchesSearch && matchesType && matchesStatus;
+    return matchesSearch && matchesType && matchesStatus && matchesProvince;
   });
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+   
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Partners</h1>
-          <p className="text-sm text-gray-600">Manage your partner organizations</p>
+          <h1 className="text-2xl font-bold text-gray-900">Implementation Partners</h1>
+          <p className="text-sm text-gray-600">Monitor partner performance across Rwanda • {partners.length} active partners</p>
         </div>
         <button
           onClick={() => setAddModalOpen(true)}
@@ -110,16 +59,16 @@ export default function PartnersPage() {
         </button>
       </div>
 
-      {/* Stats Cards */}
+     
       <PartnersStats partners={partners} />
 
-      {/* Charts */}
+     
       <PartnersChart partners={partners} />
 
-      {/* Filters */}
+    
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Search */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+         
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
@@ -131,7 +80,6 @@ export default function PartnersPage() {
             />
           </div>
 
-          {/* Type Filter */}
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <select
@@ -140,14 +88,29 @@ export default function PartnersPage() {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B609D] focus:border-transparent appearance-none bg-white"
             >
               <option value="all">All Types</option>
-              <option value="Organization">Organization</option>
+              <option value="Tech Hub">Tech Hub</option>
               <option value="NGO">NGO</option>
-              <option value="Government">Government</option>
-              <option value="Private">Private</option>
+              <option value="Educational Institution">Educational Institution</option>
+              <option value="Training Center">Training Center</option>
+              <option value="University">University</option>
             </select>
           </div>
 
-          {/* Status Filter */}
+          <div>
+            <select
+              value={provinceFilter}
+              onChange={(e) => setProvinceFilter(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B609D] focus:border-transparent appearance-none bg-white"
+            >
+              <option value="all">All Provinces</option>
+              <option value="Kigali City">Kigali City</option>
+              <option value="Northern Province">Northern Province</option>
+              <option value="Southern Province">Southern Province</option>
+              <option value="Eastern Province">Eastern Province</option>
+              <option value="Western Province">Western Province</option>
+            </select>
+          </div>
+
           <div>
             <select
               value={statusFilter}
@@ -163,14 +126,14 @@ export default function PartnersPage() {
         </div>
       </div>
 
-      {/* Partners Table */}
+     
       <PartnersTable
         partners={filteredPartners}
         onView={handleViewPartner}
         onEdit={handleEditPartner}
       />
 
-      {/* Add Partner Modal */}
+     
       <AddPartnerModal
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}

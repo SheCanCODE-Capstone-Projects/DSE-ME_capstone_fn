@@ -1,282 +1,264 @@
-"use client"
+"use client";
 
-import { useRouter } from "next/navigation"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
-import { ArrowLeft, Edit2, Trash2, Plus } from "lucide-react"
-import { useState } from "react"
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Building2, MapPin, Users, TrendingUp, AlertTriangle, Heart, CheckCircle, X } from "lucide-react";
+import { useState, use } from "react";
+import { getPartnerById, getMERequestsByPartnerId } from "@/data/partnersData";
+import { type Partner, type MERequest } from "@/types/partners";
 
-const Card = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`bg-white rounded-lg shadow-sm border ${className}`}>{children}</div>
-)
+export default function PartnerDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const router = useRouter();
+  const { id } = use(params);
+  const partner = getPartnerById(id);
+  const [meRequests, setMeRequests] = useState<MERequest[]>(
+    getMERequestsByPartnerId(id)
+  );
 
-const CardHeader = ({ children }: { children: React.ReactNode }) => (
-  <div className="p-6 pb-4">{children}</div>
-)
-
-const CardTitle = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <h3 className={`text-lg font-semibold ${className}`}>{children}</h3>
-)
-
-const CardContent = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`p-6 pt-0 ${className}`}>{children}</div>
-)
-
-const Button = ({ children, onClick, variant = "default", size = "default", className = "", ...props }: {
-  children: React.ReactNode
-  onClick?: () => void
-  variant?: "default" | "outline" | "ghost"
-  size?: "default" | "sm"
-  className?: string
-} & React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-  <button
-    onClick={onClick}
-    className={`px-4 py-2 rounded font-medium transition ${
-      variant === "outline" ? "border border-gray-300 text-gray-700 hover:bg-gray-50" :
-      variant === "ghost" ? "hover:bg-gray-100" :
-      "bg-blue-600 text-white hover:bg-blue-700"
-    } ${
-      size === "sm" ? "px-3 py-1 text-sm" : ""
-    } ${className}`}
-    {...props}
-  >
-    {children}
-  </button>
-)
-
-const partnersData: Record<number, any> = {
-  1: { id: 1, name: "Tech Skills Academy", email: "contact@techskills.org", phone: "+1-555-0101", address: "123 Tech Street, Silicon Valley, CA 94025", enrollment: 450, attendance: 92, employment: 87, gender_f: 210, disability: 18, status: "Active", region: "North America", programs: 5, staff: 24, branches: [{ id: "branch-1", name: "Tech Skills Academy - Kigali", location: "Kigali", address: "KN 4 Ave, Kigali, Rwanda", managerName: "Jean Claude Muhirwa", managerPhone: "+250-788-123-456", managerEmail: "jean@techskills.rw", enrollment: 250, attendance: 93 }, { id: "branch-2", name: "Tech Skills Academy - Huye", location: "Huye", address: "Huye Town Centre, Huye, Rwanda", managerName: "Alice Mukamana", managerPhone: "+250-788-987-654", managerEmail: "alice@techskills.rw", enrollment: 200, attendance: 91 }] },
-  2: { id: 2, name: "Digital Future Initiative", email: "info@digitalfuture.org", phone: "+1-555-0102", address: "456 Digital Ave, New York, NY 10001", enrollment: 380, attendance: 88, employment: 82, gender_f: 195, disability: 14, status: "Active", region: "North America", programs: 4, staff: 18, branches: [] },
-  3: { id: 3, name: "Youth Empowerment Center", email: "admin@youthcenter.org", phone: "+1-555-0103", address: "789 Youth Blvd, Los Angeles, CA 90001", enrollment: 520, attendance: 90, employment: 85, gender_f: 280, disability: 25, status: "Active", region: "North America", programs: 6, staff: 32, branches: [] },
-  4: { id: 4, name: "Enterprise Solutions Ltd", email: "contact@enterprise.org", phone: "+1-555-0104", address: "321 Enterprise Dr, Chicago, IL 60601", enrollment: 290, attendance: 89, employment: 80, gender_f: 140, disability: 12, status: "Active", region: "North America", programs: 3, staff: 16, branches: [] },
-  5: { id: 5, name: "Community Development Hub", email: "info@commdev.org", phone: "+1-555-0105", address: "654 Community Way, Houston, TX 77001", enrollment: 410, attendance: 87, employment: 78, gender_f: 220, disability: 20, status: "Onboarding", region: "North America", programs: 4, staff: 20, branches: [] },
-}
-
-const monthlyData = [
-  { month: "Jan", enrollment: 35, attendance: 33, employment: 30 },
-  { month: "Feb", enrollment: 38, attendance: 35, employment: 31 },
-  { month: "Mar", enrollment: 42, attendance: 38, employment: 34 },
-  { month: "Apr", enrollment: 45, attendance: 41, employment: 36 },
-  { month: "May", enrollment: 48, attendance: 44, employment: 38 },
-  { month: "Jun", enrollment: 50, attendance: 46, employment: 40 },
-]
-
-const BranchCard = ({ branch, onEdit, onDelete }: any) => (
-  <Card>
-    <CardHeader>
-      <div className="flex justify-between items-start">
-        <div>
-          <CardTitle className="text-lg">{branch.name}</CardTitle>
-          <p className="text-sm text-gray-600 mt-1">{branch.location}</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="sm" onClick={onEdit}><Edit2 className="w-4 h-4" /></Button>
-          <Button variant="ghost" size="sm" onClick={onDelete}><Trash2 className="w-4 h-4 text-red-600" /></Button>
-        </div>
-      </div>
-    </CardHeader>
-    <CardContent className="space-y-3">
-      <div>
-        <p className="text-sm text-gray-600">Address</p>
-        <p className="text-sm font-medium">{branch.address}</p>
-      </div>
-      <div>
-        <p className="text-sm text-gray-600">Manager</p>
-        <p className="text-sm font-medium">{branch.managerName}</p>
-        <p className="text-sm text-gray-600">{branch.managerEmail}</p>
-        <p className="text-sm text-gray-600">{branch.managerPhone}</p>
-      </div>
-      <div className="grid grid-cols-2 gap-4 pt-2 border-t">
-        <div>
-          <p className="text-sm text-gray-600">Enrollment</p>
-          <p className="text-lg font-bold">{branch.enrollment}</p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-600">Attendance</p>
-          <p className="text-lg font-bold">{branch.attendance}%</p>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-)
-
-export default function PartnerDetailPage({ params }: { params: { id: string } }) {
-  const router = useRouter()
-  const partner = partnersData[Number.parseInt(params.id)]
-  const [branches, setBranches] = useState(partner?.branches || [])
+  const handleMERequest = (requestId: string, action: 'approved' | 'denied'): void => {
+    setMeRequests((prev) => prev.map((req) => 
+      req.id === requestId ? { ...req, status: action } : req
+    ));
+  };
 
   if (!partner) {
     return (
-      <main className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Partner not found</h1>
-          <Button onClick={() => router.back()}>Go Back</Button>
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-2 bg-[#0B609D] text-white rounded-lg hover:bg-[#094d7d] transition-colors"
+          >
+            Go Back
+          </button>
         </div>
-      </main>
-    )
+      </div>
+    );
   }
 
-  const demographicsData = [
-    { name: "Female", value: partner.gender_f, fill: "#0B609D" },
-    { name: "Male", value: partner.enrollment - partner.gender_f, fill: "#34597E" },
-  ]
+  const getStatusColor = (status: string): string => {
+    switch (status) {
+      case 'Active': return 'bg-green-100 text-green-700';
+      case 'Inactive': return 'bg-red-100 text-red-700';
+      case 'Pending': return 'bg-yellow-100 text-yellow-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const getPerformanceColor = (rate: number, type: 'employment' | 'dropout'): string => {
+    if (type === 'employment') {
+      if (rate >= 75) return 'text-green-600';
+      if (rate >= 60) return 'text-yellow-600';
+      return 'text-red-600';
+    } else {
+      if (rate <= 5) return 'text-green-600';
+      if (rate <= 10) return 'text-yellow-600';
+      return 'text-red-600';
+    }
+  };
 
   return (
-    <main className="p-8 bg-gray-50 min-h-screen">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm" onClick={() => router.back()}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Partners
+          </button>
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">{partner.name}</h1>
-            <p className="text-gray-600 mt-1">{partner.region} • {partner.programs} Programs • {branches.length} Branches</p>
+            <h1 className="text-3xl font-bold text-gray-900">{partner.name}</h1>
+            <p className="text-gray-600">{partner.type} • {partner.province}, {partner.district}</p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Edit2 className="w-4 h-4 mr-2" />
-            Edit
-          </Button>
-          <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete
-          </Button>
+        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(partner.status)}`}>
+          {partner.status}
+        </span>
+      </div>
+
+      {/* Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-[#0B609D]/10 rounded-xl">
+              <Users className="w-6 h-6 text-[#0B609D]" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Total Participants</h3>
+              <p className="text-2xl font-bold text-gray-900">{partner.totalParticipants.toLocaleString()}</p>
+              <p className="text-xs text-gray-500">{partner.activeParticipants} currently active</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-green-50 rounded-xl">
+              <TrendingUp className={`w-6 h-6 ${getPerformanceColor(partner.employmentRate, 'employment')}`} />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Employment Rate</h3>
+              <p className={`text-2xl font-bold ${getPerformanceColor(partner.employmentRate, 'employment')}`}>
+                {partner.employmentRate}%
+              </p>
+              <p className="text-xs text-gray-500">Internship: {partner.internshipPlacementRate}%</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-red-50 rounded-xl">
+              <AlertTriangle className={`w-6 h-6 ${getPerformanceColor(partner.dropoutRate, 'dropout')}`} />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Dropout Rate</h3>
+              <p className={`text-2xl font-bold ${getPerformanceColor(partner.dropoutRate, 'dropout')}`}>
+                {partner.dropoutRate}%
+              </p>
+              <p className="text-xs text-gray-500">Program average</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-purple-50 rounded-xl">
+              <Heart className="w-6 h-6 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Inclusion</h3>
+              <p className="text-2xl font-bold text-purple-600">{partner.participantsWithDisability}</p>
+              <p className="text-xs text-gray-500">with disabilities</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-6 mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      {/* Details Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Contact & Organization Info */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Organization Details</h2>
+          <div className="space-y-4">
             <div>
-              <p className="text-sm text-gray-600">Email</p>
-              <p className="font-medium text-gray-900">{partner.email}</p>
+              <label className="text-sm font-medium text-gray-600">Contact Email</label>
+              <p className="text-gray-900">{partner.email}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Phone</p>
-              <p className="font-medium text-gray-900">{partner.phone}</p>
+              <label className="text-sm font-medium text-gray-600">Phone Number</label>
+              <p className="text-gray-900">{partner.phone}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Head Office Address</p>
-              <p className="font-medium text-gray-900">{partner.address}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Organization Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <p className="text-sm text-gray-600">Status</p>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold inline-block mt-1 ${partner.status === "Active" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}>
-                {partner.status}
-              </span>
+              <label className="text-sm font-medium text-gray-600">Location</label>
+              <p className="text-gray-900">{partner.province}, {partner.district}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Programs</p>
-              <p className="font-medium text-gray-900">{partner.programs} Active Programs</p>
+              <label className="text-sm font-medium text-gray-600">Staff Count</label>
+              <p className="text-gray-900">{partner.staff} employees</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Staff Members</p>
-              <p className="font-medium text-gray-900">{partner.staff} Staff</p>
+              <label className="text-sm font-medium text-gray-600">Programs</label>
+              <p className="text-gray-900">{partner.programs} active programs</p>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-4 gap-6 mb-8">
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-gray-600 mb-1">Total Enrollments</p>
-            <p className="text-3xl font-bold text-gray-900">{partner.enrollment}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-gray-600 mb-1">Attendance Rate</p>
-            <p className="text-3xl font-bold text-gray-900">{partner.attendance}%</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-gray-600 mb-1">Employment Rate</p>
-            <p className="text-3xl font-bold text-gray-900">{partner.employment}%</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-sm text-gray-600 mb-1">Female Participants</p>
-            <p className="text-3xl font-bold text-gray-900">{Math.round((partner.gender_f / partner.enrollment) * 100)}%</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {branches.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">Branches ({branches.length})</h2>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Branch
-            </Button>
+            <div>
+              <label className="text-sm font-medium text-gray-600">Partnership Since</label>
+              <p className="text-gray-900">{new Date(partner.joinDate).toLocaleDateString()}</p>
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {branches.map((branch) => (
-              <BranchCard
-                key={branch.id}
-                branch={branch}
-                onEdit={() => console.log("Edit branch:", branch.id)}
-                onDelete={() => setBranches(branches.filter((b) => b.id !== branch.id))}
-              />
+        </div>
+
+        {/* Gender Distribution */}
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Gender Distribution</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 bg-pink-500 rounded-full"></div>
+                <span className="text-gray-700">Female Participants</span>
+              </div>
+              <div className="text-right">
+                <p className="text-lg font-bold text-pink-600">{partner.femaleParticipants}</p>
+                <p className="text-xs text-gray-500">
+                  {Math.round((partner.femaleParticipants / partner.totalParticipants) * 100)}%
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                <span className="text-gray-700">Male Participants</span>
+              </div>
+              <div className="text-right">
+                <p className="text-lg font-bold text-blue-600">{partner.maleParticipants}</p>
+                <p className="text-xs text-gray-500">
+                  {Math.round((partner.maleParticipants / partner.totalParticipants) * 100)}%
+                </p>
+              </div>
+            </div>
+            <div className="pt-4 border-t">
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div 
+                  className="bg-pink-500 h-3 rounded-l-full" 
+                  style={{ width: `${(partner.femaleParticipants / partner.totalParticipants) * 100}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ME Requests Section */}
+      {meRequests.length > 0 && (
+        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">ME Access Requests</h2>
+          <div className="space-y-4">
+            {meRequests.map((request) => (
+              <div key={request.id} className="border border-gray-200 rounded-2xl p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900">{request.name}</h3>
+                    <p className="text-sm text-gray-600">{request.email} • {request.phone}</p>
+                    <p className="text-sm text-gray-600 mt-1">{request.experience}</p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Requested on {new Date(request.requestDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {request.status === 'pending' ? (
+                      <>
+                        <button
+                          onClick={() => handleMERequest(request.id, 'approved')}
+                          className="flex items-center gap-2 px-4 py-2 bg-[#0B609D] text-white rounded-lg hover:bg-[#094d7d] transition-colors"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleMERequest(request.id, 'denied')}
+                          className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        >
+                          <X className="w-4 h-4" />
+                          Deny
+                        </button>
+                      </>
+                    ) : (
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        request.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                      }`}>
+                        {request.status === 'approved' ? 'Approved' : 'Denied'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       )}
-
-      <div className="grid grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Monthly Performance Trend</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="enrollment" stroke="#0B609D" strokeWidth={2} />
-                <Line type="monotone" dataKey="attendance" stroke="#34597E" strokeWidth={2} />
-                <Line type="monotone" dataKey="employment" stroke="#EEF3FD" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Demographics Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie data={demographicsData} cx="50%" cy="50%" labelLine={false} label={({ name, value }) => `${name}: ${value}`} dataKey="value">
-                  {demographicsData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
