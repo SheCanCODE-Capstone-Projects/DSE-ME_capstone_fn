@@ -122,7 +122,7 @@ export default function ReportsPage() {
       {activeTab === 'Perfomance' && <PerformanceTab partnerData={partnerData} />}
       {activeTab === 'FinancialAudits' && <FinancialAuditsTab partnerData={partnerData} />}
       {activeTab === 'GenderBalance' && <GenderBalanceTab partnerData={partnerData} />}
-      {activeTab === 'reports' && <GenerateReportsTab generating={generating} onGenerateReport={handleGenerateReport} />}
+      {activeTab === 'reports' && <GenerateReportsTab generating={generating} onGenerate={handleGenerateReport} />}
     </div>
   );
 }

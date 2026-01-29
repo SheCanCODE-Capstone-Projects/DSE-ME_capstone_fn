@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { Plus, Users, UserX, UserCheck, User, Download, Search } from "lucide-react";
 import StatusCard from "../../../components/ui/statuscard";
-import { mockParticipants, Participant } from "@/lib/mockParticipants";
+import { mockParticipants, type Participant } from "@/lib/mockParticipants";
 
 /* ================= TYPES ================= */
 type ParticipantData = Participant;
