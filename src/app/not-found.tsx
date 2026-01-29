@@ -28,7 +28,7 @@ export default function NotFound() {
 
         
         <p className="text-xl mb-12 leading-relaxed" style={{ color: '#796666' }}>
-          The page you're looking for has drifted away into the digital void.
+          The page you are looking for has drifted away into the digital void.
         </p>
 
         
@@ -45,7 +45,7 @@ export default function NotFound() {
         </button>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }

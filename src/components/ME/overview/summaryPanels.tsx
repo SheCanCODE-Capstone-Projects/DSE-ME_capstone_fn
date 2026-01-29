@@ -69,7 +69,7 @@ export const AlertsPanel = () => (
         <AlertCircle size={14} className="text-rose-500 shrink-0 mt-0.5" />
         <div>
           <p className="text-xs font-bold text-rose-800">Missing Attendance</p>
-          <p className="text-[10px] text-rose-600">3 cohorts haven't logged today's attendance yet.</p>
+          <p className="text-[10px] text-rose-600">3 cohorts have not logged attendance today yet.</p>
         </div>
       </div>
       <div className="p-2 bg-amber-50 border border-amber-100 rounded-lg flex gap-3">
