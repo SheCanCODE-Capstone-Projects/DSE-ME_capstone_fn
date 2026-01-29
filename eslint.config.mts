@@ -5,6 +5,10 @@ import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
+  // Global ignores applied to all config entries
+  {
+    ignores: [".next/**", "out/**", "build/**"],
+  },
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     plugins: { js },
@@ -14,7 +18,6 @@ export default defineConfig([
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
-    ignores: [".next/**", "out/**", "build/**"],
     rules: {
       "react/react-in-jsx-scope": "off",
       "@typescript-eslint/no-unused-vars": "warn",

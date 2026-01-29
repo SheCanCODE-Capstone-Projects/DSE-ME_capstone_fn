@@ -9,7 +9,7 @@ export interface Donor {
   joinDate: string;
   totalDonations: number;
   lastDonationDate: string;
-  preferredCauses: string[];
+  preferredCauses: readonly string[];
 }
 
 export interface Donation {
