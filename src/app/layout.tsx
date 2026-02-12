@@ -18,6 +18,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "DSE M&E Platform",
   description: "A secure, multi-tenant Monitoring & Evaluation platform for tracking training, employment outcomes, and impact across donor-funded programs.",
+  icons: "/icon2.png",
+
 };
 
 

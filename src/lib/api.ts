@@ -1,10 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-if (!BASE_URL) {
-  throw new Error('NEXT_PUBLIC_API_URL environment variable is not defined');
-}
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8088/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -13,7 +9,6 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
 
 api.interceptors.request.use(
   (config) => {
@@ -26,14 +21,10 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
+    console.error('API Error:', error.response?.status, error.response?.data);
     return Promise.reject(error);
   }
 );
@@ -61,11 +52,16 @@ export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): P
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNABORTED') {
-        throw new Error('Request timeout - backend is not responding. Please check if your backend service is running.');
+      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
+        throw new Error('Cannot connect to backend. Please ensure your backend is running on port 8088.');
       }
-      const message = error.response?.data?.message || error.message;
-      throw new Error(message);
+      
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          error.response?.data || 
+                          error.message;
+      
+      throw new Error(typeof errorMessage === 'string' ? errorMessage : 'Request failed');
     }
     throw error;
   }
