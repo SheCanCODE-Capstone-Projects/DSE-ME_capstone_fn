@@ -38,6 +38,7 @@ function LoginPage() {
         localStorage.setItem('userEmail', formData.email);
         
         const user = response.user;
+      
         
         if (!user?.role || user.role === 'UNASSIGNED') {
           toast('Please request access to continue', { icon: '⏳' });

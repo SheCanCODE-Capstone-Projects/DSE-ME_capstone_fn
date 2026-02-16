@@ -4,7 +4,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8088/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
-  timeout: 30000,
+  timeout: 120000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,7 +24,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    console.error('API Error:', error.response?.status, error.response?.data);
+    if (error.response) {
+      console.error('API Error:', error.response.status, error.response.data);
+    } else {
+      console.error('Network Error:', error.message, error.code);
+    }
     return Promise.reject(error);
   }
 );
@@ -34,35 +38,57 @@ interface ApiOptions extends AxiosRequestConfig {
 }
 
 export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): Promise<T> {
-  try {
-    const { token, ...config } = options;
-    
-    if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
-      };
-    }
+  const maxRetries = 2;
+  let lastError;
 
-    const response = await api({
-      url: endpoint,
-      ...config,
-    });
-    
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
-        throw new Error('Cannot connect to backend. Please ensure your backend is running on port 8088.');
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const { token, ...config } = options;
+      
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${token}`,
+        };
       }
+
+      const response = await api({
+        url: endpoint,
+        ...config,
+      });
       
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data?.message || 
-                          error.response?.data || 
-                          error.message;
+      return response.data;
+    } catch (error) {
+      lastError = error;
       
-      throw new Error(typeof errorMessage === 'string' ? errorMessage : 'Request failed');
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ECONNABORTED' && attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          continue;
+        }
+        
+        if (error.code === 'ECONNREFUSED' || error.code === 'ERR_NETWORK') {
+          throw new Error('Cannot connect to backend. Please ensure your backend is running.');
+        }
+        
+        if (error.response?.status === 400) {
+          throw new Error('Invalid or expired verification token. Please request a new verification email.');
+        }
+        
+        if (error.response?.status === 500) {
+          throw new Error('Server error during verification. Please try again or contact support.');
+        }
+        
+        const errorMessage = error.response?.data?.error || 
+                            error.response?.data?.message || 
+                            error.response?.data || 
+                            error.message;
+        
+        throw new Error(typeof errorMessage === 'string' ? errorMessage : 'Request failed');
+      }
+      throw error;
     }
-    throw error;
   }
+  
+  throw lastError;
 }

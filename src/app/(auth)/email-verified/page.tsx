@@ -31,6 +31,9 @@ function EmailVerifiedPage() {
     if (isVerifying) return;
     
     setIsVerifying(true);
+    setStatus('verifying');
+    setMessage('Waking up server... This may take up to 2 minutes on first request.');
+    
     try {
       const result = await authApi.verifyEmail(token);
       setStatus('success');
@@ -112,8 +115,9 @@ function EmailVerifiedPage() {
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
         <h3 className="font-medium text-red-800 mb-2">What can you do?</h3>
         <ul className="text-sm text-red-700 space-y-1">
-          <li>• Check if the verification link is complete</li>
-          <li>• Try requesting a new verification email</li>
+          <li>• The verification link may have expired or already been used</li>
+          <li>• Request a new verification email from the login page</li>
+          <li>• Make sure you're using the latest verification link</li>
           <li>• Contact support if the problem persists</li>
         </ul>
       </div>

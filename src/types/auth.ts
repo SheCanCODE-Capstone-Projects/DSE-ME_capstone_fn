@@ -16,7 +16,7 @@ export interface AuthResponse {
   user?: {
     id: string;
     email: string;
-    role?: 'facilitator' | 'me' | 'donor' | null;
+    role?: 'FACILITATOR' | 'ME_OFFICER' | 'UNASSIGNED' |  'DONOR' | 'ADMIN' |null;
     status?: 'pending' | 'approved' | 'rejected';
     hasAccess?: boolean; 
   };
