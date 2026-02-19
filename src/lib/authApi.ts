@@ -1,5 +1,5 @@
 import { apiFetch } from './api';
-import { SignupFormData, LoginFormData, AuthResponse, RoleRequestData, RoleRequestResponse } from '../types/auth';
+import { SignupFormData, LoginFormData, AuthResponse, RoleRequestData, RoleRequestResponse, UserProfile } from '../types/auth';
 
 export const authApi = {
   register: async (data: SignupFormData): Promise<string> => {
@@ -65,8 +65,8 @@ export const authApi = {
     });
   },
 
-  getCurrentUser: async (): Promise<AuthResponse['user']> => {
-    return apiFetch<AuthResponse['user']>('/users/profile', {
+  getCurrentUser: async (): Promise<UserProfile> => {
+    return apiFetch<UserProfile>('/users/profile', {
       method: 'GET',
     });
   },

@@ -34,37 +34,30 @@ function LoginPage() {
       const response = await loginMutation.mutateAsync(formData);
       
       if (response.token) {
-        // Backend returns role at root level (REQUIRED field)
-        const userRole = response.role;
-        
-        // Validate user.id exists before storing
-        if (!response.user?.id) {
-          throw new Error('Login failed - user ID not provided by server');
-        }
-        
+        // Backend returns userId and role at root level
         const userData = {
-          id: response.user.id,
-          email: response.user?.email || formData.email,
-          role: userRole,
-          hasAccess: userRole !== 'UNASSIGNED'
+          id: response.userId,
+          email: formData.email,
+          role: response.role,
+          hasAccess: response.role !== 'UNASSIGNED'
         };
         
         login(response.token, userData);
         localStorage.setItem('userEmail', formData.email);
         
-        if (userRole === 'UNASSIGNED') {
+        if (response.role === 'UNASSIGNED') {
           toast('Please request access to continue', { icon: '⏳' });
           router.push('/request-access/start');
-        } else if (userRole === 'ME_OFFICER') {
+        } else if (response.role === 'ME_OFFICER') {
           toast.success('Welcome back, ME Officer!');
           router.push('/ME');
-        } else if (userRole === 'FACILITATOR') {
+        } else if (response.role === 'FACILITATOR') {
           toast.success('Welcome back, Facilitator!');
           router.push('/overview');
-        } else if (userRole === 'DONOR') {
+        } else if (response.role === 'DONOR') {
           toast.success('Welcome back, Donor!');
           router.push('/donor');
-        } else if (userRole === 'ADMIN') {
+        } else if (response.role === 'ADMIN') {
           toast.success('Welcome back, Admin!');
           router.push('/ME');
         } else {

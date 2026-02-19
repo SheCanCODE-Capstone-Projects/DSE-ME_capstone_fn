@@ -15,16 +15,18 @@ export interface LoginFormData {
 
 export interface AuthResponse {
   token: string; 
+  userId: string;
   role: 'FACILITATOR' | 'ME_OFFICER' | 'UNASSIGNED' | 'DONOR' | 'ADMIN';
   redirectTo?: string;
   message?: string;
-  user?: {
-    id: string;
-    email: string;
-    role?: 'FACILITATOR' | 'ME_OFFICER' | 'UNASSIGNED' |  'DONOR' | 'ADMIN' |null;
-    status?: 'pending' | 'approved' | 'rejected';
-    hasAccess?: boolean; 
-  };
+}
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  role: 'FACILITATOR' | 'ME_OFFICER' | 'UNASSIGNED' | 'DONOR' | 'ADMIN';
+  status?: 'pending' | 'approved' | 'rejected';
+  hasAccess?: boolean;
 }
 
 export interface RoleRequestData {
