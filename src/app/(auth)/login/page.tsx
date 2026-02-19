@@ -34,8 +34,8 @@ function LoginPage() {
       const response = await loginMutation.mutateAsync(formData);
       
       if (response.token) {
-        // Backend returns role at root level
-        const userRole = response.role || response.user?.role;
+        // Backend returns role at root level (REQUIRED field)
+        const userRole = response.role;
         
         // Validate user.id exists before storing
         if (!response.user?.id) {
@@ -45,14 +45,14 @@ function LoginPage() {
         const userData = {
           id: response.user.id,
           email: response.user?.email || formData.email,
-          role: userRole || 'UNASSIGNED',
-          hasAccess: !!userRole && userRole !== 'UNASSIGNED'
+          role: userRole,
+          hasAccess: userRole !== 'UNASSIGNED'
         };
         
         login(response.token, userData);
         localStorage.setItem('userEmail', formData.email);
         
-        if (!userRole || userRole === 'UNASSIGNED') {
+        if (userRole === 'UNASSIGNED') {
           toast('Please request access to continue', { icon: '⏳' });
           router.push('/request-access/start');
         } else if (userRole === 'ME_OFFICER') {

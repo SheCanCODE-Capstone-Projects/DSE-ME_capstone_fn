@@ -15,7 +15,7 @@ export interface LoginFormData {
 
 export interface AuthResponse {
   token: string; 
-  role?: 'FACILITATOR' | 'ME_OFFICER' | 'UNASSIGNED' | 'DONOR' | 'ADMIN' | null;
+  role: 'FACILITATOR' | 'ME_OFFICER' | 'UNASSIGNED' | 'DONOR' | 'ADMIN';
   redirectTo?: string;
   message?: string;
   user?: {
