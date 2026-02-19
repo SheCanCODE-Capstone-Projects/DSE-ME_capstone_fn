@@ -18,7 +18,6 @@ const ResetPasswordPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
-  const email = searchParams.get('email') || '';
 
   useEffect(() => {
     if (!token) {
