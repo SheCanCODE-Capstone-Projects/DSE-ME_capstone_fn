@@ -14,7 +14,7 @@ function EmailVerifiedPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // ✅ Ref to prevent double API calls in dev mode (React Strict Mode / Fast Refresh)
+
   const hasVerified = useRef(false);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ function EmailVerifiedPage() {
       return;
     }
 
-    // Only run verification once
+
     if (!hasVerified.current) {
       hasVerified.current = true;
       handleEmailVerification(token);
@@ -71,8 +71,6 @@ function EmailVerifiedPage() {
     router.push('/login');
   };
 
-  // -------------------- RENDER --------------------
-
   if (status === 'verifying') {
     return (
       <div className="space-y-6 text-center">
@@ -112,7 +110,6 @@ function EmailVerifiedPage() {
     );
   }
 
-  // Error / Verification Failed
   return (
     <div className="space-y-6 text-center">
       <div className="flex flex-col items-center mb-6">
