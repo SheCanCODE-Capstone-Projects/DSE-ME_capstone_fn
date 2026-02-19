@@ -7,7 +7,6 @@ import { Shield } from 'lucide-react';
 function VerifyOtpPage() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
 
@@ -21,8 +20,6 @@ function VerifyOtpPage() {
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
-    
-    if (error) setError('');
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
@@ -33,7 +30,6 @@ function VerifyOtpPage() {
 
   const handleResend = () => {
     setOtp(['', '', '', '', '', '']);
-    setError('');
     inputRefs.current[0]?.focus();
   };
 
@@ -42,7 +38,6 @@ function VerifyOtpPage() {
     const otpCode = otp.join('');
     
     if (otpCode.length !== 6) {
-      setError('Please enter the complete 6-digit code');
       return;
     }
     
@@ -51,8 +46,6 @@ function VerifyOtpPage() {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       router.push('/reset-password');
-    } catch (error) {
-      setError('Invalid code. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -89,12 +82,6 @@ function VerifyOtpPage() {
             ))}
           </div>
         </div>
-        
-        {error && (
-          <div className="text-center">
-            <p className="text-red-500 text-sm">{error}</p>
-          </div>
-        )}
         
         <div className="flex justify-center">
           <PrimaryButton 

@@ -27,10 +27,6 @@ export default function PartnersPage() {
     router.push(`/donor/partners/${id}`);
   };
 
-  const handleEditPartner = (id: string): void => {
-    console.log('Edit partner:', id);
-  };
-
   const filteredPartners = partners.filter((partner) => {
     const matchesSearch = partner.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          partner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -130,7 +126,6 @@ export default function PartnersPage() {
       <PartnersTable
         partners={filteredPartners}
         onView={handleViewPartner}
-        onEdit={handleEditPartner}
       />
 
      

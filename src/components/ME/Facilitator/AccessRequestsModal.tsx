@@ -1,12 +1,6 @@
-"use client";
-
 import Modal from "./Modal";
 import { Check, X, User } from "lucide-react";
 import { RoleRequestResponse } from "@/types/auth";
-
-interface AccessRequest extends RoleRequestResponse {
-  createdAt: string;
-}
 
 interface AccessRequestsModalProps {
   isOpen: boolean;

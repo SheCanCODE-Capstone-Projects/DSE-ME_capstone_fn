@@ -24,10 +24,10 @@ export const authApi = {
   verifyEmail: async (token: string): Promise<string> => {
     const encodedToken = encodeURIComponent(token);
     try {
-      const response = await apiFetch<any>(`/auth/verify?token=${encodedToken}`, {
+      const response = await apiFetch<string | { message?: string }>(`/auth/verify?token=${encodedToken}`, {
         method: 'GET',
       });
-      // Handle both string and object responses
+    
       if (typeof response === 'string') {
         return response;
       }

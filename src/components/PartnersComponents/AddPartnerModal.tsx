@@ -1,7 +1,6 @@
-"use client";
-
 import { useState } from "react";
 import { X, Plus, Trash2, MapPin } from "lucide-react";
+import { type Partner } from "@/types/partners";
 
 interface Branch {
   id: string;
@@ -14,7 +13,7 @@ interface Branch {
 interface AddPartnerModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (partner: any) => void;
+  onCreate: (partner: Partner) => void;
 }
 
 export default function AddPartnerModal({ isOpen, onClose, onCreate }: AddPartnerModalProps) {
@@ -63,7 +62,7 @@ export default function AddPartnerModal({ isOpen, onClose, onCreate }: AddPartne
       id: Date.now().toString(),
       ...formData,
       staff: parseInt(formData.staff) || 0,
-      status: "Pending",
+      status: "Pending" as const,
       joinDate: new Date().toISOString().split('T')[0],
       totalParticipants: 0,
       activeParticipants: 0,

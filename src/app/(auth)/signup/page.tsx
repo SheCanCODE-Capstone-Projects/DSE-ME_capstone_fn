@@ -7,7 +7,6 @@ import PrimaryButton from '@/components/PrimaryButton';
 import { UserPlus } from 'lucide-react';
 import GoogleSignupButton from '@/components/GoogleSignupButton';
 import { useSignup } from '@/hooks/auth/useSignup';
-import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { SignupFormData } from '@/types/auth';
 import toast from 'react-hot-toast';
@@ -22,7 +21,6 @@ export default function SignupPage() {
   });
 
   const signupMutation = useSignup();
-  const { login } = useAuth();
   const router = useRouter();
 
  
@@ -46,14 +44,15 @@ export default function SignupPage() {
       localStorage.setItem('pendingVerificationEmail', formData.email);
       toast.success(message || 'Account created! Please verify your email.');
       router.push('/email-verification');
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as Error & { message?: string };
       // If email sending fails, inform user but allow them to proceed
-      if (err.message?.includes('Failed to send verification email')) {
+      if (error.message?.includes('Failed to send verification email')) {
         toast.error('Email service unavailable. Please contact support or try manual verification.');
         localStorage.setItem('pendingVerificationEmail', formData.email);
         router.push('/email-verification');
       } else {
-        toast.error(err.message || 'Signup failed');
+        toast.error(error.message || 'Signup failed');
       }
     }
   };

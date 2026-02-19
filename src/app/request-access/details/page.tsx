@@ -50,7 +50,7 @@ function DetailsContent() {
 
   return (
     <DetailsStep
-      role={rawRole as any}
+      role={rawRole as "Facilitator" | "ME" | "Partner"}
       onNext={handleSubmit}
       onBack={() => router.back()}
       isLoading={isSubmitting}

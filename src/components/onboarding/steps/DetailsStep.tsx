@@ -1,11 +1,5 @@
-"use client";
-
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { User, Mail, MapPin, Building2, MessageSquare, ArrowLeft, ArrowRight } from "lucide-react";
-import type { ProfileDetails, UserRole, Organization } from "@/types/profile";
-import { organizations as orgData } from "@/lib/onboardingData";
-import toast from "react-hot-toast";
+import { MessageSquare, ArrowLeft, ArrowRight } from "lucide-react";
 
 interface DetailsStepProps {
   role: string;
@@ -15,7 +9,6 @@ interface DetailsStepProps {
 }
 
 export default function DetailsStep({ role, onNext, onBack, isLoading = false }: DetailsStepProps) {
-  const router = useRouter();
   const [reason, setReason] = useState('');
   const [focusedField, setFocusedField] = useState<string>("");
 

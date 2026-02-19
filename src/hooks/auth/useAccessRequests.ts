@@ -18,7 +18,7 @@ export function useGetAllAccessRequests(page = 0, size = 20, sort = 'requestedAt
 export function useGetPendingAccessRequests() {
   return useQuery<{ content: RoleRequestResponse[]; totalPages: number; totalElements: number; currentPage: number }>({
     queryKey: ['pendingAccessRequests'],
-    queryFn: authApi.getPendingAccessRequests,
+    queryFn: () => authApi.getPendingAccessRequests(),
   });
 }
 

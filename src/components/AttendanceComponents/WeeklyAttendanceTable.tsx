@@ -1,5 +1,4 @@
 import { Student, DailyAttendance } from '@/types/attendance';
-import StatCard from '@/components/ui/statuscard';
 import { Check, X, Clock } from 'lucide-react';
 
 interface WeeklyAttendanceTableProps {

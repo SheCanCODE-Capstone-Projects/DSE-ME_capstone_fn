@@ -27,7 +27,7 @@ const PreferencesPanel: React.FC<PreferencesPanelProps> = ({ theme, onThemeChang
             return (
               <button
                 key={item.id}
-                onClick={() => onThemeChange(item.id as any)}
+                onClick={() => onThemeChange(item.id as 'light' | 'dark' | 'system')}
                 className={`
                   relative flex flex-col items-center p-8 rounded-[2.5rem] border-[3px] transition-all duration-500 text-center group
                   ${isActive 

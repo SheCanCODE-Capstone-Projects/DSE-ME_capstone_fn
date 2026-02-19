@@ -1,6 +1,4 @@
-"use client"
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { useCurrentUser } from '@/hooks/auth/useCurrentUser';
 
 interface User {
   id: string;
@@ -12,7 +10,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (token: string, userData?: any) => void;
+  login: (token: string, userData?: User) => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -28,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setToken(storedToken);
   }, []);
 
-  const login = (newToken: string, userData?: any) => {
+  const login = (newToken: string, userData?: User) => {
     setToken(newToken);
     setUser(userData || null);
     localStorage.setItem('token', newToken);

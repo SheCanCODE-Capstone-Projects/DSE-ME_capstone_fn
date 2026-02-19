@@ -7,19 +7,18 @@ interface PartnersChartProps {
 export default function PartnersChart({ partners }: PartnersChartProps) {
   const activePartners = partners.filter(p => p.status === 'Active');
   
-  // Group partners by province
+
   const partnersByProvince = partners.reduce((acc, partner) => {
     acc[partner.province] = (acc[partner.province] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  // Participants by province
   const participantsByProvince = partners.reduce((acc, partner) => {
     acc[partner.province] = (acc[partner.province] || 0) + partner.totalParticipants;
     return acc;
   }, {} as Record<string, number>);
 
-  // Employment performance by partner
+ 
   const topPerformers = activePartners
     .sort((a, b) => b.employmentRate - a.employmentRate)
     .slice(0, 5);
@@ -40,7 +39,7 @@ export default function PartnersChart({ partners }: PartnersChartProps) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      {/* Geographic Distribution */}
+     
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Geographic Distribution</h3>
         <div className="space-y-4">
@@ -71,11 +70,11 @@ export default function PartnersChart({ partners }: PartnersChartProps) {
         </div>
       </div>
 
-      {/* Employment Performance */}
+   
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Employment Performance</h3>
         <div className="space-y-4">
-          {topPerformers.map((partner, index) => {
+          {topPerformers.map((partner) => {
             return (
               <div key={partner.id} className="space-y-2">
                 <div className="flex justify-between items-center">
@@ -105,11 +104,11 @@ export default function PartnersChart({ partners }: PartnersChartProps) {
         </div>
       </div>
 
-      {/* Risk Indicators */}
+  
       <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Risk Indicators</h3>
         <div className="space-y-4">
-          {/* High Dropout Rate Partners */}
+         
           <div className="p-4 bg-red-50 rounded-xl border border-red-100">
             <h4 className="text-sm font-semibold text-red-800 mb-2">High Dropout Risk</h4>
             {activePartners
@@ -127,7 +126,7 @@ export default function PartnersChart({ partners }: PartnersChartProps) {
             )}
           </div>
 
-          {/* Low Employment Rate Partners */}
+         
           <div className="p-4 bg-yellow-50 rounded-xl border border-yellow-100">
             <h4 className="text-sm font-semibold text-yellow-800 mb-2">Low Employment Rate</h4>
             {activePartners
@@ -145,7 +144,6 @@ export default function PartnersChart({ partners }: PartnersChartProps) {
             )}
           </div>
 
-          {/* Disability Inclusion */}
           <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
             <h4 className="text-sm font-semibold text-purple-800 mb-2">Disability Inclusion</h4>
             {partners

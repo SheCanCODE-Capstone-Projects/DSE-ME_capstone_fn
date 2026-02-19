@@ -107,8 +107,8 @@ export default function FacilitatorsPage() {
       await approveRequest.mutateAsync(requestId);
       refetch();
       toast.success('Access request approved successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to approve request');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to approve request');
     }
   };
 
@@ -117,8 +117,8 @@ export default function FacilitatorsPage() {
       await rejectRequest.mutateAsync(requestId);
       refetch();
       toast.success('Access request rejected successfully!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to reject request');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to reject request');
     }
   };
 

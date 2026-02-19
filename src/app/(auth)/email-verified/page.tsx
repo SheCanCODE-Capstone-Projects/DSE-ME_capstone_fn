@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PrimaryButton from '@/components/PrimaryButton';
 import { CheckCircle, XCircle, Loader } from 'lucide-react';
 import { authApi } from '@/lib/authApi';
 import toast from 'react-hot-toast';
 
-function EmailVerifiedPage() {
+function EmailVerifiedContent() {
   const [status, setStatus] = useState<'verifying' | 'success' | 'error'>('verifying');
   const [message, setMessage] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
@@ -41,23 +41,22 @@ function EmailVerifiedPage() {
     setMessage('Waking up server... This may take up to 2 minutes on first request.');
 
     try {
-      console.log('Starting verification with token:', token?.substring(0, 10) + '...');
       const result = await authApi.verifyEmail(token);
-      console.log('Verification result:', result, typeof result);
+     
 
       setStatus('success');
       const successMessage = typeof result === 'string' ? result : 'Email verified successfully!';
       setMessage(successMessage);
       toast.success(successMessage);
     } catch (error: unknown) {
-      console.error('Verification error:', error);
+     
       setStatus('error');
 
       let errorMessage = 'Email verification failed';
       if (error instanceof Error) {
         errorMessage = error.message;
       } else if (typeof error === 'object' && error !== null && 'message' in error) {
-        errorMessage = String((error as any).message);
+        errorMessage = String((error as { message: unknown }).message);
       }
 
       setMessage(errorMessage);
@@ -137,4 +136,10 @@ function EmailVerifiedPage() {
   );
 }
 
-export default EmailVerifiedPage;
+export default function EmailVerifiedPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EmailVerifiedContent />
+    </Suspense>
+  );
+}

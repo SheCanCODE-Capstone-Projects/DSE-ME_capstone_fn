@@ -1,6 +1,5 @@
-"use client";
 import React from "react";
-import { Pencil, Trash, BookOpen, Calendar, Award, FileText, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { Pencil, Trash, BookOpen, Calendar, Award, CheckCircle, Clock, AlertCircle } from "lucide-react";
 
 interface AssignmentCardProps {
   title: string;

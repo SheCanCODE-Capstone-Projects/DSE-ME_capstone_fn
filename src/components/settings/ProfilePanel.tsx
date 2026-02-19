@@ -10,7 +10,7 @@ function Input({
   onChange,
 }: {
   label: string;
-  icon: any;
+  icon: React.ComponentType<{ size?: number }>;
   value: string;
   onChange: (v: string) => void;
 }) {

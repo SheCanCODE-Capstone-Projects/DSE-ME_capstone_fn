@@ -39,7 +39,7 @@ function LoginPage() {
         const userData = {
           id: response.user?.id || '',
           email: response.user?.email || formData.email,
-          role: userRole,
+          role: userRole || 'UNASSIGNED',
           hasAccess: true
         };
         

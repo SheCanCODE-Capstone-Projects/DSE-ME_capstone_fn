@@ -1,12 +1,11 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import PrimaryButton from '@/components/PrimaryButton';
-import { Mail, CheckCircle, XCircle } from 'lucide-react';
+import { Mail, CheckCircle } from 'lucide-react';
 import { authApi } from '@/lib/authApi';
 import toast from 'react-hot-toast';
 
-function EmailVerificationPage() {
+function EmailVerificationContent() {
   const [isResending, setIsResending] = useState(false);
   const [email, setEmail] = useState('');
   const [verificationStatus, setVerificationStatus] = useState<'pending' | 'success' | 'error'>('pending');
@@ -39,9 +38,9 @@ function EmailVerificationPage() {
       setTimeout(() => {
         router.push('/login');
       }, 2000);
-    } catch (error: any) {
+    } catch (error) {
       setVerificationStatus('error');
-      toast.error(error.message || 'Email verification failed');
+      toast.error((error as Error).message || 'Email verification failed');
     }
   };
 
@@ -52,8 +51,8 @@ function EmailVerificationPage() {
     try {
       const message = await authApi.resendVerification(email);
       toast.success(message || 'Verification email sent!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to resend verification email');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to resend verification email');
     } finally {
       setIsResending(false);
     }
@@ -120,4 +119,10 @@ function EmailVerificationPage() {
   );
 }
 
-export default EmailVerificationPage;
+export default function EmailVerificationPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EmailVerificationContent />
+    </Suspense>
+  );
+}

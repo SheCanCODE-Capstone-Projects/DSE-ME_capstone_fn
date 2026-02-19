@@ -1,8 +1,8 @@
 "use client";
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function VerifyRedirect() {
+function VerifyRedirectContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -16,4 +16,12 @@ export default function VerifyRedirect() {
   }, [router, searchParams]);
 
   return null;
+}
+
+export default function VerifyRedirect() {
+  return (
+    <Suspense fallback={null}>
+      <VerifyRedirectContent />
+    </Suspense>
+  );
 }
