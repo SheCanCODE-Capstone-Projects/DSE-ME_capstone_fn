@@ -22,9 +22,20 @@ export const authApi = {
   },
 
   verifyEmail: async (token: string): Promise<string> => {
-    return apiFetch<string>(`/auth/verify?token=${token}`, {
-      method: 'GET',
-    });
+    const encodedToken = encodeURIComponent(token);
+    try {
+      const response = await apiFetch<any>(`/auth/verify?token=${encodedToken}`, {
+        method: 'GET',
+      });
+      // Handle both string and object responses
+      if (typeof response === 'string') {
+        return response;
+      }
+      return response?.message || 'Email verified successfully!';
+    } catch (error) {
+      console.error('Verification API error:', error);
+      throw error;
+    }
   },
 
   resendVerification: async (email: string): Promise<string> => {
@@ -55,7 +66,7 @@ export const authApi = {
   },
 
   getCurrentUser: async (): Promise<AuthResponse['user']> => {
-    return apiFetch<AuthResponse['user']>('/auth/me', {
+    return apiFetch<AuthResponse['user']>('/users/profile', {
       method: 'GET',
     });
   },
@@ -66,8 +77,8 @@ export const authApi = {
     });
   },
 
-  getPendingAccessRequests: async (): Promise<RoleRequestResponse[]> => {
-    return apiFetch<RoleRequestResponse[]>('/access-requests/pending', {
+  getPendingAccessRequests: async (page = 0, size = 20): Promise<{ content: RoleRequestResponse[]; totalPages: number; totalElements: number; currentPage: number }> => {
+    return apiFetch<{ content: RoleRequestResponse[]; totalPages: number; totalElements: number; currentPage: number }>(`/access-requests/pending?page=${page}&size=${size}`, {
       method: 'GET',
     });
   },
@@ -81,14 +92,6 @@ export const authApi = {
   rejectAccessRequest: async (requestId: string): Promise<RoleRequestResponse> => {
     return apiFetch<RoleRequestResponse>(`/access-requests/${requestId}/reject`, {
       method: 'POST',
-    });
-  },
-
-  // Admin endpoint to promote user to ME_OFFICER (for testing)
-  promoteToME: async (email: string): Promise<string> => {
-    return apiFetch<string>('/admin/promote-me', {
-      method: 'POST',
-      data: { email },
     });
   },
 };

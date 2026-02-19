@@ -17,6 +17,8 @@ export default function SignupPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    firstName: '',
+    lastName: '',
   });
 
   const signupMutation = useSignup();
@@ -45,12 +47,19 @@ export default function SignupPage() {
       toast.success(message || 'Account created! Please verify your email.');
       router.push('/email-verification');
     } catch (err: any) {
-      toast.error(err.message || 'Signup failed');
+      // If email sending fails, inform user but allow them to proceed
+      if (err.message?.includes('Failed to send verification email')) {
+        toast.error('Email service unavailable. Please contact support or try manual verification.');
+        localStorage.setItem('pendingVerificationEmail', formData.email);
+        router.push('/email-verification');
+      } else {
+        toast.error(err.message || 'Signup failed');
+      }
     }
   };
 
   const isFormValid =
-    formData.email && formData.password && formData.confirmPassword;
+    formData.email && formData.password && formData.confirmPassword && formData.firstName && formData.lastName;
 
   return (
     <div className="max-w-md mx-auto p-6 space-y-6">
@@ -66,6 +75,34 @@ export default function SignupPage() {
 
       
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              First Name
+            </label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B609D]"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Last Name
+            </label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0B609D]"
+              required
+            />
+          </div>
+        </div>
         <Email
           name="email"
           value={formData.email}

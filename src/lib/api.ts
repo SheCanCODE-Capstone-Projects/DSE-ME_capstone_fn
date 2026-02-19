@@ -25,7 +25,11 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response) {
-      console.error('API Error:', error.response.status, error.response.data);
+      console.error('API Error:', {
+        status: error.response.status,
+        url: error.config?.url,
+        data: error.response.data
+      });
     } else {
       console.error('Network Error:', error.message, error.code);
     }
@@ -62,6 +66,7 @@ export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): P
       lastError = error;
       
       if (axios.isAxiosError(error)) {
+        // Only retry on timeout, not on 4xx/5xx errors
         if (error.code === 'ECONNABORTED' && attempt < maxRetries) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           continue;
@@ -71,20 +76,21 @@ export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): P
           throw new Error('Cannot connect to backend. Please ensure your backend is running.');
         }
         
-        if (error.response?.status === 400) {
-          throw new Error('Invalid or expired verification token. Please request a new verification email.');
+        // Don't retry on HTTP errors (400, 500, etc.)
+        const responseData = error.response?.data;
+        let errorMessage = 'Request failed';
+        
+        if (typeof responseData === 'string') {
+          errorMessage = responseData;
+        } else if (responseData?.error) {
+          errorMessage = responseData.error;
+        } else if (responseData?.message) {
+          errorMessage = responseData.message;
+        } else if (error.message) {
+          errorMessage = error.message;
         }
         
-        if (error.response?.status === 500) {
-          throw new Error('Server error during verification. Please try again or contact support.');
-        }
-        
-        const errorMessage = error.response?.data?.error || 
-                            error.response?.data?.message || 
-                            error.response?.data || 
-                            error.message;
-        
-        throw new Error(typeof errorMessage === 'string' ? errorMessage : 'Request failed');
+        throw new Error(errorMessage);
       }
       throw error;
     }

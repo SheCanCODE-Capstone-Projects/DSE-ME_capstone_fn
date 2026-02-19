@@ -7,6 +7,7 @@ import AssignCohortsModal from "@/components/ME/Facilitator/AssignCohortsModal";
 import AssignCoursesModal from "@/components/ME/Facilitator/AssignCoursesModal";
 import AccessRequestsModal from "@/components/ME/Facilitator/AccessRequestsModal";
 import { Facilitator } from "@/types/facilitator";
+import { RoleRequestResponse } from "@/types/auth";
 import { useGetPendingAccessRequests, useApproveAccessRequest, useRejectAccessRequest } from "@/hooks/auth/useAccessRequests";
 import toast from "react-hot-toast";
 
@@ -37,9 +38,12 @@ export default function FacilitatorsPage() {
   const [courseModalOpen, setCourseModalOpen] = useState(false);
   const [accessRequestsOpen, setAccessRequestsOpen] = useState(false);
 
-  const { data: accessRequests = [], refetch } = useGetPendingAccessRequests();
+  const { data: accessRequestsData } = useGetPendingAccessRequests() as { data?: { content: RoleRequestResponse[] } };
+  const { refetch } = useGetPendingAccessRequests();
   const approveRequest = useApproveAccessRequest();
   const rejectRequest = useRejectAccessRequest();
+
+  const accessRequests: RoleRequestResponse[] = accessRequestsData?.content || [];
 
   const [search, setSearch] = useState("");
   const [regionFilter, setRegionFilter] = useState("all");

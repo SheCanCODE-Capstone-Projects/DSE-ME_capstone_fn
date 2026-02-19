@@ -83,7 +83,7 @@ function EmailVerificationPage() {
         </div>
         <h2 className="text-2xl font-bold text-center text-black">Check Your Email</h2>
         <p className="text-gray-600 text-center mt-2">
-          We've sent a verification link to <br />
+          {`We've sent a verification link to`} <br />
           <span className="font-medium text-[#0B609D]">{email}</span>
         </p>
       </div>
@@ -93,7 +93,7 @@ function EmailVerificationPage() {
         <ol className="text-sm text-blue-700 space-y-1">
           <li>1. Check your email inbox</li>
           <li>2. Click the verification link</li>
-          <li>3. You'll be taken to the verification page</li>
+          <li>3. {`You'll`} be taken to the verification page</li>
           <li>4. Then you can login to your account</li>
         </ol>
       </div>

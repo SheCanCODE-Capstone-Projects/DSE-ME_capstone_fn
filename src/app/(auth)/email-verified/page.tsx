@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PrimaryButton from '@/components/PrimaryButton';
 import { CheckCircle, XCircle, Loader } from 'lucide-react';
@@ -13,36 +14,52 @@ function EmailVerifiedPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // ✅ Ref to prevent double API calls in dev mode (React Strict Mode / Fast Refresh)
+  const hasVerified = useRef(false);
+
   useEffect(() => {
     const token = searchParams.get('token');
-    
+
     if (!token) {
       setStatus('error');
       setMessage('Invalid verification link. No token provided.');
       return;
     }
 
-    if (!isVerifying) {
+    // Only run verification once
+    if (!hasVerified.current) {
+      hasVerified.current = true;
       handleEmailVerification(token);
     }
-  }, [searchParams, isVerifying]);
+  }, [searchParams]);
 
   const handleEmailVerification = async (token: string) => {
     if (isVerifying) return;
-    
+
     setIsVerifying(true);
     setStatus('verifying');
     setMessage('Waking up server... This may take up to 2 minutes on first request.');
-    
+
     try {
+      console.log('Starting verification with token:', token?.substring(0, 10) + '...');
       const result = await authApi.verifyEmail(token);
+      console.log('Verification result:', result, typeof result);
+
       setStatus('success');
       const successMessage = typeof result === 'string' ? result : 'Email verified successfully!';
       setMessage(successMessage);
-      toast.success('Email verified successfully!');
+      toast.success(successMessage);
     } catch (error: unknown) {
+      console.error('Verification error:', error);
       setStatus('error');
-      const errorMessage = error instanceof Error ? error.message : 'Email verification failed';
+
+      let errorMessage = 'Email verification failed';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        errorMessage = String((error as any).message);
+      }
+
       setMessage(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -54,6 +71,8 @@ function EmailVerifiedPage() {
     router.push('/login');
   };
 
+  // -------------------- RENDER --------------------
+
   if (status === 'verifying') {
     return (
       <div className="space-y-6 text-center">
@@ -62,9 +81,7 @@ function EmailVerifiedPage() {
             <Loader className="w-6 h-6 text-white animate-spin" />
           </div>
           <h2 className="text-2xl font-bold text-blue-600">Verifying Email...</h2>
-          <p className="text-gray-600 mt-2">
-            Please wait while we verify your email address.
-          </p>
+          <p className="text-gray-600 mt-2">{message}</p>
         </div>
       </div>
     );
@@ -78,28 +95,24 @@ function EmailVerifiedPage() {
             <CheckCircle className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-green-600">Email Verified!</h2>
-          <p className="text-gray-600 mt-2">
-            {message}
-          </p>
+          <p className="text-gray-600 mt-2">{message}</p>
         </div>
-        
+
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <h3 className="font-medium text-green-800 mb-2">What's Next?</h3>
+          <h3 className="font-medium text-green-800 mb-2">{"What's"} Next?</h3>
           <p className="text-sm text-green-700">
             Your email has been successfully verified. You can now log in to your account.
           </p>
         </div>
-        
+
         <div className="flex justify-center">
-          <PrimaryButton
-            label="Go to Login"
-            onClick={handleGoToLogin}
-          />
+          <PrimaryButton label="Go to Login" onClick={handleGoToLogin} />
         </div>
       </div>
     );
   }
 
+  // Error / Verification Failed
   return (
     <div className="space-y-6 text-center">
       <div className="flex flex-col items-center mb-6">
@@ -107,26 +120,21 @@ function EmailVerifiedPage() {
           <XCircle className="w-6 h-6 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-red-600">Verification Failed</h2>
-        <p className="text-gray-600 mt-2">
-          {message}
-        </p>
+        <p className="text-gray-600 mt-2">{message}</p>
       </div>
-      
+
       <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <h3 className="font-medium text-red-800 mb-2">What can you do?</h3>
+        <h3 className="font-medium text-red-800 mb-2">What can you do{"?"}</h3>
         <ul className="text-sm text-red-700 space-y-1">
           <li>• The verification link may have expired or already been used</li>
           <li>• Request a new verification email from the login page</li>
-          <li>• Make sure you're using the latest verification link</li>
+          <li>• Make sure {`you're`} using the latest verification link</li>
           <li>• Contact support if the problem persists</li>
         </ul>
       </div>
-      
+
       <div className="flex justify-center space-x-4">
-        <PrimaryButton
-          label="Go to Login"
-          onClick={handleGoToLogin}
-        />
+        <PrimaryButton label="Go to Login" onClick={handleGoToLogin} />
       </div>
     </div>
   );

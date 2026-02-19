@@ -34,25 +34,31 @@ function LoginPage() {
       const response = await loginMutation.mutateAsync(formData);
       
       if (response.token) {
-        login(response.token, response.user);
+        // Backend returns role at root level
+        const userRole = response.role || response.user?.role;
+        const userData = {
+          id: response.user?.id || '',
+          email: response.user?.email || formData.email,
+          role: userRole,
+          hasAccess: true
+        };
+        
+        login(response.token, userData);
         localStorage.setItem('userEmail', formData.email);
         
-        const user = response.user;
-      
-        
-        if (!user?.role || user.role === 'UNASSIGNED') {
+        if (!userRole || userRole === 'UNASSIGNED') {
           toast('Please request access to continue', { icon: '⏳' });
           router.push('/request-access/start');
-        } else if (user.role === 'ME_OFFICER') {
+        } else if (userRole === 'ME_OFFICER') {
           toast.success('Welcome back, ME Officer!');
           router.push('/ME');
-        } else if (user.role === 'FACILITATOR') {
+        } else if (userRole === 'FACILITATOR') {
           toast.success('Welcome back, Facilitator!');
           router.push('/overview');
-        } else if (user.role === 'DONOR') {
+        } else if (userRole === 'DONOR') {
           toast.success('Welcome back, Donor!');
           router.push('/donor');
-        } else if (user.role === 'ADMIN') {
+        } else if (userRole === 'ADMIN') {
           toast.success('Welcome back, Admin!');
           router.push('/ME');
         } else {
