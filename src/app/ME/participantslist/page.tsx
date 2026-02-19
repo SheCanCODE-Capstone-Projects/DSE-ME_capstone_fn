@@ -11,8 +11,11 @@ import StatsCards from '@/components/ME/ParticipantsList/StatsCards';
 import ParticipantsTable from '@/components/ME/ParticipantsList/ParticipantsTable';
 import FilterBar from '@/components/ME/ParticipantsList/FilterBar';
 import EmploymentStats from '@/components/ME/ParticipantsList/EmploymentStats';
+import FacilitatorDashboard from '@/components/ME/ParticipantsList/FacilitatorDashboard';
 import { Participant } from '@/types/participant';
 import { Cohort } from '@/types/cohort';
+import { Facilitator } from '@/types/facilitator';
+import { useGetFacilitators, useGetFacilitatorStats } from '@/hooks/facilitators/useFacilitators';
 
 const initialCohorts: Cohort[] = [
   { id: "1", name: "A-001", description: "First cohort of 2024", startDate: "2024-01-15", endDate: "2024-06-15", participantCount: 2, isActive: true },
@@ -33,6 +36,7 @@ export default function ParticipantsPage() {
   const [cohorts, setCohorts] = useState<Cohort[]>(initialCohorts);
   const [activeTab, setActiveTab] = useState<'all' | 'cohorts' | 'employment'>('all');
   const [selectedCohort, setSelectedCohort] = useState<string>('all');
+  const [selectedFacilitatorId, setSelectedFacilitatorId] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [employmentFilter, setEmploymentFilter] = useState<string>('all');
@@ -45,6 +49,13 @@ export default function ParticipantsPage() {
   const [cohortModalOpen, setCohortModalOpen] = useState(false);
   const [employmentModalOpen, setEmploymentModalOpen] = useState(false);
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
+
+  // Fetch facilitators and stats
+  const { data: facilitatorsData, isLoading: facilitatorsLoading } = useGetFacilitators();
+  const facilitators: Facilitator[] = facilitatorsData?.content || [];
+  const selectedFacilitator = facilitators.find(f => f.id === selectedFacilitatorId) || null;
+  
+  const { data: facilitatorStats, isLoading: statsLoading } = useGetFacilitatorStats(selectedFacilitatorId);
 
   const handleAddParticipant = (newParticipant: Omit<Participant, "id">) => {
     const participant: Participant = {
@@ -207,6 +218,39 @@ export default function ParticipantsPage() {
 
   return (
     <div>
+      {/* Facilitator Selector */}
+      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              View by Facilitator
+            </label>
+            <select
+              value={selectedFacilitatorId}
+              onChange={(e) => setSelectedFacilitatorId(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+              disabled={facilitatorsLoading}
+            >
+              <option value="">All Facilitators</option>
+              {facilitators.map((facilitator) => (
+                <option key={facilitator.id} value={facilitator.id}>
+                  {facilitator.name} ({facilitator.participantsCount} participant{facilitator.participantsCount !== 1 ? 's' : ''})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Facilitator Dashboard */}
+      {selectedFacilitatorId && (
+        <FacilitatorDashboard
+          facilitator={selectedFacilitator}
+          stats={facilitatorStats}
+          isLoading={statsLoading}
+        />
+      )}
+
       <div className="bg-white rounded-lg shadow-sm p-1 mb-6">
         <div className="flex space-x-1">
           <button
