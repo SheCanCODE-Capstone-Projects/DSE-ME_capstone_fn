@@ -6,8 +6,7 @@ import Footer from "@/components/Footer";
 import SidebarME from "@/components/SidebarME";
 import NavbarME from "@/components/NavbarME";
 import { AuthProvider } from "@/context/AuthContext";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
+
 import { useRouteProtection } from "@/hooks/useRouteProtection";
 
 function MEContent({ children }: { children: React.ReactNode }) {
@@ -56,10 +55,8 @@ export default function MELayout({
   children: React.ReactNode;
 }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <MEContent>{children}</MEContent>
-      </AuthProvider>
-    </QueryClientProvider>
+    <AuthProvider>
+      <MEContent>{children}</MEContent>
+    </AuthProvider>
   );
 }

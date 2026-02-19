@@ -36,8 +36,14 @@ function LoginPage() {
       if (response.token) {
         // Backend returns role at root level
         const userRole = response.role || response.user?.role;
+        
+        // Validate user.id exists before storing
+        if (!response.user?.id) {
+          throw new Error('Login failed - user ID not provided by server');
+        }
+        
         const userData = {
-          id: response.user?.id || '',
+          id: response.user.id,
           email: response.user?.email || formData.email,
           role: userRole || 'UNASSIGNED',
           hasAccess: !!userRole && userRole !== 'UNASSIGNED'

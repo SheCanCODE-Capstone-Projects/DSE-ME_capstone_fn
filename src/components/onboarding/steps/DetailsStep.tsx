@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { MessageSquare, ArrowLeft, ArrowRight } from "lucide-react";
+import type { UserRole } from "@/types/profile";
 
 interface DetailsStepProps {
-  role: string;
+  role: UserRole;
   onNext: (reason: string) => void;
   onBack: () => void;
   isLoading?: boolean;
