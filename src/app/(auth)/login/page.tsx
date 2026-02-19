@@ -40,7 +40,7 @@ function LoginPage() {
           id: response.user?.id || '',
           email: response.user?.email || formData.email,
           role: userRole || 'UNASSIGNED',
-          hasAccess: true
+          hasAccess: !!userRole && userRole !== 'UNASSIGNED'
         };
         
         login(response.token, userData);
@@ -73,6 +73,8 @@ function LoginPage() {
       
       if (errorMessage.includes('verify your email') || errorMessage.includes('not verified')) {
         toast.error('Please verify your email first');
+        localStorage.setItem('pendingVerificationEmail', formData.email);
+        router.push('/email-verification');
       } else {
         toast.error(errorMessage);
       }

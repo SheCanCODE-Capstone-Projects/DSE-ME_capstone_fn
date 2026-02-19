@@ -10,9 +10,8 @@ import { useRouteProtection } from "@/hooks/useRouteProtection";
 import { AuthProvider } from "@/context/AuthContext";
 import { ProfileProvider } from "@/context/profileContext";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const queryClient = new QueryClient();
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
 
 function FacilitatorContent({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);

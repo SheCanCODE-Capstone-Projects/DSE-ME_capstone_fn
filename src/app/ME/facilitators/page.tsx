@@ -38,8 +38,7 @@ export default function FacilitatorsPage() {
   const [courseModalOpen, setCourseModalOpen] = useState(false);
   const [accessRequestsOpen, setAccessRequestsOpen] = useState(false);
 
-  const { data: accessRequestsData } = useGetPendingAccessRequests() as { data?: { content: RoleRequestResponse[] } };
-  const { refetch } = useGetPendingAccessRequests();
+  const { data: accessRequestsData, refetch } = useGetPendingAccessRequests() as { data?: { content: RoleRequestResponse[] }; refetch: () => void };
   const approveRequest = useApproveAccessRequest();
   const rejectRequest = useRejectAccessRequest();
 
@@ -50,7 +49,7 @@ export default function FacilitatorsPage() {
   const [activeFilter, setActiveFilter] = useState<"all" | "active" | "inactive">("all");
 
   useEffect(() => {
-    const interval = setInterval(() => refetch(), 30000); 
+    const interval = setInterval(() => refetch(), 30000);
     return () => clearInterval(interval);
   }, [refetch]);
 

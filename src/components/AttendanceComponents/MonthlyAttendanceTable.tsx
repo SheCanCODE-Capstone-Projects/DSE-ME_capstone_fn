@@ -113,8 +113,8 @@ export default function MonthlyAttendanceTable({
     try {
       await sendWarningEmail(student);
       alert(`Warning email sent to ${student.name}`);
-    } finally {
-      
+    } catch (error) {
+      alert('Failed to send email');
     }
   };
 

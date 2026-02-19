@@ -4,10 +4,15 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 export function useRouteProtection(requiredRole?: string | string[]) {
-  const { user, token } = useAuth();
+  const { user, token, isLoading } = useAuth();
   const router = useRouter();
 
+  const isAuthorized = !!token && !!user && (!requiredRole || 
+    (Array.isArray(requiredRole) ? requiredRole.includes(user.role) : user.role === requiredRole));
+
   useEffect(() => {
+    if (isLoading) return;
+    
     if (!token) {
       router.push('/login');
       return;
@@ -24,7 +29,7 @@ export function useRouteProtection(requiredRole?: string | string[]) {
         router.push('/unauthorized');
       }
     }
-  }, [user, token, requiredRole, router]);
+  }, [user, token, requiredRole, router, isLoading]);
 
-  return { user, token, isAuthorized: !!token && !!user };
+  return { user, token, isAuthorized };
 }

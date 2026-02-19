@@ -33,7 +33,7 @@ export interface RoleRequestData {
 }
 
 export interface RoleRequestResponse {
-  id?: string;
+  id: string;
   userId?: string;
   userEmail?: string;
   requestedRole: 'FACILITATOR' | 'ME_OFFICER' | 'DONOR' | 'ADMIN';

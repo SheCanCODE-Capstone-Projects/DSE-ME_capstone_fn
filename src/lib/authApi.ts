@@ -84,12 +84,18 @@ export const authApi = {
   },
 
   approveAccessRequest: async (requestId: string): Promise<RoleRequestResponse> => {
+    if (!requestId || requestId.trim() === '') {
+      throw new Error('Invalid request ID');
+    }
     return apiFetch<RoleRequestResponse>(`/access-requests/${requestId}/approve`, {
       method: 'POST',
     });
   },
 
   rejectAccessRequest: async (requestId: string): Promise<RoleRequestResponse> => {
+    if (!requestId || requestId.trim() === '') {
+      throw new Error('Invalid request ID');
+    }
     return apiFetch<RoleRequestResponse>(`/access-requests/${requestId}/reject`, {
       method: 'POST',
     });

@@ -27,8 +27,8 @@ export default function AccessRequestsModal({
           <p className="text-gray-500 text-center py-8">No pending access requests</p>
         ) : (
           <div className="space-y-4">
-            {requests.map((request) => (
-              <div key={request.id || ''} className="border border-gray-200 rounded-lg p-4">
+            {requests.map((request, index) => (
+              <div key={request.id || `request-${index}`} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                     <User size={20} className="text-gray-600" />
@@ -45,16 +45,16 @@ export default function AccessRequestsModal({
                 
                 <div className="flex gap-2 mt-3">
                   <button
-                    onClick={() => request.id && onApprove(request.id)}
-                    disabled={loading || !request.id}
+                    onClick={() => onApprove(request.id)}
+                    disabled={loading}
                     className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 transition text-sm disabled:opacity-50"
                   >
                     <Check size={14} />
                     Approve
                   </button>
                   <button
-                    onClick={() => request.id && onReject(request.id)}
-                    disabled={loading || !request.id}
+                    onClick={() => onReject(request.id)}
+                    disabled={loading}
                     className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition text-sm disabled:opacity-50"
                   >
                     <X size={14} />
