@@ -16,7 +16,7 @@ interface Course {
 interface CreateCourseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (course: Course) => void;
+  onCreate: (course: CreateCoursePayload) => void;
 }
 
 export default function CreateCourseModal({
