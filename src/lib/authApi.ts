@@ -71,6 +71,13 @@ export const authApi = {
     });
   },
 
+  updateProfile: async (data: { firstName: string; lastName?: string }): Promise<UserProfile> => {
+    return apiFetch<UserProfile>('/users/profile', {
+      method: 'PATCH',
+      data,
+    });
+  },
+
   getAllAccessRequests: async (page = 0, size = 20, sort = 'requestedAt,desc'): Promise<{ content: RoleRequestResponse[]; totalPages: number; totalElements: number; currentPage: number }> => {
     return apiFetch<{ content: RoleRequestResponse[]; totalPages: number; totalElements: number; currentPage: number }>(`/access-requests?page=${page}&size=${size}&sort=${sort}`, {
       method: 'GET',

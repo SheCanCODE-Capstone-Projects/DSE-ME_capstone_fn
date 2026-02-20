@@ -96,9 +96,7 @@ export default function PartnersPage() {
     fetchPartners();
   }, []);
 
-  const handleAddPartner = (newPartner: Partner): void => {
-    // Persist partner to backend as an organization + main center,
-    // then refresh the list from the backend.
+  const handleAddPartner = (newPartner: Partner & { branches?: Array<{ name: string; province: string; district: string; address?: string }> }): void => {
     (async () => {
       try {
         const created = await authApi.createPartner({
@@ -108,7 +106,7 @@ export default function PartnersPage() {
           province: newPartner.province,
         });
 
-        // Create a main center based on the primary location if district is provided
+        // Create main center from primary location if district is provided
         if (newPartner.district) {
           await authApi.createCenter(created.partnerId, {
             centerName: `${newPartner.name} Main`,
@@ -116,6 +114,19 @@ export default function PartnersPage() {
             country: created.country,
             region: created.region,
           });
+        }
+
+        // Create centers for each branch
+        const branches = newPartner.branches || [];
+        for (const branch of branches) {
+          if (branch.name?.trim() && branch.district?.trim()) {
+            await authApi.createCenter(created.partnerId, {
+              centerName: branch.name.trim(),
+              location: `${branch.province || "Kigali City"} - ${branch.district.trim()}`,
+              country: created.country,
+              region: created.region,
+            });
+          }
         }
 
         const apiPartners = await authApi.getPartners();

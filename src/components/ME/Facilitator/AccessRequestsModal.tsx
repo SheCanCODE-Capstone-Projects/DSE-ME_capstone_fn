@@ -39,8 +39,13 @@ export default function AccessRequestsModal({
                   </div>
                   
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900">{request.userEmail}</h4>
-                    <p className="text-sm text-gray-600">Requested Role: <span className="font-semibold capitalize">{request.requestedRole}</span></p>
+                    <p className="font-semibold text-gray-900 text-base">
+                      {request.requesterName || "Name not provided"}
+                    </p>
+                    <p className="text-sm text-gray-700">
+                      {request.requesterEmail || request.userEmail || "—"}
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">Requested Role: <span className="font-semibold capitalize">{request.requestedRole?.replace(/_/g, " ")}</span></p>
                     {request.organizationName && (
                       <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
                         <Building2 size={14} className="text-gray-400" />

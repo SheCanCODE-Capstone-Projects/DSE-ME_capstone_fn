@@ -45,6 +45,8 @@ export interface RoleRequestResponse {
   id: string;
   userId?: string;
   userEmail?: string;
+  requesterEmail?: string;
+  requesterName?: string;
   requestedRole: 'FACILITATOR' | 'ME_OFFICER' | 'DONOR';
   status: 'pending' | 'approved' | 'rejected';
   reason?: string;

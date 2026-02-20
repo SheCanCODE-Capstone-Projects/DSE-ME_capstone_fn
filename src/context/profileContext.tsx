@@ -33,15 +33,27 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
   useEffect(() => {
     const stored = localStorage.getItem("profileData");
     if (stored) {
-      setProfile(JSON.parse(stored));
+      try {
+        const parsed = JSON.parse(stored) as Partial<Profile>;
+        setProfile((prev) => ({
+          ...prev,
+          phone: parsed.phone ?? prev.phone,
+          location: parsed.location ?? prev.location,
+          bio: parsed.bio ?? prev.bio,
+          avatar: parsed.avatar ?? prev.avatar,
+        }));
+      } catch {
+        // Ignore invalid stored data
+      }
     }
   }, []);
 
   useEffect(() => {
     if (!user) return;
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || "";
     setProfile((prev) => ({
       ...prev,
-      fullName: prev.fullName || [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email,
+      fullName,
       email: user.email,
     }));
   }, [user]);
