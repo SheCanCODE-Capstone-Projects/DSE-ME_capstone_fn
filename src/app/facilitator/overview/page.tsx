@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Users, UserPlus } from 'lucide-react';
 import StatCard from '@/components/ui/statuscard';
@@ -5,15 +7,23 @@ import AttendanceChart from '@/components/overview/AttendanceChart';
 import PerformanceChart from '@/components/overview/Perfomance';
 import AlertsPanel from '@/components/overview/Alertspanel';
 import QuickActivities from '@/components/overview/QuickActivities';
+import { useAuth } from '@/context/AuthContext';
+import { getPersonalizedGreeting } from '@/lib/userUtils';
 
 function FacilitatorDashboard () {
+  const { user } = useAuth();
+
   return (
     <div className="text-gray-800 font-sans relative">
-
-      <main className=" min-h-screen">
-      
-
+      <main className="min-h-screen">
         <div className="space-y-6">
+          {/* Welcome Header */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">
+              {getPersonalizedGreeting(user)}
+            </h1>
+            <p className="text-gray-600 mt-1">Here's what's happening with your participants today.</p>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard 

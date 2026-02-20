@@ -1,23 +1,72 @@
-import { useState } from "react";
-import { MessageSquare, ArrowLeft, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MessageSquare, ArrowLeft, ArrowRight, Building2, MapPin } from "lucide-react";
 import type { UserRole } from "@/types/profile";
+import { authApi } from "@/lib/authApi";
+import { Partner, Center } from "@/types/auth";
 
 interface DetailsStepProps {
   role: UserRole;
-  onNext: (reason: string) => void;
+  onNext: (data: { reason: string; organizationPartnerId: string; locationCenterId: string }) => void;
   onBack: () => void;
   isLoading?: boolean;
 }
 
 export default function DetailsStep({ role, onNext, onBack, isLoading = false }: DetailsStepProps) {
   const [reason, setReason] = useState('');
+  const [organizationPartnerId, setOrganizationPartnerId] = useState('');
+  const [locationCenterId, setLocationCenterId] = useState('');
   const [focusedField, setFocusedField] = useState<string>("");
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [centers, setCenters] = useState<Center[]>([]);
+  const [filteredCenters, setFilteredCenters] = useState<Center[]>([]);
+  const [loadingPartners, setLoadingPartners] = useState(true);
+  const [loadingCenters, setLoadingCenters] = useState(false);
 
-  const isValid = reason.trim().length >= 10;
+  useEffect(() => {
+    const fetchPartners = async () => {
+      try {
+        setLoadingPartners(true);
+        const data = await authApi.getPartners();
+        setPartners(data);
+      } catch (error) {
+        console.error('Failed to fetch partners:', error);
+      } finally {
+        setLoadingPartners(false);
+      }
+    };
+    fetchPartners();
+  }, []);
+
+  useEffect(() => {
+    const fetchCenters = async () => {
+      if (!organizationPartnerId) {
+        setFilteredCenters([]);
+        setLocationCenterId('');
+        return;
+      }
+      try {
+        setLoadingCenters(true);
+        const data = await authApi.getCentersByPartner(organizationPartnerId);
+        setFilteredCenters(data);
+        // Reset location if current selection is not in filtered list
+        if (locationCenterId && !data.find(c => c.centerId === locationCenterId)) {
+          setLocationCenterId('');
+        }
+      } catch (error) {
+        console.error('Failed to fetch centers:', error);
+        setFilteredCenters([]);
+      } finally {
+        setLoadingCenters(false);
+      }
+    };
+    fetchCenters();
+  }, [organizationPartnerId]);
+
+  const isValid = reason.trim().length >= 10 && organizationPartnerId && locationCenterId;
 
   const handleSubmit = async () => {
     if (!isValid || isLoading) return;
-    onNext(reason);
+    onNext({ reason, organizationPartnerId, locationCenterId });
   };
 
   return (
@@ -29,6 +78,63 @@ export default function DetailsStep({ role, onNext, onBack, isLoading = false }:
         </p>
 
         <div className="space-y-4 mb-8">
+          {/* Organization Selection */}
+          <div className="relative">
+            <Building2 className="absolute left-4 top-4 text-gray-400" size={20} />
+            <select
+              value={organizationPartnerId}
+              onChange={(e) => setOrganizationPartnerId(e.target.value)}
+              onFocus={() => setFocusedField("organization")}
+              onBlur={() => setFocusedField("")}
+              className={`w-full pl-12 pr-4 py-4 rounded-2xl border-2 text-gray-700 bg-white outline-none appearance-none ${
+                focusedField === "organization" ? "border-sky-500 shadow-lg shadow-sky-100" : "border-gray-200"
+              }`}
+              disabled={loadingPartners}
+            >
+              <option value="">Select Organization</option>
+              {partners.map((partner) => (
+                <option key={partner.partnerId} value={partner.partnerId}>
+                  {partner.partnerName} ({partner.country})
+                </option>
+              ))}
+            </select>
+            {!organizationPartnerId && (
+              <p className="text-xs text-gray-500 mt-1 ml-12">Please select the organization you work for</p>
+            )}
+          </div>
+
+          {/* Location Selection */}
+          <div className="relative">
+            <MapPin className="absolute left-4 top-4 text-gray-400" size={20} />
+            <select
+              value={locationCenterId}
+              onChange={(e) => setLocationCenterId(e.target.value)}
+              onFocus={() => setFocusedField("location")}
+              onBlur={() => setFocusedField("")}
+              className={`w-full pl-12 pr-4 py-4 rounded-2xl border-2 text-gray-700 bg-white outline-none appearance-none ${
+                focusedField === "location" ? "border-sky-500 shadow-lg shadow-sky-100" : "border-gray-200"
+              }`}
+              disabled={!organizationPartnerId || loadingCenters}
+            >
+              <option value="">Select Location/Branch</option>
+              {filteredCenters.map((center) => (
+                <option key={center.centerId} value={center.centerId}>
+                  {center.centerName} - {center.location}
+                </option>
+              ))}
+            </select>
+            {!organizationPartnerId && (
+              <p className="text-xs text-gray-500 mt-1 ml-12">Please select an organization first</p>
+            )}
+            {organizationPartnerId && !locationCenterId && !loadingCenters && (
+              <p className="text-xs text-gray-500 mt-1 ml-12">Please select your location/branch</p>
+            )}
+            {loadingCenters && (
+              <p className="text-xs text-gray-500 mt-1 ml-12">Loading locations...</p>
+            )}
+          </div>
+
+          {/* Reason Textarea */}
           <div className="relative">
             <MessageSquare className="absolute left-4 top-4 text-gray-400" size={20} />
             <textarea

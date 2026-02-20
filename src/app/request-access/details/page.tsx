@@ -17,8 +17,7 @@ function DetailsContent() {
 
   const roleMapping: Record<string, string> = {
     "Facilitator": "FACILITATOR",
-    "ME": "ME_OFFICER", 
-    "Partner": "DONOR"
+    "ME": "ME_OFFICER",
   };
 
   const backendRole = roleMapping[rawRole];
@@ -28,14 +27,16 @@ function DetailsContent() {
     return null;
   }
 
-  const handleSubmit = async (reason: string) => {
+  const handleSubmit = async (data: { reason: string; organizationPartnerId: string; locationCenterId: string }) => {
     if (isSubmitting) return;
     
     setIsSubmitting(true);
     try {
       await requestRoleMutation.mutateAsync({
-        requestedRole: backendRole as 'FACILITATOR' | 'ME_OFFICER' | 'DONOR',
-        reason
+        requestedRole: backendRole as 'FACILITATOR' | 'ME_OFFICER',
+        reason: data.reason,
+        organizationPartnerId: data.organizationPartnerId,
+        locationCenterId: data.locationCenterId
       });
       
       toast.success('Access request submitted successfully!');
@@ -50,7 +51,7 @@ function DetailsContent() {
 
   return (
     <DetailsStep
-      role={rawRole as "Facilitator" | "ME" | "Partner"}
+      role={rawRole as "Facilitator" | "ME"}
       onNext={handleSubmit}
       onBack={() => router.back()}
       isLoading={isSubmitting}

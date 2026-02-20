@@ -1,6 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 type Profile = {
   fullName: string;
@@ -12,10 +13,10 @@ type Profile = {
 };
 
 const defaultProfile: Profile = {
-  fullName: "Debz Tt",
-  email: "debtz@gmail.com",
-  phone: "+250 7912345678",
-  location: "SheCanCode Hub",
+  fullName: "",
+  email: "",
+  phone: "",
+  location: "",
   bio: "",
   avatar: "",
 };
@@ -27,11 +28,35 @@ const ProfileContext = createContext<{
 
 export const ProfileProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<Profile>(defaultProfile);
+  const { user } = useAuth();
 
   useEffect(() => {
     const stored = localStorage.getItem("profileData");
-    if (stored) setProfile(JSON.parse(stored));
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored) as Partial<Profile>;
+        setProfile((prev) => ({
+          ...prev,
+          phone: parsed.phone ?? prev.phone,
+          location: parsed.location ?? prev.location,
+          bio: parsed.bio ?? prev.bio,
+          avatar: parsed.avatar ?? prev.avatar,
+        }));
+      } catch {
+        // Ignore invalid stored data
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || "";
+    setProfile((prev) => ({
+      ...prev,
+      fullName,
+      email: user.email,
+    }));
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem("profileData", JSON.stringify(profile));

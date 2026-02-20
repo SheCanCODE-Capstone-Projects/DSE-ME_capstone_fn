@@ -17,7 +17,7 @@ const navItems = [
  
 ];
 
-const settingsItem = { label: 'Settings', icon: Settings, href: '/ME/settings' };
+const settingsItem = { label: 'Settings', icon: Settings, href: '/donor/settings' };
 
 interface SidebarProps {
   isOpen?: boolean;

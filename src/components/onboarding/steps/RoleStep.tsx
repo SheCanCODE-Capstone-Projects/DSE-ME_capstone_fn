@@ -8,8 +8,7 @@ export default function RoleStep({ onNext }: { onNext: (role: string) => void })
   const [selected, setSelected] = useState("");
 
   const roles = [
-    { id: "Partner", label: "Partner" },
-    { id: "ME", label: "ME" },
+    { id: "ME", label: "ME Officer" },
     { id: "Facilitator", label: "Facilitator" },
   ];
 

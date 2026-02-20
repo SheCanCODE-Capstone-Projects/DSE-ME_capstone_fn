@@ -98,7 +98,7 @@ export default function FacilitatorCard({
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2 font-medium text-gray-900">
             <BookOpen size={18} />
-            Teaches
+            Tracks
           </div>
           <span className="text-sm bg-sky-50 text-sky-700 px-2 py-0.5 rounded-full">
             {facilitator.courses.length}
@@ -125,7 +125,7 @@ export default function FacilitatorCard({
               : "text-gray-400 cursor-not-allowed"
           }`}
         >
-          <Plus size={14} /> Assign Course
+          <Plus size={14} /> Assign Track
         </button>
       </div>
     </div>
