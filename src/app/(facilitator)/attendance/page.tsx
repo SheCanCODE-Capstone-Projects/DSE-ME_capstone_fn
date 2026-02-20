@@ -1,13 +1,13 @@
 "use client";
 
-import { Check, X, Calendar, Download, ClipboardList, Save, Clock } from "lucide-react";
+import { Check, X, Download, ClipboardList, Save, Clock } from "lucide-react";
 import { useState } from "react";
 import StatCard from '@/components/ui/statuscard';
 import AttendanceControls from '@/components/AttendanceComponents/AttendanceControls';
 import DailyAttendanceTable from '@/components/AttendanceComponents/DailyAttendanceTable';
 import WeeklyAttendanceTable from '@/components/AttendanceComponents/WeeklyAttendanceTable';
 import MonthlyAttendanceTable from '@/components/AttendanceComponents/MonthlyAttendanceTable';
-import { Student, AttendanceRecord, DailyAttendance, ViewType } from '@/types/attendance';
+import { AttendanceRecord, DailyAttendance, ViewType } from '@/types/attendance';
 import { mockStudents, exportAttendance, calculateStats } from '@/utils/attendanceUtils';
 
 export default function AttendancePage() {
@@ -24,7 +24,7 @@ export default function AttendancePage() {
   );
 
   const currentDayAttendance = attendanceRecords[selectedDate] || {};
-  const stats = calculateStats(currentDayAttendance, students.length);
+  const stats = calculateStats(currentDayAttendance);
 
   const updateAttendance = (studentId: string, status: AttendanceRecord['status'], timeIn?: string, notes?: string) => {
     const now = new Date();
@@ -53,8 +53,8 @@ export default function AttendancePage() {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setHasUnsavedChanges(false);
       alert(`Attendance saved for ${selectedDate}`);
-    } catch (error) {
-      alert('Error saving attendance. Please try again.');
+    } finally {
+      // Cleanup if needed
     }
   };
 

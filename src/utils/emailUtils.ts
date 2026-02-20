@@ -1,27 +1,6 @@
-import { Student } from '@/types/attendance';
-
-export const sendWarningEmail = async (student: Student, attendanceDays: number, monthName: string) => {
+export const sendWarningEmail = async (student: { id: string; name: string; email: string }) => {
   try {
    
-    const emailData = {
-      to: student.email,
-      subject: `Attendance Warning - ${monthName}`,
-      body: `
-        Dear ${student.name},
-        
-        This is to inform you that your attendance for ${monthName} is below the required minimum.
-        
-        Current Attendance: ${attendanceDays} days
-        Required Minimum: 6 days
-        
-        Please ensure regular attendance to avoid academic consequences.
-        
-        Best regards,
-        Academic Administration
-      `
-    };
-
-    
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     console.log('Warning email sent to:', student.email);
@@ -32,11 +11,11 @@ export const sendWarningEmail = async (student: Student, attendanceDays: number,
   }
 };
 
-export const sendBulkWarningEmails = async (studentsWithLowAttendance: Array<{student: Student, attendanceDays: number}>, monthName: string) => {
+export const sendBulkWarningEmails = async (studentsWithLowAttendance: Array<{student: { id: string; name: string; email: string }}>) => {
   const results = [];
   
-  for (const { student, attendanceDays } of studentsWithLowAttendance) {
-    const result = await sendWarningEmail(student, attendanceDays, monthName);
+  for (const { student } of studentsWithLowAttendance) {
+    const result = await sendWarningEmail(student);
     results.push({ student: student.name, ...result });
   }
   

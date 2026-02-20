@@ -4,19 +4,49 @@ import { useRouter } from 'next/navigation';
 import Email from '@/components/ui/InputEmail';
 import PrimaryButton from '@/components/PrimaryButton';
 import { KeyRound } from 'lucide-react';
+import { authApi } from '@/lib/authApi';
 
 function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    setIsLoading(true);
+    setError('');
+
+    try {
+      console.log('Submitting forgot password request for:', email);
+      const response = await authApi.forgotPassword(email);
+      console.log('Forgot password response:', response);
+      setIsSubmitted(true);
+    } catch (err) {
+      let errorMessage = 'Failed to send reset code';
+      
+      if (err instanceof Error) {
+        errorMessage = err.message;
+        console.error('Forgot password error message:', err.message);
+        console.error('Forgot password error stack:', err.stack);
+      } else {
+        console.error('Forgot password error (unknown type):', err);
+      }
+      
+      // Check if it's a connection error
+      if (errorMessage.includes('Cannot connect to backend')) {
+        errorMessage = 'Backend is not running. Please check if the server is online.';
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const isFormValid = email.trim() !== '';
@@ -32,13 +62,13 @@ function ForgotPasswordPage() {
         </div>
         
         <p className="text-gray-600">
-          We&apos;ve sent an OTP to {email}
+          We&apos;ve sent a reset code to {email}
         </p>
         
         <div className="flex justify-center">
           <PrimaryButton 
-            label="Back to Login" 
-            onClick={() => router.push('/login')} 
+            label="Enter Code" 
+            onClick={() => router.push(`/verify-otp?email=${encodeURIComponent(email)}`)} 
           />
         </div>
         
@@ -63,15 +93,32 @@ function ForgotPasswordPage() {
         </div>
         <h2 className="text-2xl font-bold text-center text-black">Forgot Password</h2>
         <p className="text-sm text-gray-600 text-center mt-2">
-          Enter your email, we will send OTP in the email and follow instructions
+          Enter your email, we will send reset code in the email and follow instructions
         </p>
       </div>
+      
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded space-y-2">
+          <p className="font-semibold">Error:</p>
+          <p>{error}</p>
+          {error.includes('Cannot connect') && (
+            <div className="mt-3 pt-3 border-t border-red-200 text-sm">
+              <p className="font-semibold mb-1">Debugging tips:</p>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Check if backend is running on http://localhost:8088</li>
+                <li>Check browser console for more details (F12)</li>
+                <li>Check backend logs for errors</li>
+              </ul>
+            </div>
+          )}
+        </div>
+      )}
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <Email value={email} onChange={handleChange} required />
         
         <div className="flex justify-center pt-3">
-          <PrimaryButton label="Send OTP" type="submit" disabled={!isFormValid} />
+          <PrimaryButton label={isLoading ? 'Sending...' : 'Send Reset Code'} type="submit" disabled={!isFormValid || isLoading} />
         </div>
       </form>
     </div>

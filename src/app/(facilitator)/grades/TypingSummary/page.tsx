@@ -1,5 +1,5 @@
 "use client";
-import { Keyboard, Target, Clock, TrendingUp, Award, Calendar, ArrowLeft } from "lucide-react"
+import { Keyboard, Target, Clock, Award, Calendar, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation";
 import StatCard from '@/components/ui/statuscard';
 import { getAllParticipants } from '@/lib/mockParticipants';

@@ -50,7 +50,7 @@ export default function CreateCourseModal({
     }
   };
 
-  const handleChange = (field: keyof Course, value: any) => {
+  const handleChange = (field: keyof Course, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

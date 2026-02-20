@@ -1,102 +1,23 @@
-"use client";
-
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { User, Mail, MapPin, Building2, MessageSquare, ArrowLeft, ArrowRight } from "lucide-react";
-import type { ProfileDetails, UserRole, Organization } from "@/types/profile";
-import { organizations as orgData } from "@/lib/onboardingData";
-import toast from "react-hot-toast";
+import { MessageSquare, ArrowLeft, ArrowRight } from "lucide-react";
+import type { UserRole } from "@/types/profile";
 
 interface DetailsStepProps {
   role: UserRole;
-  onNext: () => void;
+  onNext: (reason: string) => void;
   onBack: () => void;
+  isLoading?: boolean;
 }
 
-export default function DetailsStep({ role, onNext, onBack }: DetailsStepProps) {
-  const router = useRouter();
-  const [form, setForm] = useState<ProfileDetails>({
-    name: "",
-    email: "",
-    organization: "",
-    location: "",
-    extra: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
+export default function DetailsStep({ role, onNext, onBack, isLoading = false }: DetailsStepProps) {
+  const [reason, setReason] = useState('');
   const [focusedField, setFocusedField] = useState<string>("");
 
-
-  const availableLocations: string[] =
-    orgData.find((o) => o.name === form.organization)?.locations ?? [];
-
-  
-  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim());
-  const isValid =
-    form.name.trim() !== "" &&
-    emailValid &&
-    form.organization.trim() !== "" &&
-    form.location.trim() !== "";
-
-
-  function update(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) {
-    const { name, value } = e.target;
-
-    setForm((prev) => {
-     
-      if (name === "organization") {
-        return { ...prev, organization: value, location: "" };
-      }
-      return { ...prev, [name]: value };
-    });
-  }
+  const isValid = reason.trim().length >= 10;
 
   const handleSubmit = async () => {
-    setSubmitting(true);
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error('Please login first');
-        router.push('/login');
-        return;
-      }
-
-      // Get user from token
-      const userEmail = localStorage.getItem('userEmail');
-      if (!userEmail) {
-        toast.error('User not found');
-        return;
-      }
-
-      // Create access request
-      const requestedRole = role.toLowerCase() === 'facilitator' ? 'facilitator' : 'me';
-      const requestId = `req_${Date.now()}`;
-      const request = {
-        id: requestId,
-        userEmail: userEmail,
-        requestedRole: requestedRole,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        profileDetails: form
-      };
-
-      // Store request in localStorage (simulating API)
-      const existingRequests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
-      existingRequests.push(request);
-      localStorage.setItem('accessRequests', JSON.stringify(existingRequests));
-      
-      // Store profile details
-      localStorage.setItem('profileDetails', JSON.stringify(form));
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      onNext();
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to submit request');
-    } finally {
-      setSubmitting(false);
-    }
+    if (!isValid || isLoading) return;
+    onNext(reason);
   };
 
   return (
@@ -108,94 +29,21 @@ export default function DetailsStep({ role, onNext, onBack }: DetailsStepProps) 
         </p>
 
         <div className="space-y-4 mb-8">
-       
-          <div className="relative">
-            <User className="absolute  left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              name="name"
-              value={form.name}
-              onChange={update}
-              onFocus={() => setFocusedField("name")}
-              onBlur={() => setFocusedField("")}
-              placeholder="Full name"
-              className={`w-full pl-12 text-gray-500 bg-white pr-4 py-4 rounded-2xl border-2 outline-none ${
-                focusedField === "name" ? "border-sky-500 shadow-lg shadow-sky-100" : "border-gray-200"
-              }`}
-            />
-          </div>
-
-          
-          <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              name="email"
-              value={form.email}
-              onChange={update}
-              onFocus={() => setFocusedField("email")}
-              onBlur={() => setFocusedField("")}
-              placeholder="Email address"
-              className={`w-full pl-12 pr-4 text-gray-500 bg-white py-4 rounded-2xl border-2 outline-none ${
-                focusedField === "email" ? "border-sky-500 shadow-lg shadow-sky-100" : "border-gray-200"
-              }`}
-            />
-            {!emailValid && form.email && (
-              <p className="text-xs text-red-500 mt-1">Enter a valid email</p>
-            )}
-          </div>
-
-          
-          <div className="relative">
-            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <select
-              name="organization"
-              value={form.organization}
-              onChange={update}
-              onFocus={() => setFocusedField("organization")}
-              onBlur={() => setFocusedField("")}
-              className={`w-full pl-12 pr-4 py-4 rounded-2xl text-gray-500 bg-white border-2 outline-none  ${
-                focusedField === "organization" ? "border-sky-500 shadow-lg shadow-sky-100" : "border-gray-200"
-              }`}
-            >
-              <option value="">Select organization</option>
-              {orgData.map((org: Organization) => (
-                <option key={org.name} value={org.name}>{org.name}</option>
-              ))}
-            </select>
-          </div>
-
-        
-          <div className="relative">
-            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-            <select
-              name="location"
-              value={form.location}
-              onChange={update}
-              onFocus={() => setFocusedField("location")}
-              onBlur={() => setFocusedField("")}
-              disabled={!form.organization}
-              className={`w-full pl-12 pr-4 py-4 rounded-2xl border-2 outline-none text-gray-500 bg-white ${
-                focusedField === "location" ? "border-sky-500 shadow-lg shadow-sky-100" : "border-gray-200"
-              }`}
-            >
-              <option value="">
-                {form.organization ? "Select location" : "Select organization first"}
-              </option>
-              {availableLocations.map((loc) => (
-                <option key={loc} value={loc}>{loc}</option>
-              ))}
-            </select>
-          </div>
-
-          
           <div className="relative">
             <MessageSquare className="absolute left-4 top-4 text-gray-400" size={20} />
             <textarea
-              name="extra"
-              value={form.extra}
-              onChange={update}
-              placeholder="Anything else? (optional)"
-              className="w-full pl-12 pr-4 py-4 h-32 rounded-2xl border-2 text-gray-500 bg-white border-gray-200"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              onFocus={() => setFocusedField("reason")}
+              onBlur={() => setFocusedField("")}
+              placeholder="Why do you need this role? Please provide details about your background and how you plan to use this access..."
+              className={`w-full pl-12 pr-4 py-4 h-32 rounded-2xl border-2 text-gray-500 bg-white outline-none ${
+                focusedField === "reason" ? "border-sky-500 shadow-lg shadow-sky-100" : "border-gray-200"
+              }`}
             />
+            {reason.trim().length > 0 && reason.trim().length < 10 && (
+              <p className="text-xs text-red-500 mt-1">Please provide at least 10 characters</p>
+            )}
           </div>
         </div>
 
@@ -209,15 +57,15 @@ export default function DetailsStep({ role, onNext, onBack }: DetailsStepProps) 
           </button>
 
           <button
-            disabled={!isValid || submitting}
+            disabled={!isValid || isLoading}
             onClick={handleSubmit}
             className={`px-8 py-4 rounded-full flex items-center gap-2 font-semibold transition-all ${
-              isValid && !submitting
+              isValid && !isLoading
                 ? "bg-gradient-to-r from-gray-600 to-sky-700 text-white shadow-lg hover:shadow-xl"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >
-            {submitting ? 'Submitting...' : 'Submit'} <ArrowRight size={20} />
+            {isLoading ? 'Submitting...' : 'Submit Request'} <ArrowRight size={20} />
           </button>
         </div>
       </div>

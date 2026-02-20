@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/lib/queryClient";
+
 import NavbarDonor from "@/components/NavbarDonor";
 import SidebarDonor from "@/components/SidebarDonor";
 export default function MELayout({
@@ -26,7 +25,6 @@ export default function MELayout({
   };
 
   return (
-  <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <div className="flex flex-col min-h-screen bg-[#f0f4f8]">
         <NavbarDonor 
@@ -45,7 +43,5 @@ export default function MELayout({
         <Footer />
       </div>
     </AuthProvider>
-  </QueryClientProvider>
-);
-
+  );
 }
