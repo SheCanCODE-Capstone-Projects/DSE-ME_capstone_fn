@@ -1,7 +1,8 @@
 'use client'
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Camera, Mail, Phone, MapPin, Briefcase, Save, User } from 'lucide-react';
 import { useProfile } from "../../context/profileContext";
+import { useAuth } from '@/context/AuthContext';
 
 function Input({
   label,
@@ -37,13 +38,7 @@ function ProfilePanel() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const { profile, setProfile } = useProfile();
-
-  useEffect(() => {
-    const storedProfile = localStorage.getItem('profileData');
-    if (storedProfile) {
-      setProfile(JSON.parse(storedProfile));
-    }
-  }, [setProfile]);
+  const { user } = useAuth();
 
   const handleSave = () => {
     localStorage.setItem('profileData', JSON.stringify(profile));
@@ -104,7 +99,7 @@ function ProfilePanel() {
             {profile.fullName}
           </h2>
           <p className="text-slate-500 font-medium">
-            Facilitator • SheCanCode
+            {user?.role ? `${user.role} •` : ''} SheCanCode
           </p>
         </div>
       </div>

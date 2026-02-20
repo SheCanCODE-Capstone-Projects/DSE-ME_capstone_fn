@@ -1,6 +1,7 @@
 "use client"
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 type Profile = {
   fullName: string;
@@ -12,10 +13,10 @@ type Profile = {
 };
 
 const defaultProfile: Profile = {
-  fullName: "Debz Tt",
-  email: "debtz@gmail.com",
-  phone: "+250 7912345678",
-  location: "SheCanCode Hub",
+  fullName: "",
+  email: "",
+  phone: "",
+  location: "",
   bio: "",
   avatar: "",
 };
@@ -27,11 +28,23 @@ const ProfileContext = createContext<{
 
 export const ProfileProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<Profile>(defaultProfile);
+  const { user } = useAuth();
 
   useEffect(() => {
     const stored = localStorage.getItem("profileData");
-    if (stored) setProfile(JSON.parse(stored));
+    if (stored) {
+      setProfile(JSON.parse(stored));
+    }
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    setProfile((prev) => ({
+      ...prev,
+      fullName: prev.fullName || [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email,
+      email: user.email,
+    }));
+  }, [user]);
 
   useEffect(() => {
     localStorage.setItem("profileData", JSON.stringify(profile));

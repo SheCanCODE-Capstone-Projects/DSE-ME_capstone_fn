@@ -53,13 +53,10 @@ function LoginPage() {
           router.push('/ME');
         } else if (response.role === 'FACILITATOR') {
           toast.success('Welcome back, Facilitator!');
-          router.push('/overview');
+          router.push('/facilitator/overview');
         } else if (response.role === 'DONOR') {
           toast.success('Welcome back, Donor!');
           router.push('/donor');
-        } else if (response.role === 'ADMIN') {
-          toast.success('Welcome back, Admin!');
-          router.push('/ME');
         } else {
           toast.success('Login successful!');
           router.push('/dashboard');

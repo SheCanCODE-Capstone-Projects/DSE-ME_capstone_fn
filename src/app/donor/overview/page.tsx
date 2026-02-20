@@ -1,9 +1,15 @@
 
-import React from 'react';
+"use client";
+
+import React, { useState } from 'react';
 import StatusCard from '../../../components/ui/statuscard';
 import ImpactTrendChart from '../../../components/donorComponents/graphs/ImpactTrendChart';
-import { Handshake, Users, Briefcase, TrendingUp, Target } from 'lucide-react';
+import { Handshake, Users, Briefcase, TrendingUp, Target, UserCheck } from 'lucide-react';
 import QuickActivities from '../../../components/donorComponents/overview/Quickactivities';
+import AccessRequestsModal from '@/components/ME/Facilitator/AccessRequestsModal';
+import { useGetPendingAccessRequests, useApproveAccessRequest, useRejectAccessRequest } from '@/hooks/auth/useAccessRequests';
+import type { RoleRequestResponse } from '@/types/auth';
+import toast from 'react-hot-toast';
 
 const Dashboard: React.FC = () => {
   const stats = [
@@ -19,8 +25,55 @@ const Dashboard: React.FC = () => {
     { name: "WeCode Rwanda", rate: 70, color: "bg-orange-500" },
   ];
 
+  const [accessRequestsOpen, setAccessRequestsOpen] = useState(false);
+
+  const { data: accessRequestsData, refetch } = useGetPendingAccessRequests() as {
+    data?: { content: RoleRequestResponse[] };
+    refetch: () => void;
+  };
+  const approveRequest = useApproveAccessRequest();
+  const rejectRequest = useRejectAccessRequest();
+  const accessRequests: RoleRequestResponse[] = accessRequestsData?.content || [];
+
+  const handleApproveRequest = async (requestId: string) => {
+    try {
+      await approveRequest.mutateAsync(requestId);
+      refetch();
+      toast.success('Access request approved successfully!');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to approve request');
+    }
+  };
+
+  const handleRejectRequest = async (requestId: string) => {
+    try {
+      await rejectRequest.mutateAsync(requestId);
+      refetch();
+      toast.success('Access request rejected successfully!');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to reject request');
+    }
+  };
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      {/* Access Requests Button - Above stat cards */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => setAccessRequestsOpen(true)}
+          className="relative flex items-center gap-2 px-4 py-3 bg-[#0B609D] text-white rounded-2xl hover:bg-[#094d7a] transition shadow-sm"
+        >
+          <UserCheck size={18} />
+          <span className="font-medium text-sm">Access Requests</span>
+          {accessRequests.length > 0 && (
+            <span className="ml-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
+              {accessRequests.length}
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((s, i) => <StatusCard key={i} {...s} />)}
       </div>
@@ -49,7 +102,17 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
       <QuickActivities />
+
+      <AccessRequestsModal
+        isOpen={accessRequestsOpen}
+        onClose={() => setAccessRequestsOpen(false)}
+        requests={accessRequests}
+        onApprove={handleApproveRequest}
+        onReject={handleRejectRequest}
+        loading={approveRequest.isPending || rejectRequest.isPending}
+      />
     </div>
   );
 };

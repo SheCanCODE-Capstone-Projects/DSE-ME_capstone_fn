@@ -25,7 +25,7 @@ export default function LandingStep({ onNext }: { onNext: () => void }) {
       <h1 className="text-4xl font-bold text-gray-900 mb-4">Request Access</h1>
 
       <p className="text-gray-600 mb-8 text-lg">
-        Complete this quick 4-step process to request access to DSE's platform and join as a team member.
+        Complete this quick 4-step process to request access to DSE&apos;s platform and join as a team member.
       </p>
 
       {/* What to expect */}

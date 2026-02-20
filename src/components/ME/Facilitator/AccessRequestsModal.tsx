@@ -1,5 +1,5 @@
 import Modal from "./Modal";
-import { Check, X, User } from "lucide-react";
+import { Check, X, User, Building2, MapPin } from "lucide-react";
 import { RoleRequestResponse } from "@/types/auth";
 
 interface AccessRequestsModalProps {
@@ -23,6 +23,10 @@ export default function AccessRequestsModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Access Requests">
       <div className="max-h-96 overflow-y-auto">
+        <p className="text-xs text-gray-500 mb-3">
+          For ME Officer requests, Donor should confirm with the organization&apos;s official email or contact records
+          that this person truly represents that organization before approving.
+        </p>
         {requests.length === 0 ? (
           <p className="text-gray-500 text-center py-8">No pending access requests</p>
         ) : (
@@ -37,6 +41,23 @@ export default function AccessRequestsModal({
                   <div className="flex-1">
                     <h4 className="font-semibold text-gray-900">{request.userEmail}</h4>
                     <p className="text-sm text-gray-600">Requested Role: <span className="font-semibold capitalize">{request.requestedRole}</span></p>
+                    {request.organizationName && (
+                      <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
+                        <Building2 size={14} className="text-gray-400" />
+                        Organization: <span className="font-medium">{request.organizationName}</span>
+                      </p>
+                    )}
+                    {request.locationName && (
+                      <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
+                        <MapPin size={14} className="text-gray-400" />
+                        Location: <span className="font-medium">{request.locationName}</span>
+                      </p>
+                    )}
+                    {request.reason && (
+                      <p className="text-xs text-gray-500 mt-2 p-2 bg-gray-50 rounded">
+                        {request.reason}
+                      </p>
+                    )}
                     <p className="text-xs text-gray-400 mt-1">
                       Requested: {request.requestedAt ? new Date(request.requestedAt).toLocaleDateString() : 'Unknown'}
                     </p>
