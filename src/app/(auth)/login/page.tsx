@@ -48,18 +48,25 @@ function LoginPage() {
         if (response.role === 'UNASSIGNED') {
           toast('Please request access to continue', { icon: '⏳' });
           router.push('/request-access/start');
-        } else if (response.role === 'ME_OFFICER') {
-          toast.success('Welcome back, ME Officer!');
-          router.push('/ME');
-        } else if (response.role === 'FACILITATOR') {
-          toast.success('Welcome back, Facilitator!');
-          router.push('/facilitator/overview');
-        } else if (response.role === 'DONOR') {
-          toast.success('Welcome back, Donor!');
-          router.push('/donor');
         } else {
-          toast.success('Login successful!');
-          router.push('/dashboard');
+          // User profile will be fetched by AuthContext after login
+          // Show a generic welcome message, personalized greeting will show on overview page
+          const roleMessages: Record<string, string> = {
+            'ME_OFFICER': 'Welcome back!',
+            'FACILITATOR': 'Welcome back!',
+            'DONOR': 'Welcome back!'
+          };
+          toast.success(roleMessages[response.role] || 'Login successful!');
+          
+          if (response.role === 'ME_OFFICER') {
+            router.push('/ME');
+          } else if (response.role === 'FACILITATOR') {
+            router.push('/facilitator/overview');
+          } else if (response.role === 'DONOR') {
+            router.push('/donor');
+          } else {
+            router.push('/dashboard');
+          }
         }
       } else {
         toast.error('Login failed - no token received');

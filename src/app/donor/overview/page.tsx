@@ -10,6 +10,8 @@ import AccessRequestsModal from '@/components/ME/Facilitator/AccessRequestsModal
 import { useGetPendingAccessRequests, useApproveAccessRequest, useRejectAccessRequest } from '@/hooks/auth/useAccessRequests';
 import type { RoleRequestResponse } from '@/types/auth';
 import toast from 'react-hot-toast';
+import { useAuth } from '@/context/AuthContext';
+import { getPersonalizedGreeting } from '@/lib/userUtils';
 
 const Dashboard: React.FC = () => {
   const stats = [
@@ -26,6 +28,7 @@ const Dashboard: React.FC = () => {
   ];
 
   const [accessRequestsOpen, setAccessRequestsOpen] = useState(false);
+  const { user } = useAuth();
 
   const { data: accessRequestsData, refetch } = useGetPendingAccessRequests() as {
     data?: { content: RoleRequestResponse[] };
@@ -57,6 +60,14 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
+      {/* Welcome Header */}
+      <div className="mb-4">
+        <h1 className="text-3xl font-bold text-gray-900">
+          {getPersonalizedGreeting(user)}
+        </h1>
+        <p className="text-gray-600 mt-1">Monitor your partners and track program impact.</p>
+      </div>
+
       {/* Access Requests Button - Above stat cards */}
       <div className="flex justify-end">
         <button

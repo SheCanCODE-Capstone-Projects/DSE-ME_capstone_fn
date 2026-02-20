@@ -30,3 +30,33 @@ export function getDisplayName(user: UserLike | null | undefined): string {
   if (parts.length) return parts.join(' ');
   return (user.email || '').trim() || '';
 }
+
+/**
+ * Gets a time-based greeting (Good morning, Good afternoon, Good evening).
+ */
+export function getTimeBasedGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+/**
+ * Gets personalized greeting with user's first name or display name.
+ */
+export function getPersonalizedGreeting(user: UserLike | null | undefined): string {
+  const timeGreeting = getTimeBasedGreeting();
+  if (!user) return timeGreeting;
+  
+  const firstName = (user.firstName || '').trim();
+  if (firstName) {
+    return `${timeGreeting}, ${firstName}!`;
+  }
+  
+  const displayName = getDisplayName(user);
+  if (displayName && displayName !== user.email) {
+    return `${timeGreeting}, ${displayName}!`;
+  }
+  
+  return `${timeGreeting}!`;
+}
