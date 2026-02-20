@@ -2,6 +2,14 @@ import { Search, Filter, Plus, Briefcase } from 'lucide-react';
 import { Participant } from '@/types/participant';
 import { Cohort } from '@/types/cohort';
 
+function cohortLabel(c: Cohort): string {
+  if (c.courseName || c.facilitatorName) {
+    const parts = [c.courseName, c.facilitatorName].filter(Boolean);
+    return `${c.name} (${parts.join(' • ')})`;
+  }
+  return c.name;
+}
+
 interface FilterBarProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
@@ -63,7 +71,7 @@ export default function FilterBar({
               <option value="all">All Cohorts</option>
               {cohorts.map(cohort => (
                 <option key={cohort.id} value={cohort.name}>
-                  {cohort.name} ({participants.filter(p => p.cohort === cohort.name).length} participants)
+                  {cohortLabel(cohort)} ({participants.filter(p => p.cohort === cohort.name).length} participants)
                 </option>
               ))}
             </select>
@@ -106,7 +114,7 @@ export default function FilterBar({
                   <option value="all">All Cohorts</option>
                   {cohorts.map(cohort => (
                     <option key={cohort.id} value={cohort.name}>
-                      {cohort.name}
+                      {cohortLabel(cohort)}
                     </option>
                   ))}
                 </select>

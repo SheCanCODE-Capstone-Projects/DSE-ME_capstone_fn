@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Users, UserPlus, Briefcase } from 'lucide-react';
 import AddParticipantModal from '@/components/ME/Participant/AddParticipantModal';
 import ViewParticipantModal from '@/components/ME/Participant/ViewParticipantModal';
 import EditParticipantModal from '@/components/ME/Participant/EditParticipantModal';
-import AddCohortModal from '@/components/ME/Participant/AddCohortModal';
+import AddCohortBatchModal from '@/components/ME/Participant/AddCohortBatchModal';
 import EmploymentManagementModal from '@/components/ME/Participant/EmploymentManagementModal';
 import StatsCards from '@/components/ME/ParticipantsList/StatsCards';
 import ParticipantsTable from '@/components/ME/ParticipantsList/ParticipantsTable';
@@ -16,13 +16,7 @@ import { Participant } from '@/types/participant';
 import { Cohort } from '@/types/cohort';
 import { Facilitator } from '@/types/facilitator';
 import { useGetFacilitators, useGetFacilitatorStats } from '@/hooks/facilitators/useFacilitators';
-
-const initialCohorts: Cohort[] = [
-  { id: "1", name: "A-001", description: "First cohort of 2024", startDate: "2024-01-15", endDate: "2024-06-15", participantCount: 2, isActive: true },
-  { id: "2", name: "A-002", description: "Second cohort of 2024", startDate: "2024-02-01", endDate: "2024-07-01", participantCount: 2, isActive: true },
-  { id: "3", name: "B-001", description: "Advanced cohort", startDate: "2024-03-01", endDate: "2024-08-01", participantCount: 0, isActive: true },
-  { id: "4", name: "B-002", description: "Professional development cohort", startDate: "2024-04-01", endDate: "2024-09-01", participantCount: 0, isActive: false }
-];
+import { useGetMeCohortBatchesList } from '@/hooks/me/useMeCohorts';
 
 const initialParticipants: Participant[] = [
   { id: "1", name: "Sarah Johnson", email: "sarah.johnson@email.com", cohort: "A-001", gender: "Female", employment: "Employed", score: 92, income: "5,500,000", status: "Completed", joinDate: "2024-01-15" },
@@ -33,7 +27,15 @@ const initialParticipants: Participant[] = [
 
 export default function ParticipantsPage() {
   const [participants, setParticipants] = useState<Participant[]>(initialParticipants);
-  const [cohorts, setCohorts] = useState<Cohort[]>(initialCohorts);
+  const { data: apiBatches = [], isLoading: cohortsLoading } = useGetMeCohortBatchesList();
+  const cohorts: Cohort[] = useMemo(() => apiBatches.map((b) => ({
+    id: b.id,
+    name: b.name,
+    startDate: b.startDate,
+    endDate: b.endDate ?? '',
+    participantCount: 0,
+    isActive: (b.status ?? '').toLowerCase() === 'active',
+  })), [apiBatches]);
   const [activeTab, setActiveTab] = useState<'all' | 'cohorts' | 'employment'>('all');
   const [selectedCohort, setSelectedCohort] = useState<string>('all');
   const [selectedFacilitatorId, setSelectedFacilitatorId] = useState<string>('');
@@ -88,13 +90,8 @@ export default function ParticipantsPage() {
     );
   };
 
-  const handleAddCohort = (newCohort: Omit<Cohort, "id" | "participantCount">) => {
-    const cohort: Cohort = {
-      ...newCohort,
-      id: `cohort_${Date.now()}`,
-      participantCount: 0
-    };
-    setCohorts(prev => [...prev, cohort]);
+  const handleAddCohort = () => {
+    setCohortModalOpen(false);
   };
 
   const filteredParticipants = participants.filter(participant => {
@@ -295,6 +292,7 @@ export default function ParticipantsPage() {
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
         onCreate={handleAddParticipant}
+        cohorts={cohorts}
       />
       
       <ViewParticipantModal
@@ -310,10 +308,9 @@ export default function ParticipantsPage() {
         onUpdate={handleUpdateParticipant}
       />
       
-      <AddCohortModal
+      <AddCohortBatchModal
         isOpen={cohortModalOpen}
         onClose={() => setCohortModalOpen(false)}
-        onCreate={handleAddCohort}
       />
       
       <EmploymentManagementModal

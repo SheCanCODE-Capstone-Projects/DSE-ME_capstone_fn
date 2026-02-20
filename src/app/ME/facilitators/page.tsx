@@ -1,42 +1,35 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { UserCheck, Search, Filter } from "lucide-react";
+import { UserCheck, Search, Filter, Plus } from "lucide-react";
 import FacilitatorCard from "@/components/ME/Facilitator/FacilitatorCard";
 import AssignCohortsModal from "@/components/ME/Facilitator/AssignCohortsModal";
 import AssignCoursesModal from "@/components/ME/Facilitator/AssignCoursesModal";
+import CreateTrackModal from "@/components/ME/Facilitator/CreateTrackModal";
 import AccessRequestsModal from "@/components/ME/Facilitator/AccessRequestsModal";
 import { Facilitator } from "@/types/facilitator";
 import { RoleRequestResponse } from "@/types/auth";
 import { useGetPendingAccessRequests, useApproveAccessRequest, useRejectAccessRequest } from "@/hooks/auth/useAccessRequests";
+import {
+  useGetMeFacilitators,
+  useGetMeCohortBatchesList,
+  useGetMeCourses,
+} from "@/hooks/me/useMeCohorts";
+import { useQueryClient } from "@tanstack/react-query";
+import { meApi } from "@/lib/meApi";
 import toast from "react-hot-toast";
 
-const facilitatorsData: Facilitator[] = [
-  { id: "1", name: "John Smith", email: "john@example.com", region: "North Region", participantsCount: 45, isActive: true,
-    cohorts: [{ id: "c1", name: "Cohort 2024-Q1" }], courses: [{ id: "cs1", name: "Business Skills" }] },
-  { id: "2", name: "Jane Doe", email: "jane@example.com", region: "South Region", participantsCount: 30, isActive: false,
-    cohorts: [{ id: "c2", name: "Cohort 2024-Q2" }], courses: [{ id: "cs2", name: "Leadership Dev" }] },
-];
-
-const allCohorts = [
-  { id: "c1", name: "Cohort 2024-Q1" },
-  { id: "c2", name: "Cohort 2024-Q2" },
-  { id: "c3", name: "Cohort 2024-Q3" },
-];
-
-const allCourses = [
-  { id: "cs1", name: "Business Skills" },
-  { id: "cs2", name: "Leadership Development" },
-  { id: "cs3", name: "Digital Marketing" },
-  { id: "cs4", name: "Project Management" },
-];
-
 export default function FacilitatorsPage() {
-  const [facilitators, setFacilitators] = useState<Facilitator[]>(facilitatorsData);
+  const queryClient = useQueryClient();
   const [selectedFacilitator, setSelectedFacilitator] = useState<Facilitator | null>(null);
   const [cohortModalOpen, setCohortModalOpen] = useState(false);
   const [courseModalOpen, setCourseModalOpen] = useState(false);
+  const [createTrackModalOpen, setCreateTrackModalOpen] = useState(false);
   const [accessRequestsOpen, setAccessRequestsOpen] = useState(false);
+
+  const { data: facilitatorsList = [], isLoading: facilitatorsLoading } = useGetMeFacilitators();
+  const { data: cohortBatchesList = [] } = useGetMeCohortBatchesList();
+  const { data: tracksList = [] } = useGetMeCourses();
 
   const { data: accessRequestsData, refetch } = useGetPendingAccessRequests() as { data?: { content: RoleRequestResponse[] }; refetch: () => void };
   const approveRequest = useApproveAccessRequest();
@@ -53,7 +46,12 @@ export default function FacilitatorsPage() {
     return () => clearInterval(interval);
   }, [refetch]);
 
-  const filteredFacilitators = facilitators.filter(f => {
+  const allCohorts = cohortBatchesList.map((b) => ({ id: b.id, name: b.name }));
+  const allTracks = tracksList.map((c) => ({ id: c.id, name: c.name }));
+
+  const facilitators: Facilitator[] = facilitatorsList;
+
+  const filteredFacilitators = facilitators.filter((f) => {
     const matchesSearch = f.name.toLowerCase().includes(search.toLowerCase());
     const matchesRegion = regionFilter === "all" || f.region === regionFilter;
     const matchesActive =
@@ -68,46 +66,52 @@ export default function FacilitatorsPage() {
     setCohortModalOpen(true);
   };
 
-  const handleAssignCourses = (facilitator: Facilitator) => {
+  const handleAssignTracks = (facilitator: Facilitator) => {
     setSelectedFacilitator(facilitator);
     setCourseModalOpen(true);
   };
 
-  const handleSaveCohorts = (selectedIds: string[]) => {
-    if (selectedFacilitator) {
-      const updatedCohorts = allCohorts.filter(c => selectedIds.includes(c.id));
-      setFacilitators(prev => prev.map(f => 
-        f.id === selectedFacilitator.id 
-          ? { ...f, cohorts: updatedCohorts }
-          : f
-      ));
+  const handleSaveCohorts = async (selectedIds: string[]) => {
+    if (!selectedFacilitator) return;
+    try {
+      await meApi.setFacilitatorCohortBatches(selectedFacilitator.id, selectedIds);
+      await queryClient.invalidateQueries({ queryKey: ["me", "facilitators"] });
+      toast.success("Cohorts updated.");
+    } catch (err) {
+      toast.error((err as Error).message ?? "Failed to update cohorts.");
     }
   };
 
-  const handleSaveCourses = (selectedIds: string[]) => {
-    if (selectedFacilitator) {
-      const updatedCourses = allCourses.filter(c => selectedIds.includes(c.id));
-      setFacilitators(prev => prev.map(f => 
-        f.id === selectedFacilitator.id 
-          ? { ...f, courses: updatedCourses }
-          : f
-      ));
+  const handleSaveTracks = async (selectedIds: string[]) => {
+    if (!selectedFacilitator) return;
+    const currentIds = selectedFacilitator.courses.map((c) => c.id);
+    const toAdd = selectedIds.filter((id) => !currentIds.includes(id));
+    const toRemove = currentIds.filter((id) => !selectedIds.includes(id));
+    try {
+      for (const courseId of toAdd) {
+        await meApi.assignCourseToFacilitator(selectedFacilitator.id, courseId);
+      }
+      for (const courseId of toRemove) {
+        await meApi.removeCourseFromFacilitator(selectedFacilitator.id, courseId);
+      }
+      await queryClient.invalidateQueries({ queryKey: ["me", "facilitators"] });
+      toast.success("Tracks updated.");
+    } catch (err) {
+      toast.error((err as Error).message ?? "Failed to update tracks.");
     }
   };
 
-  const handleToggleActive = (id: string) => {
-    setFacilitators(prev =>
-      prev.map(f => (f.id === id ? { ...f, isActive: !f.isActive } : f))
-    );
+  const handleToggleActive = (_id: string) => {
+    // Optional: wire to backend if facilitator active/inactive is persisted
   };
 
   const handleApproveRequest = async (requestId: string) => {
     try {
       await approveRequest.mutateAsync(requestId);
       refetch();
-      toast.success('Access request approved successfully!');
+      toast.success("Access request approved successfully!");
     } catch (error) {
-      toast.error((error as Error).message || 'Failed to approve request');
+      toast.error((error as Error).message || "Failed to approve request");
     }
   };
 
@@ -115,15 +119,22 @@ export default function FacilitatorsPage() {
     try {
       await rejectRequest.mutateAsync(requestId);
       refetch();
-      toast.success('Access request rejected successfully!');
+      toast.success("Access request rejected successfully!");
     } catch (error) {
-      toast.error((error as Error).message || 'Failed to reject request');
+      toast.error((error as Error).message || "Failed to reject request");
     }
   };
 
+  if (facilitatorsLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-gray-500">Loading facilitators…</p>
+      </div>
+    );
+  }
+
   return (
     <div>
-      
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
@@ -136,7 +147,7 @@ export default function FacilitatorsPage() {
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             />
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Filter size={20} className="text-gray-400" />
             <select
@@ -151,7 +162,7 @@ export default function FacilitatorsPage() {
               <option value="West Region">West Region</option>
             </select>
           </div>
-          
+
           <select
             value={activeFilter}
             onChange={(e) =>
@@ -163,7 +174,16 @@ export default function FacilitatorsPage() {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
-          
+
+          <button
+            type="button"
+            onClick={() => setCreateTrackModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition"
+          >
+            <Plus size={16} />
+            Create track
+          </button>
+
           <button
             onClick={() => setAccessRequestsOpen(true)}
             className="relative flex items-center gap-2 px-4 py-2 bg-[#0B609D] text-white rounded-lg hover:bg-[#094d7a] transition"
@@ -185,7 +205,7 @@ export default function FacilitatorsPage() {
             key={f.id}
             facilitator={f}
             onAssignCohort={() => handleAssignCohorts(f)}
-            onAssignCourse={() => handleAssignCourses(f)}
+            onAssignCourse={() => handleAssignTracks(f)}
             onToggleActive={handleToggleActive}
           />
         ))}
@@ -207,10 +227,16 @@ export default function FacilitatorsPage() {
 
       <AssignCoursesModal
         facilitator={selectedFacilitator}
-        courses={allCourses}
+        courses={allTracks}
         isOpen={courseModalOpen}
         onClose={() => setCourseModalOpen(false)}
-        onSave={handleSaveCourses}
+        onSave={handleSaveTracks}
+      />
+
+      <CreateTrackModal
+        isOpen={createTrackModalOpen}
+        onClose={() => setCreateTrackModalOpen(false)}
+        onSuccess={() => queryClient.invalidateQueries({ queryKey: ["me", "courses"] })}
       />
 
       <AccessRequestsModal
