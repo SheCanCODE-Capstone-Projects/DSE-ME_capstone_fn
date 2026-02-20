@@ -7,6 +7,8 @@ import AssignCohortsModal from "@/components/ME/Facilitator/AssignCohortsModal";
 import AssignCoursesModal from "@/components/ME/Facilitator/AssignCoursesModal";
 import AccessRequestsModal from "@/components/ME/Facilitator/AccessRequestsModal";
 import { Facilitator } from "@/types/facilitator";
+import { RoleRequestResponse } from "@/types/auth";
+import { useGetPendingAccessRequests, useApproveAccessRequest, useRejectAccessRequest } from "@/hooks/auth/useAccessRequests";
 import toast from "react-hot-toast";
 
 const facilitatorsData: Facilitator[] = [
@@ -31,34 +33,25 @@ const allCourses = [
 
 export default function FacilitatorsPage() {
   const [facilitators, setFacilitators] = useState<Facilitator[]>(facilitatorsData);
-  const [accessRequests, setAccessRequests] = useState<any[]>([]);
   const [selectedFacilitator, setSelectedFacilitator] = useState<Facilitator | null>(null);
   const [cohortModalOpen, setCohortModalOpen] = useState(false);
   const [courseModalOpen, setCourseModalOpen] = useState(false);
   const [accessRequestsOpen, setAccessRequestsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  const { data: accessRequestsData, refetch } = useGetPendingAccessRequests() as { data?: { content: RoleRequestResponse[] }; refetch: () => void };
+  const approveRequest = useApproveAccessRequest();
+  const rejectRequest = useRejectAccessRequest();
+
+  const accessRequests: RoleRequestResponse[] = accessRequestsData?.content || [];
 
   const [search, setSearch] = useState("");
   const [regionFilter, setRegionFilter] = useState("all");
   const [activeFilter, setActiveFilter] = useState<"all" | "active" | "inactive">("all");
 
   useEffect(() => {
-    loadAccessRequests();
-    // Set up interval to check for new requests
-    const interval = setInterval(loadAccessRequests, 3000);
+    const interval = setInterval(() => refetch(), 30000);
     return () => clearInterval(interval);
-  }, []);
-
-  const loadAccessRequests = async () => {
-    try {
-      // Load from localStorage
-      const requests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
-      const pendingRequests = requests.filter((r: any) => r.status === 'pending');
-      setAccessRequests(pendingRequests);
-    } catch (error) {
-      console.error('Failed to load access requests:', error);
-    }
-  };
+  }, [refetch]);
 
   const filteredFacilitators = facilitators.filter(f => {
     const matchesSearch = f.name.toLowerCase().includes(search.toLowerCase());
@@ -109,63 +102,28 @@ export default function FacilitatorsPage() {
   };
 
   const handleApproveRequest = async (requestId: string) => {
-    setLoading(true);
     try {
-      const request = accessRequests.find(r => r.id === requestId);
-      if (!request) return;
-
-      // Update request status in localStorage
-      const allRequests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
-      const updatedRequests = allRequests.map((r: any) => 
-        r.id === requestId ? { ...r, status: 'approved' } : r
-      );
-      localStorage.setItem('accessRequests', JSON.stringify(updatedRequests));
-
-      const newFacilitator: Facilitator = {
-        id: `fac_${Date.now()}`,
-        name: request.userEmail.split('@')[0],
-        email: request.userEmail,
-        region: "North Region",
-        participantsCount: 0,
-        isActive: true,
-        cohorts: [],
-        courses: [allCourses[0]]
-      };
-
-      setFacilitators(prev => [...prev, newFacilitator]);
-      await loadAccessRequests();
-      toast.success(`${request.userEmail} has been approved as ${request.requestedRole}!`);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to approve request');
-    } finally {
-      setLoading(false);
+      await approveRequest.mutateAsync(requestId);
+      refetch();
+      toast.success('Access request approved successfully!');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to approve request');
     }
   };
 
   const handleRejectRequest = async (requestId: string) => {
-    setLoading(true);
     try {
-      const request = accessRequests.find(r => r.id === requestId);
-      
-      // Update request status in localStorage
-      const allRequests = JSON.parse(localStorage.getItem('accessRequests') || '[]');
-      const updatedRequests = allRequests.map((r: any) => 
-        r.id === requestId ? { ...r, status: 'rejected' } : r
-      );
-      localStorage.setItem('accessRequests', JSON.stringify(updatedRequests));
-      
-      await loadAccessRequests();
-      toast.success(`Access request from ${request?.userEmail} has been rejected.`);
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to reject request');
-    } finally {
-      setLoading(false);
+      await rejectRequest.mutateAsync(requestId);
+      refetch();
+      toast.success('Access request rejected successfully!');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to reject request');
     }
   };
 
   return (
     <div>
-      {/* Search and Filter Section */}
+      
       <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
@@ -261,7 +219,7 @@ export default function FacilitatorsPage() {
         requests={accessRequests}
         onApprove={handleApproveRequest}
         onReject={handleRejectRequest}
-        loading={loading}
+        loading={approveRequest.isPending || rejectRequest.isPending}
       />
     </div>
   );

@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { X, CheckCircle, Clock } from "lucide-react";
 import { Assignment, Student } from "@/types/assignment";
@@ -10,13 +9,6 @@ type Props = {
   students: Student[];
   onSaveGrades: (grades: Record<string, number>) => void;
 };
-
-
-const dummyStudents: Student[] = [
-  { id: "s1", name: "Alice Johnson" },
-  { id: "s2", name: "Bob Smith" },
-  { id: "s3", name: "Charlie Brown" },
-];
 
 export default function GradeStudentsModal({ isOpen, onClose, assignment, students, onSaveGrades }: Props) {
   const [grades, setGrades] = useState<Record<string, number>>({});

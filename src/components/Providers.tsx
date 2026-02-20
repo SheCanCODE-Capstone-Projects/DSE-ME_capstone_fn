@@ -9,8 +9,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        retry: (failureCount, error: any) => {
-          if (error?.status >= 400 && error?.status < 500) {
+        retry: (failureCount, error: Error & { status?: number }) => {
+          if (error?.status && error.status >= 400 && error.status < 500) {
             return false;
           }
           return failureCount < 3;

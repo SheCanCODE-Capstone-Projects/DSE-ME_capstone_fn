@@ -96,7 +96,7 @@ export default function AssignmentsPage() {
 
   
   const filteredAndSortedAssignments = useMemo(() => {
-    let filtered = assignments.filter(assignment => {
+    const filtered = assignments.filter(assignment => {
       const matchesSearch = assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            assignment.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            assignment.chapter.toLowerCase().includes(searchTerm.toLowerCase());
@@ -205,7 +205,7 @@ export default function AssignmentsPage() {
             <Filter size={20} className="text-gray-400" />
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
+              onChange={(e) => setStatusFilter(e.target.value as "all" | "not-started" | "in-progress" | "completed")}
               className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             >
               <option value="all">All Status</option>
@@ -217,7 +217,7 @@ export default function AssignmentsPage() {
           
           <select
             value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value as any)}
+            onChange={(e) => setTypeFilter(e.target.value as "all" | "Quiz" | "Capstone" | "Assignment")}
             className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
           >
             <option value="all">All Types</option>
@@ -228,7 +228,7 @@ export default function AssignmentsPage() {
           
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as "latest" | "oldest" | "title")}
             className="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
           >
             <option value="latest">Latest First</option>
@@ -263,7 +263,7 @@ export default function AssignmentsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {paginatedAssignments.map((a, idx) => {
+        {paginatedAssignments.map((a) => {
           const originalIndex = assignments.findIndex(assignment => assignment === a);
           const status = getAssignmentStatus(a);
           return (

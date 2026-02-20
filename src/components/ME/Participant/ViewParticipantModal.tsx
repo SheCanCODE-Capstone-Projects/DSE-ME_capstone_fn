@@ -1,6 +1,4 @@
-"use client";
-
-import { X, User, Mail, Users, Briefcase, Award, Calendar } from "lucide-react";
+import { X, Users, Briefcase, Award, Calendar } from "lucide-react";
 import { Participant } from "@/types/participant";
 
 interface ViewParticipantModalProps {

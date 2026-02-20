@@ -1,15 +1,19 @@
 "use client";
+import dynamic from 'next/dynamic';
 import React, { useState, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import PrimaryButton from '@/components/PrimaryButton';
 import { Shield } from 'lucide-react';
 
-function VerifyOtpPage() {
+// Mark this component as not prerenderable since it uses useSearchParams
+const VerifyOtpPageContent = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email') || '';
 
   const handleChange = (index: number, value: string) => {
     if (value.length > 1) return;
@@ -21,8 +25,6 @@ function VerifyOtpPage() {
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
-    
-    if (error) setError('');
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
@@ -33,8 +35,8 @@ function VerifyOtpPage() {
 
   const handleResend = () => {
     setOtp(['', '', '', '', '', '']);
-    setError('');
     inputRefs.current[0]?.focus();
+    setError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,17 +44,20 @@ function VerifyOtpPage() {
     const otpCode = otp.join('');
     
     if (otpCode.length !== 6) {
-      setError('Please enter the complete 6-digit code');
+      setError('Please enter a 6-digit code');
       return;
     }
     
     setIsLoading(true);
+    setError('');
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      router.push('/reset-password');
-    } catch (error) {
-      setError('Invalid code. Please try again.');
+      // Navigate to reset password with token (OTP is the reset token)
+      router.push(`/reset-password?token=${otpCode}&email=${encodeURIComponent(email)}`);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to verify code';
+      setError(errorMessage);
+      console.error('Verify OTP error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -68,9 +73,15 @@ function VerifyOtpPage() {
         </div>
         <h2 className="text-2xl font-bold text-center text-black">Verify Code</h2>
         <p className="text-gray-600 text-center mt-2">
-          Enter the verification code to continue
+          Enter the 6-digit code sent to {email}
         </p>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex justify-center">
@@ -89,12 +100,6 @@ function VerifyOtpPage() {
             ))}
           </div>
         </div>
-        
-        {error && (
-          <div className="text-center">
-            <p className="text-red-500 text-sm">{error}</p>
-          </div>
-        )}
         
         <div className="flex justify-center">
           <PrimaryButton 
@@ -124,6 +129,11 @@ function VerifyOtpPage() {
       </div>
     </div>
   );
-}
+};
+
+// Export as dynamic component to skip prerendering
+const VerifyOtpPage = dynamic(() => Promise.resolve(VerifyOtpPageContent), {
+  ssr: false,
+});
 
 export default VerifyOtpPage;

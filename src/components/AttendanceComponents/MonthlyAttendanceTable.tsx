@@ -63,7 +63,7 @@ export default function MonthlyAttendanceTable({
     const lastDay = new Date(year, month + 1, 0);
     
     const weeks = [];
-    let currentWeekStart = new Date(firstDay);
+    const currentWeekStart = new Date(firstDay);
     currentWeekStart.setDate(firstDay.getDate() - firstDay.getDay() + 1); // Start from Monday
     
     while (currentWeekStart <= lastDay) {
@@ -97,31 +97,24 @@ export default function MonthlyAttendanceTable({
 
     setSendingEmails(true);
     try {
-      const emailData = studentsWithLowAttendance.map(({ student, stats }) => ({
-        student,
-        attendanceDays: stats.present
+      const emailData = studentsWithLowAttendance.map(({ student }) => ({
+        student
       }));
       
-      const results = await sendBulkWarningEmails(emailData, monthName);
-      const successCount = results.filter(r => r.success).length;
+      await sendBulkWarningEmails(emailData);
       
-      alert(`Warning emails sent successfully to ${successCount} students with low attendance.`);
-    } catch (error) {
-      alert('Failed to send warning emails. Please try again.');
+      alert(`Warning emails sent successfully to students with low attendance.`);
     } finally {
       setSendingEmails(false);
     }
   };
 
-  const handleSingleWarningEmail = async (student: Student, attendanceDays: number) => {
+  const handleSingleWarningEmail = async (student: { id: string; name: string; studentId: string; email: string }) => {
     try {
-      const result = await sendWarningEmail(student, attendanceDays, monthName);
-      if (result.success) {
-        alert(`Warning email sent to ${student.name}`);
-      } else {
-        alert('Failed to send email');
-      }
+      await sendWarningEmail(student);
+      alert(`Warning email sent to ${student.name}`);
     } catch (error) {
+      console.error('Failed to send warning email:', error);
       alert('Failed to send email');
     }
   };
@@ -258,7 +251,7 @@ export default function MonthlyAttendanceTable({
                   <td className="px-4 py-4 text-center">
                     {stats.present < 6 ? (
                       <button
-                        onClick={() => handleSingleWarningEmail(student, stats.present)}
+                        onClick={() => handleSingleWarningEmail(student)}
                         className="flex items-center gap-1 px-3 py-1 text-xs bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition"
                         title="Send warning email"
                       >

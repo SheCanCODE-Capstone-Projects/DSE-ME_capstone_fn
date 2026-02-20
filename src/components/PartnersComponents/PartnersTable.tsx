@@ -1,14 +1,13 @@
-import { Building2, Mail, Phone, MapPin, Users, TrendingUp, AlertTriangle, Heart } from "lucide-react";
+import { Building2, MapPin, Users, TrendingUp, AlertTriangle } from "lucide-react";
 import { type Partner } from "@/types/partners";
 import { calculatePercentage } from "@/utils/calculations";
 
 interface PartnersTableProps {
   partners: Partner[];
   onView: (id: string) => void;
-  onEdit: (id: string) => void;
 }
 
-export default function PartnersTable({ partners, onView, onEdit }: PartnersTableProps) {
+export default function PartnersTable({ partners, onView }: PartnersTableProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Active':

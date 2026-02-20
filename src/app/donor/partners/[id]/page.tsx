@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Building2, MapPin, Users, TrendingUp, AlertTriangle, Heart, CheckCircle, X } from "lucide-react";
+import { ArrowLeft, Users, TrendingUp, AlertTriangle, Heart, CheckCircle, X } from "lucide-react";
 import { useState, use } from "react";
 import { getPartnerById, getMERequestsByPartnerId } from "@/data/partnersData";
-import { type Partner, type MERequest } from "@/types/partners";
+import { type MERequest } from "@/types/partners";
 import { calculatePercentage } from "@/utils/calculations";
 
 export default function PartnerDetailPage({ params }: { params: Promise<{ id: string }> }) {

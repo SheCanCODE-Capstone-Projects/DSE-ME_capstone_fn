@@ -1,4 +1,3 @@
-"use client"
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useCurrentUser } from '@/hooks/auth/useCurrentUser';
 
@@ -12,7 +11,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (token: string) => void;
+  login: (token: string, userData?: User) => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -21,30 +20,64 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser(token || undefined);
   
   useEffect(() => {
-    setToken(localStorage.getItem('token'));
+    const storedToken = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    
+    if (storedToken) {
+      setToken(storedToken);
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch {
+          // Invalid stored user data
+        }
+      }
+    }
+    setIsLoading(false);
   }, []);
+  
+  useEffect(() => {
+    if (currentUser && token) {
+      const userData: User = {
+        id: currentUser.id,
+        email: currentUser.email,
+        role: currentUser.role || 'UNASSIGNED',
+        hasAccess: !!currentUser.role && currentUser.role !== 'UNASSIGNED'
+      };
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+    }
+  }, [currentUser, token]);
 
-  const { data: user, isLoading } = useCurrentUser(token || undefined);
-
-  const login = (newToken: string) => {
+  const login = (newToken: string, userData?: User) => {
     setToken(newToken);
+    setUser(userData || null);
     localStorage.setItem('token', newToken);
+    if (userData) {
+      localStorage.setItem('user', JSON.stringify(userData));
+    }
   };
 
   const logout = () => {
     setToken(null);
+    setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   return (
     <AuthContext.Provider value={{ 
-      user: user || null, 
+      user, 
       token, 
       login, 
       logout, 
-      isLoading
+      isLoading: isLoading || isLoadingUser
     }}>
       {children}
     </AuthContext.Provider>

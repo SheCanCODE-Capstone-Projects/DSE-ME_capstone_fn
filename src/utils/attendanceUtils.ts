@@ -1,14 +1,14 @@
-import { Student, AttendanceRecord, DailyAttendance } from '@/types/attendance';
+import { DailyAttendance } from '@/types/attendance';
 import { getAllParticipants } from '@/lib/mockParticipants';
 
-export const mockStudents: Student[] = getAllParticipants().map(p => ({
+export const mockStudents = getAllParticipants().map(p => ({
   id: p.id,
   name: p.name,
   email: p.email || `${p.name.toLowerCase().replace(' ', '.')}@example.com`,
   studentId: `STU${p.id}`
 }));
 
-export const exportAttendance = (attendanceRecords: {[date: string]: DailyAttendance}, students: Student[]) => {
+export const exportAttendance = (attendanceRecords: {[date: string]: DailyAttendance}, students: { id: string; name: string; studentId: string }[]) => {
   const csvContent = [
     ['Date', 'Student ID', 'Name', 'Status', 'Time In', 'Notes'].join(','),
     ...Object.entries(attendanceRecords).flatMap(([date, dayRecords]) =>
@@ -30,7 +30,7 @@ export const exportAttendance = (attendanceRecords: {[date: string]: DailyAttend
   window.URL.revokeObjectURL(url);
 };
 
-export const calculateStats = (currentDayAttendance: DailyAttendance, totalStudents: number) => {
+export const calculateStats = (currentDayAttendance: DailyAttendance) => {
   const presentCount = Object.values(currentDayAttendance).filter(r => r.status === 'Present').length;
   const absentCount = Object.values(currentDayAttendance).filter(r => r.status === 'Absent').length;
   const lateCount = Object.values(currentDayAttendance).filter(r => r.status === 'Late').length;

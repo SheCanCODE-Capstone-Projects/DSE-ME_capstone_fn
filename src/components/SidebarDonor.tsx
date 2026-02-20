@@ -1,11 +1,8 @@
-'use client';
-
 import {
   Home,
   Users,
   UserCog,
-  BookOpen ,
-  FileBarChart,
+  BookOpen,
   Settings,
 } from 'lucide-react';
 import Link from 'next/link';

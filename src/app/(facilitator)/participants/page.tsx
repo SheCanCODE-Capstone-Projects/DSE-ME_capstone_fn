@@ -317,7 +317,6 @@ export default function Participant() {
   
   // Search and Filter states
   const [searchQuery, setSearchQuery] = useState("");
-  const [genderFilter, setGenderFilter] = useState("All");
   const [courseFilter, setCourseFilter] = useState("All");
   const [cohortFilter, setCohortFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -329,13 +328,12 @@ export default function Participant() {
     return participants.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            p.id.includes(searchQuery);
-      const matchesGender = genderFilter === "All" || p.gender === genderFilter;
       const matchesCourse = courseFilter === "All" || p.course === courseFilter;
       const matchesCohort = cohortFilter === "All" || p.cohort === cohortFilter;
       const matchesStatus = statusFilter === "All" || p.status.toLowerCase() === statusFilter.toLowerCase();
-      return matchesSearch && matchesGender && matchesCourse && matchesCohort && matchesStatus;
+      return matchesSearch && matchesCourse && matchesCohort && matchesStatus;
     });
-  }, [participants, searchQuery, genderFilter, courseFilter, cohortFilter, statusFilter]);
+  }, [participants, searchQuery, courseFilter, cohortFilter, statusFilter]);
 
   // Stats calculation
   const stats = [
