@@ -8,6 +8,8 @@ interface User {
   lastName?: string;
   role: string;
   hasAccess: boolean;
+  organizationName?: string;
+  organizationId?: string;
 }
 
 interface AuthContextType {

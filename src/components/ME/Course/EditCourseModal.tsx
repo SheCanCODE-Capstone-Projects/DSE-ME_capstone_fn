@@ -1,22 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../Facilitator/Modal";
-import { useCreateMeCourse } from "@/hooks/me/useMeCohorts";
+import { meApi } from "@/lib/meApi";
 import toast from "react-hot-toast";
 
-interface CreateCourseModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onCreate: () => void;
+interface Course {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  durationWeeks: number;
+  level: string;
 }
 
-export default function CreateCourseModal({
+interface EditCourseModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  course: Course | null;
+  onSuccess: () => void;
+}
+
+export default function EditCourseModal({
   isOpen,
   onClose,
-  onCreate,
-}: CreateCourseModalProps) {
-  const createCourseMutation = useCreateMeCourse();
+  course,
+  onSuccess,
+}: EditCourseModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     code: "",
@@ -24,11 +34,27 @@ export default function CreateCourseModal({
     durationWeeks: 12,
     level: "BEGINNER",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (course) {
+      setFormData({
+        name: course.name,
+        code: course.code,
+        description: course.description || "",
+        durationWeeks: course.durationWeeks,
+        level: course.level,
+      });
+    }
+  }, [course]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!course) return;
+
+    setIsSubmitting(true);
     try {
-      await createCourseMutation.mutateAsync({
+      await meApi.updateCourse(course.id, {
         name: formData.name,
         code: formData.code,
         description: formData.description,
@@ -36,18 +62,13 @@ export default function CreateCourseModal({
         durationWeeks: formData.durationWeeks,
         maxParticipants: 30,
       });
-      toast.success("Course created successfully!");
-      setFormData({
-        name: "",
-        code: "",
-        description: "",
-        durationWeeks: 12,
-        level: "BEGINNER",
-      });
-      onCreate();
+      toast.success("Course updated successfully!");
+      onSuccess();
       onClose();
     } catch (error) {
-      toast.error((error as Error).message || "Failed to create course");
+      toast.error((error as Error).message || "Failed to update course");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -56,7 +77,7 @@ export default function CreateCourseModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Create New Course">
+    <Modal isOpen={isOpen} onClose={onClose} title="Edit Course">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -67,7 +88,6 @@ export default function CreateCourseModal({
             value={formData.name}
             onChange={(e) => handleChange("name", e.target.value)}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-            placeholder="Enter course name"
             required
           />
         </div>
@@ -81,8 +101,9 @@ export default function CreateCourseModal({
             value={formData.code}
             onChange={(e) => handleChange("code", e.target.value)}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-            placeholder="e.g., BUS101"
             required
+            disabled
+            title="Course code cannot be changed"
           />
         </div>
 
@@ -94,7 +115,6 @@ export default function CreateCourseModal({
             value={formData.description}
             onChange={(e) => handleChange("description", e.target.value)}
             className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-            placeholder="Enter course description"
             rows={3}
           />
         </div>
@@ -110,7 +130,6 @@ export default function CreateCourseModal({
               value={formData.durationWeeks}
               onChange={(e) => handleChange("durationWeeks", parseInt(e.target.value))}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-              placeholder="e.g., 12"
               required
             />
           </div>
@@ -136,16 +155,16 @@ export default function CreateCourseModal({
             type="button"
             onClick={onClose}
             className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition"
-            disabled={createCourseMutation.isPending}
+            disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
             type="submit"
             className="px-4 py-2 rounded-lg bg-[#0B609D] text-white hover:bg-[#094d7a] transition disabled:opacity-50"
-            disabled={createCourseMutation.isPending}
+            disabled={isSubmitting}
           >
-            {createCourseMutation.isPending ? "Creating..." : "Create Course"}
+            {isSubmitting ? "Updating..." : "Update Course"}
           </button>
         </div>
       </form>

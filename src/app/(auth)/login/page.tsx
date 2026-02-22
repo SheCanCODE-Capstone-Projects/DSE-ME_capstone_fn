@@ -39,7 +39,9 @@ function LoginPage() {
           id: response.userId,
           email: formData.email,
           role: response.role,
-          hasAccess: response.role !== 'UNASSIGNED'
+          hasAccess: response.role !== 'UNASSIGNED',
+          organizationName: response.organizationName,
+          organizationId: response.organizationId
         };
         
         login(response.token, userData);

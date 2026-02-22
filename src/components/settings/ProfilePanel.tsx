@@ -120,7 +120,7 @@ function ProfilePanel() {
             {profile.fullName}
           </h2>
           <p className="text-slate-500 font-medium">
-            {user?.role ? `${user.role} •` : ''} SheCanCode
+            {user?.role ? `${user.role} •` : ''} {user?.organizationName || 'No Organization'}
           </p>
         </div>
       </div>

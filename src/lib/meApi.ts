@@ -69,6 +69,8 @@ export interface CourseResponse {
   durationWeeks?: number;
   maxParticipants?: number;
   status?: string;
+  facilitatorsCount?: number;
+  participantsCount?: number;
 }
 
 export const meApi = {
@@ -151,6 +153,55 @@ export const meApi = {
         maxParticipants: data.maxParticipants ?? 30,
       },
     });
+  },
+
+  updateCourse: async (id: string, data: CreateCourseRequest): Promise<CourseResponse> => {
+    return apiFetch<CourseResponse>(`/me/courses/${id}`, {
+      method: 'PUT',
+      data: {
+        name: data.name,
+        code: data.code,
+        description: data.description || undefined,
+        level: data.level,
+        durationWeeks: data.durationWeeks ?? 12,
+        maxParticipants: data.maxParticipants ?? 30,
+      },
+    });
+  },
+
+  deleteCourse: async (id: string): Promise<void> => {
+    return apiFetch(`/me/courses/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  toggleCourseStatus: async (id: string): Promise<CourseResponse> => {
+    return apiFetch<CourseResponse>(`/me/courses/${id}/toggle-status`, {
+      method: 'PATCH',
+    });
+  },
+
+  getParticipants: async (page = 0, size = 20, filters?: { cohortId?: string; batchId?: string; status?: string }): Promise<{
+    content: any[];
+    totalPages: number;
+    totalElements: number;
+    number: number;
+  }> => {
+    const params = new URLSearchParams({ page: String(page), size: String(size) });
+    if (filters?.cohortId) params.append('cohortId', filters.cohortId);
+    if (filters?.batchId) params.append('batchId', filters.batchId);
+    if (filters?.status) params.append('status', filters.status);
+    return apiFetch(`/me/participants?${params.toString()}`, { method: 'GET' });
+  },
+
+  getParticipantStats: async (): Promise<{
+    totalParticipants: number;
+    enrolledCount: number;
+    activeCount: number;
+    completedCount: number;
+    droppedCount: number;
+  }> => {
+    return apiFetch('/me/participants/stats', { method: 'GET' });
   },
 
   getFacilitators: async (page = 0, size = 100): Promise<{
