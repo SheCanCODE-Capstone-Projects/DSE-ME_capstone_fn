@@ -73,6 +73,7 @@ function ParticipantModal({
     disabilityStatus: (initialData?.disabilityStatus || "NO") as DisabilityStatus,
     educationLevel: initialData?.educationLevel || "",
     employmentStatusBaseline: (initialData?.employmentStatusBaseline || "UNEMPLOYED") as EmploymentStatusBaseline,
+    cohortId: "", // Add cohort selection
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,6 +90,11 @@ function ParticipantModal({
           toast.error("Email, phone, and education level are required.");
           return;
         }
+        
+        if (!formData.cohortId) {
+          toast.error("Please select a course for the participant.");
+          return;
+        }
 
         await onCreate({
           firstName: formData.firstName.trim(),
@@ -100,6 +106,7 @@ function ParticipantModal({
           disabilityStatus: formData.disabilityStatus,
           educationLevel: formData.educationLevel.trim(),
           employmentStatusBaseline: formData.employmentStatusBaseline,
+          cohortId: formData.cohortId || undefined, // Include cohort selection
         });
       } else {
         await onUpdate({
@@ -261,6 +268,20 @@ function ParticipantModal({
                     </option>
                   ))}
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Course <span className="text-red-500">*</span></label>
+                <select
+                  name="cohortId"
+                  required
+                  value={formData.cohortId}
+                  onChange={handleChange}
+                  className="mt-1 w-full px-4 py-2 border rounded-lg bg-white"
+                >
+                  <option value="">Select a course</option>
+                  {/* Facilitator's assigned courses will be populated here */}
+                </select>
+                <p className="text-xs text-gray-500 mt-1">Select the course this participant will take</p>
               </div>
             </>
           )}

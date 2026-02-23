@@ -41,7 +41,9 @@ function LoginPage() {
           role: response.role,
           hasAccess: response.role !== 'UNASSIGNED',
           organizationName: response.organizationName,
-          organizationId: response.organizationId
+          organizationId: response.organizationId,
+          locationName: response.locationName,
+          locationId: response.locationId
         };
         
         login(response.token, userData);

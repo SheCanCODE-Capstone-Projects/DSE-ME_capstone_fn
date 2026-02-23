@@ -120,7 +120,10 @@ function ProfilePanel() {
             {profile.fullName}
           </h2>
           <p className="text-slate-500 font-medium">
-            {user?.role ? `${user.role} •` : ''} {user?.organizationName || 'No Organization'}
+            {user?.role ? `${user.role}` : ''}
+          </p>
+          <p className="text-sm text-slate-400">
+            {user?.organizationName || 'No Organization'} {user?.locationName ? `• ${user.locationName}` : ''}
           </p>
         </div>
       </div>

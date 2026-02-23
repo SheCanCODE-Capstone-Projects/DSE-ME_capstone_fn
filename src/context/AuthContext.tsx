@@ -10,6 +10,8 @@ interface User {
   hasAccess: boolean;
   organizationName?: string;
   organizationId?: string;
+  locationName?: string;
+  locationId?: string;
 }
 
 interface AuthContextType {
