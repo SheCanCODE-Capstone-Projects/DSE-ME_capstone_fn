@@ -38,6 +38,7 @@ export interface FacilitatorParticipantsListResponse {
 }
 
 export interface FacilitatorParticipantsListParams {
+  cohortId?: string;
   page?: number;
   size?: number;
   search?: string;

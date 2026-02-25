@@ -25,6 +25,7 @@ export function useFacilitatorParticipantsList(params: FacilitatorParticipantsLi
     queryKey: ['facilitator', 'participants', 'list', params],
     queryFn: async () => {
       const qs = buildQueryString({
+        cohortId: params.cohortId,
         page: params.page ?? 0,
         size: params.size ?? 10,
         search: params.search,
@@ -79,6 +80,26 @@ export function useCreateFacilitatorParticipant() {
         data: dto,
       });
     },
+    onMutate: async (newParticipant) => {
+      await queryClient.cancelQueries({ queryKey: ['facilitator', 'participants', 'list'] });
+      const previousData = queryClient.getQueryData(['facilitator', 'participants', 'list']);
+      
+      queryClient.setQueryData(['facilitator', 'participants', 'list'], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          participants: [{ ...newParticipant, participantId: 'temp-' + Date.now() }, ...(old.participants || [])],
+          totalElements: (old.totalElements || 0) + 1,
+        };
+      });
+      
+      return { previousData };
+    },
+    onError: (_err, _newParticipant, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(['facilitator', 'participants', 'list'], context.previousData);
+      }
+    },
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['facilitator', 'participants', 'list'] }),
@@ -103,6 +124,36 @@ export function useUpdateFacilitatorParticipant() {
         method: 'PUT',
         data: dto,
       });
+    },
+    onMutate: async ({ participantId, dto }) => {
+      await queryClient.cancelQueries({ queryKey: ['facilitator', 'participants'] });
+      const previousList = queryClient.getQueryData(['facilitator', 'participants', 'list']);
+      const previousDetail = queryClient.getQueryData(['facilitator', 'participants', 'byId', participantId]);
+      
+      queryClient.setQueryData(['facilitator', 'participants', 'list'], (old: any) => {
+        if (!old?.participants) return old;
+        return {
+          ...old,
+          participants: old.participants.map((p: any) =>
+            p.participantId === participantId ? { ...p, ...dto } : p
+          ),
+        };
+      });
+      
+      queryClient.setQueryData(['facilitator', 'participants', 'byId', participantId], (old: any) => {
+        if (!old) return old;
+        return { ...old, ...dto };
+      });
+      
+      return { previousList, previousDetail };
+    },
+    onError: (_err, { participantId }, context) => {
+      if (context?.previousList) {
+        queryClient.setQueryData(['facilitator', 'participants', 'list'], context.previousList);
+      }
+      if (context?.previousDetail) {
+        queryClient.setQueryData(['facilitator', 'participants', 'byId', participantId], context.previousDetail);
+      }
     },
     onSuccess: async (_data, variables) => {
       await Promise.all([

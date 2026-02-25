@@ -7,6 +7,7 @@ import {
   PencilLine,
   Radar,
   Settings,
+  BookOpen,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -16,10 +17,11 @@ const FACILITATOR_BASE = '/facilitator';
 
 const navItems = [
   { label: 'Overview', icon: Home, href: `${FACILITATOR_BASE}/overview` },
+  { label: 'My Cohorts', icon: BookOpen, href: `${FACILITATOR_BASE}/cohorts` },
   { label: 'Participants', icon: Users, href: `${FACILITATOR_BASE}/participants` },
   { label: 'Attendance', icon: List, href: `${FACILITATOR_BASE}/attendance` },
   { label: 'Grades', icon: PencilLine, href: `${FACILITATOR_BASE}/grades` },
-  { label: 'Survey', icon: Radar, href: `${FACILITATOR_BASE}/surveys` },
+  
 ];
 
 const settingsItem = { label: 'Settings', icon: Settings, href: `${FACILITATOR_BASE}/settings` };

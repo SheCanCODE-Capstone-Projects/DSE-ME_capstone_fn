@@ -18,6 +18,30 @@ export function useCreateMeCohort() {
   });
 }
 
+export function useUpdateCohortStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: 'PLANNED' | 'UPCOMING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' }) =>
+      meApi.updateCohortStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me', 'cohorts'] });
+      queryClient.invalidateQueries({ queryKey: ['me', 'cohort-batches'] });
+    },
+  });
+}
+
+export function useUpdateCohortBatchStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: 'PLANNED' | 'UPCOMING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' }) =>
+      meApi.updateCohortBatchStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me', 'cohorts'] });
+      queryClient.invalidateQueries({ queryKey: ['me', 'cohort-batches'] });
+    },
+  });
+}
+
 export function useGetMeCohortBatchesList() {
   return useQuery({
     queryKey: ['me', 'cohort-batches', 'list'],

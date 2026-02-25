@@ -12,13 +12,16 @@ import type { RoleRequestResponse } from '@/types/auth';
 import toast from 'react-hot-toast';
 import { useAuth } from '@/context/AuthContext';
 import { getPersonalizedGreeting } from '@/lib/userUtils';
+import { useDonorStatistics } from '@/hooks/donor/useDonorStatistics';
 
 const Dashboard: React.FC = () => {
+  const { data: statistics, isLoading } = useDonorStatistics();
+  
   const stats = [
-    { title: "Total Partners", value: 5, icon: <Handshake size={28}/>, subtext: "Active" },
-    { title: "Total Impacted", value: "1,240", icon: <Users size={28}/>, subtext: "Individuals" },
-    { title: "Avg. Employment", value: "72%", icon: <Briefcase size={28}/>, subtext: "Rate" },
-    { title: "Efficiency", value: "84%", icon: <TrendingUp size={28}/>, subtext: "Budget" },
+    { title: "Total Partners", value: statistics?.totalPartners ?? 0, icon: <Handshake size={28}/>, subtext: "Active" },
+    { title: "Total Impacted", value: statistics?.totalImpacted?.toLocaleString() ?? "0", icon: <Users size={28}/>, subtext: "Individuals" },
+    { title: "Avg. Employment", value: `${statistics?.avgEmploymentRate ?? 0}%`, icon: <Briefcase size={28}/>, subtext: "Rate" },
+    { title: "Efficiency", value: `${statistics?.budgetEfficiency ?? 0}%`, icon: <TrendingUp size={28}/>, subtext: "Budget" },
   ];
 
   const topPartners = [

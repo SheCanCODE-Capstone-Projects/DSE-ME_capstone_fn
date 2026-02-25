@@ -4,6 +4,8 @@ import React from 'react'
 
 const GoogleLoginButton = () => {
   const handleGoogleLogin = () => {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:8088';
+    window.location.href = `${backendUrl}/oauth2/authorization/google`;
   };
 
   return (

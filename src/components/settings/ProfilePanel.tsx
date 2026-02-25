@@ -1,10 +1,11 @@
 'use client'
 import React, { useRef, useState } from 'react';
-import { Camera, Mail, Phone, MapPin, Briefcase, Save, User } from 'lucide-react';
+import { Camera, Mail, Phone, MapPin, Briefcase, Save, User, Building2 } from 'lucide-react';
 import { useProfile } from "../../context/profileContext";
 import { useAuth } from '@/context/AuthContext';
 import { authApi } from '@/lib/authApi';
 import { useQueryClient } from '@tanstack/react-query';
+import { useFacilitatorProfile } from '@/hooks/useFacilitator';
 
 function Input({
   label,
@@ -47,6 +48,7 @@ function ProfilePanel() {
 
   const { profile, setProfile } = useProfile();
   const { user } = useAuth();
+  const { data: facilitatorProfile } = useFacilitatorProfile();
 
   const handleSave = async () => {
     if (!user) return;
@@ -122,9 +124,17 @@ function ProfilePanel() {
           <p className="text-slate-500 font-medium">
             {user?.role ? `${user.role}` : ''}
           </p>
-          <p className="text-sm text-slate-400">
-            {user?.organizationName || 'No Organization'} {user?.locationName ? `• ${user.locationName}` : ''}
-          </p>
+          {facilitatorProfile?.organizationName && (
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <Building2 size={16} />
+              <span>{facilitatorProfile.organizationName}</span>
+            </div>
+          )}
+          {facilitatorProfile?.centerName && (
+            <p className="text-sm text-slate-400">
+              {facilitatorProfile.centerName}
+            </p>
+          )}
         </div>
       </div>
 

@@ -62,7 +62,7 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate, cohorts
       ></div>
 
       <div className="bg-white rounded-2xl p-6 z-10 w-96 max-w-full shadow-2xl border border-gray-200 transform transition-all duration-200 scale-100 max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 flex-shrink-0">
           <h2 className="text-xl font-semibold text-gray-900">Add New Participant</h2>
           <button
             onClick={onClose}
@@ -72,7 +72,8 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate, cohorts
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto pr-2">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="space-y-4 overflow-y-auto pr-2 max-h-[calc(90vh-200px)]" style={{scrollbarWidth: 'thin'}}>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <User size={16} className="inline mr-2" />
@@ -186,7 +187,9 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate, cohorts
             </div>
           )}
 
-          <div className="flex justify-end gap-3 pt-4">
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 mt-4 flex-shrink-0">
             <button
               type="button"
               onClick={onClose}

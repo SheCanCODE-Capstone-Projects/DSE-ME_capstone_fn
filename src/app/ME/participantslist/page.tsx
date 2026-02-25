@@ -6,6 +6,7 @@ import StatsCards from "@/components/ME/ParticipantsList/StatsCards";
 import EmploymentStats from "@/components/ME/ParticipantsList/EmploymentStats";
 import ParticipantsTable from "@/components/ME/ParticipantsList/ParticipantsTable";
 import FilterBar from "@/components/ME/ParticipantsList/FilterBar";
+import AddParticipantModal from "@/components/ME/ParticipantsList/AddParticipantModal";
 import { useGetMeParticipants } from "@/hooks/me/useMeParticipants";
 import { useGetMeCohortsList, useGetMeCohortBatchesList } from "@/hooks/me/useMeCohorts";
 import { useAuth } from "@/context/AuthContext";
@@ -17,6 +18,7 @@ export default function ParticipantsListPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"participants" | "employment">("participants");
   const [page, setPage] = useState(0);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [filters, setFilters] = useState({
     search: "",
     cohortId: "",
@@ -114,7 +116,7 @@ export default function ParticipantsListPage() {
           ) : (
             <ParticipantsTable
               participants={filteredParticipants}
-              onAddClick={() => {}}
+              onAddClick={() => setIsAddModalOpen(true)}
               onView={(id) => console.log("View", id)}
               onEdit={(id) => console.log("Edit", id)}
               totalItems={participantsData?.totalElements || 0}
@@ -144,7 +146,7 @@ export default function ParticipantsListPage() {
           ) : (
             <ParticipantsTable
               participants={filteredParticipants}
-              onAddClick={() => {}}
+              onAddClick={() => setIsAddModalOpen(true)}
               onView={(id) => console.log("View", id)}
               onEdit={(id) => console.log("Edit", id)}
               totalItems={participantsData?.totalElements || 0}
@@ -155,6 +157,11 @@ export default function ParticipantsListPage() {
           )}
         </>
       )}
+
+      <AddParticipantModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
     </div>
   );
 }

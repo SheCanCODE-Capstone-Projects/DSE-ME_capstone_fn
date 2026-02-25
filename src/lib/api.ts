@@ -24,27 +24,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response) {
-      console.error('API Error:', {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        url: error.config?.url,
-        data: error.response.data,
-        headers: error.response.headers,
-      });
-      console.error('Full error response:', error.response);
-    } else if (error.request) {
-      console.error('No Response Error - Request was made but no response received:', {
-        url: error.config?.url,
-        message: error.message,
-        code: error.code,
-      });
-    } else {
-      console.error('Network Error:', {
-        message: error.message,
-        code: error.code,
-        stack: error.stack,
-      });
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
@@ -79,7 +64,10 @@ export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): P
       lastError = error;
       
       if (axios.isAxiosError(error)) {
-        // Only retry on timeout, not on 4xx/5xx errors
+        if (error.response?.status === 401) {
+          throw error;
+        }
+        
         if (error.code === 'ECONNABORTED' && attempt < maxRetries) {
           await new Promise(resolve => setTimeout(resolve, 2000));
           continue;
@@ -89,21 +77,12 @@ export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): P
           throw new Error('Cannot connect to backend. Please ensure your backend is running.');
         }
         
-        // Don't retry on HTTP errors (400, 500, etc.)
         const responseData = error.response?.data;
         let errorMessage = 'Request failed';
-        
-        console.error('Detailed error info:', {
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-          data: responseData,
-          headers: error.response?.headers,
-        });
         
         if (typeof responseData === 'string') {
           errorMessage = responseData;
         } else if (typeof responseData === 'object' && responseData !== null) {
-          // Try multiple common error response formats
           if (responseData.error) {
             errorMessage = typeof responseData.error === 'string' ? responseData.error : JSON.stringify(responseData.error);
           } else if (responseData.message) {
@@ -112,10 +91,6 @@ export async function apiFetch<T>(endpoint: string, options: ApiOptions = {}): P
             errorMessage = responseData.details;
           } else if (responseData.msg) {
             errorMessage = responseData.msg;
-          } else if (Object.keys(responseData).length > 0) {
-            // If object has properties but not standard error fields, just stringify first property
-            const firstKey = Object.keys(responseData)[0];
-            errorMessage = `${firstKey}: ${JSON.stringify(responseData[firstKey])}`;
           }
         } else if (error.message) {
           errorMessage = error.message;

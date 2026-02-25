@@ -4,6 +4,7 @@
 import React, { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Download, Plus, Search, User, UserCheck, UserX, Users } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import StatusCard from "../../../components/ui/statuscard";
 import {
   useCreateFacilitatorParticipant,
@@ -481,6 +482,9 @@ const ParticipantsTable = ({
 
 
 export default function Participant() {
+  const searchParams = useSearchParams();
+  const cohortId = searchParams.get('cohort');
+  
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
@@ -494,6 +498,7 @@ export default function Participant() {
   const pageSize = 10;
 
   const participantsQuery = useFacilitatorParticipantsList({
+    cohortId: cohortId || undefined,
     page,
     size: pageSize,
     search: searchQuery,

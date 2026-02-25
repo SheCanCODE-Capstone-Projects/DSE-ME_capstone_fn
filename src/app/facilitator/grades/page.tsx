@@ -33,7 +33,7 @@ function DashboardPage() {
             title="Assignments"
             description="Create assignments and grade student submissions"
             buttonText="Manage Assignments"
-            href="/grades/assignments"
+            href="grades/assignments"
           />
 
           <GradeCards

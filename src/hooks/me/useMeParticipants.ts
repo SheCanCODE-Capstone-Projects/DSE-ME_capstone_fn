@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { meApi } from '@/lib/meApi';
 
 export function useGetMeParticipants(page = 0, size = 20, filters?: { cohortId?: string; batchId?: string; status?: string }) {
@@ -12,5 +12,23 @@ export function useGetMeParticipantStats() {
   return useQuery({
     queryKey: ['me', 'participants', 'stats'],
     queryFn: () => meApi.getParticipantStats(),
+  });
+}
+
+export function useCreateParticipant() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      studentId: string;
+      cohortId: string;
+      gender?: string;
+    }) => meApi.createParticipant(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['me', 'participants'] });
+      queryClient.invalidateQueries({ queryKey: ['me', 'participants', 'stats'] });
+    },
   });
 }
