@@ -19,6 +19,10 @@ export interface AuthResponse {
   role: 'FACILITATOR' | 'ME_OFFICER' | 'UNASSIGNED' | 'DONOR';
   redirectTo?: string;
   message?: string;
+  organizationName?: string;
+  organizationId?: string;
+  locationName?: string;
+  locationId?: string;
 }
 
 export interface UserProfile {

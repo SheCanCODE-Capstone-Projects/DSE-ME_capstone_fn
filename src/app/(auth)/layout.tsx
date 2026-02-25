@@ -110,7 +110,7 @@ const getLeftContent = (pathname: string) => {
             Check your inbox<br/>
             and click the link<br/>
             to verify your email.<br/><br/>
-            Can't find it?<br/>
+            Can&apos;t find it?<br/>
             Check your spam folder.
           </p>
           <div className="text-sm md:text-base">

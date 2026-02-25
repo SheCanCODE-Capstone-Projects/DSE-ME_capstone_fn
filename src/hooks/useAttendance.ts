@@ -12,7 +12,7 @@ export const useAttendanceParticipants = (cohortId?: string, date?: string, star
 export const useMarkAttendance = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<MarkAttendanceResponse, Error, MarkAttendanceRequest>({
+  return useMutation<MarkAttendanceResponse, Error, MarkAttendanceRequest, { previousData: any }>({
     mutationFn: (request) => facilitatorApi.markAttendance(request),
     onMutate: async (newAttendance) => {
       await queryClient.cancelQueries({ queryKey: ['attendanceParticipants'] });
@@ -23,8 +23,8 @@ export const useMarkAttendance = () => {
         return {
           ...old,
           participants: old.participants.map((p: any) =>
-            newAttendance.attendanceRecords.some((r: any) => r.participantId === p.participantId)
-              ? { ...p, attendanceStatus: newAttendance.attendanceRecords.find((r: any) => r.participantId === p.participantId)?.status }
+            newAttendance.records.some((r: any) => r.participantId === p.participantId)
+              ? { ...p, attendanceStatus: newAttendance.records.find((r: any) => r.participantId === p.participantId)?.status }
               : p
           ),
         };

@@ -9,11 +9,11 @@ import toast from "react-hot-toast";
 interface AddCohortModalProps {
   isOpen: boolean;
   onClose: () => void;
-  /** Called with new cohort when created (includes id and participantCount from API) */
+  
   onCreate: (cohort: Cohort | null) => void;
 }
 
-/** Helper: format facilitator display name */
+
 function facilitatorLabel(firstName?: string | null, lastName?: string | null): string {
   const parts = [firstName, lastName].filter(Boolean);
   return parts.length ? parts.join(" ") : "— No facilitator —";

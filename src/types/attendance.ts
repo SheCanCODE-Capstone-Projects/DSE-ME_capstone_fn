@@ -11,6 +11,7 @@ export interface AttendanceRecord {
   status: 'Present' | 'Absent' | 'Late' | 'Absent with Communication' | 'Late with Communication';
   timeIn?: string;
   notes?: string;
+  remarks?: string;
   markedBy: string;
   markedAt: string;
 }

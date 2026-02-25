@@ -41,14 +41,20 @@ export interface CreateCohortBatchRequest {
 
 export interface CreateMeCohortRequest {
   name: string;
+  courseId?: string;
+  facilitatorId?: string;
   startDate: string;
   endDate?: string;
+  maxParticipants?: number;
 }
 
 export interface CreateCourseRequest {
   name: string;
   code?: string;
+  description?: string;
+  durationWeeks?: number;
   level?: string;
+  maxParticipants?: number;
 }
 
 export interface CohortBatchResponse {
@@ -58,6 +64,9 @@ export interface CohortBatchResponse {
   endDate?: string;
   status?: string;
   centerName?: string;
+  currentParticipants?: number;
+  course?: { id?: string; name?: string; code?: string };
+  facilitator?: { id?: string; firstName?: string; lastName?: string };
 }
 
 export const meApi = {
@@ -137,7 +146,7 @@ export const meApi = {
       method: 'PATCH',
     }),
 
-  updateCourse: (courseId: string, data: { name: string; code?: string; description?: string; durationWeeks?: number; level?: string }) =>
+  updateCourse: (courseId: string, data: { name: string; code?: string; description?: string; durationWeeks?: number; level?: string; maxParticipants?: number }) =>
     apiFetch<any>(`/me/courses/${courseId}`, {
       method: 'PUT',
       data,
