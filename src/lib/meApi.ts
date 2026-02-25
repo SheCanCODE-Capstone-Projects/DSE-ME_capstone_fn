@@ -65,8 +65,12 @@ export interface CohortBatchResponse {
   status?: string;
   centerName?: string;
   currentParticipants?: number;
+  batchId?: string;
+  batch?: { id?: string; name?: string };
   course?: { id?: string; name?: string; code?: string };
   facilitator?: { id?: string; firstName?: string; lastName?: string };
+  facilitators?: { id?: string; firstName?: string; lastName?: string; email?: string; facilitatorId?: string }[];
+  maxParticipants?: number;
 }
 
 export const meApi = {
@@ -172,5 +176,20 @@ export const meApi = {
     apiFetch<any>('/me/participants', {
       method: 'POST',
       data,
+    }),
+
+  // Cohort Facilitators
+  getCohortFacilitators: (cohortId: string) =>
+    apiFetch<any[]>(`/me/cohorts/${cohortId}/facilitators`),
+
+  assignFacilitatorsToCohort: (cohortId: string, facilitatorIds: string[]) =>
+    apiFetch<any>(`/me/cohorts/${cohortId}/facilitators`, {
+      method: 'POST',
+      data: { facilitatorIds },
+    }),
+
+  removeFacilitatorFromCohort: (cohortId: string, facilitatorId: string) =>
+    apiFetch<any>(`/me/cohorts/${cohortId}/facilitators/${facilitatorId}`, {
+      method: 'DELETE',
     }),
 };
