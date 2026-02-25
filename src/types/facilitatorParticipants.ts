@@ -84,6 +84,7 @@ export interface CreateFacilitatorParticipantDTO {
   disabilityStatus: DisabilityStatus;
   educationLevel: string;
   employmentStatusBaseline: EmploymentStatusBaseline;
+  cohortId?: string;
 }
 
 export interface UpdateFacilitatorParticipantDTO {

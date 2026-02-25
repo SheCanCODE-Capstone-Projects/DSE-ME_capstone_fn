@@ -54,6 +54,7 @@ export default function ParticipantsListPage() {
     status: p.status,
     email: p.email,
     studentId: p.studentId,
+    joinDate: p.enrollmentDate || p.createdAt || new Date().toISOString(),
   }));
 
   const filteredParticipants = participants.filter((p: any) =>
