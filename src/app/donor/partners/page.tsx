@@ -1,26 +1,142 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search, Filter, UserCheck } from "lucide-react";
 import AddPartnerModal from "@/components/PartnersComponents/AddPartnerModal";
 import PartnersTable from "@/components/PartnersComponents/PartnersTable";
 import PartnersStats from "@/components/PartnersComponents/PartnersStats";
 import PartnersChart from "@/components/PartnersComponents/PartnersChart";
-import { partnersData } from "@/data/partnersData";
 import { type Partner } from "@/types/partners";
+import { authApi } from "@/lib/authApi";
+import toast from "react-hot-toast";
+import AccessRequestsModal from "@/components/ME/Facilitator/AccessRequestsModal";
+import { useGetPendingAccessRequests, useApproveAccessRequest, useRejectAccessRequest } from "@/hooks/auth/useAccessRequests";
+import type { RoleRequestResponse } from "@/types/auth";
 
 export default function PartnersPage() {
   const router = useRouter();
-  const [partners, setPartners] = useState<Partner[]>(partnersData);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [isLoadingPartners, setIsLoadingPartners] = useState(false);
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [accessRequestsOpen, setAccessRequestsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [provinceFilter, setProvinceFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const handleAddPartner = (newPartner: Partner): void => {
-    setPartners((prev) => [...prev, newPartner]);
+  const { data: accessRequestsData, refetch } = useGetPendingAccessRequests() as {
+    data?: { content: RoleRequestResponse[] };
+    refetch: () => void;
+  };
+  const approveRequest = useApproveAccessRequest();
+  const rejectRequest = useRejectAccessRequest();
+  const accessRequests: RoleRequestResponse[] = accessRequestsData?.content || [];
+
+  const handleApproveRequest = async (requestId: string) => {
+    try {
+      await approveRequest.mutateAsync(requestId);
+      refetch();
+      toast.success('Access request approved successfully!');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to approve request');
+    }
+  };
+
+  const handleRejectRequest = async (requestId: string) => {
+    try {
+      await rejectRequest.mutateAsync(requestId);
+      refetch();
+      toast.success('Access request rejected successfully!');
+    } catch (error) {
+      toast.error((error as Error).message || 'Failed to reject request');
+    }
+  };
+
+  // Map backend partners (organizations) to UI Partner type used in the donor dashboard
+  const mapApiPartnersToUi = (apiPartners: import("@/types/auth").Partner[]): Partner[] => {
+    return apiPartners.map((p) => ({
+      id: p.partnerId,
+      name: p.partnerName,
+      type: "Tech Hub",
+      email: p.contactEmail || "",
+      phone: p.contactPhone || "",
+      province: p.region || "Kigali City",
+      district: "",
+      staff: 0,
+      status: "Active",
+      joinDate: new Date().toISOString().split("T")[0],
+      totalParticipants: 0,
+      activeParticipants: 0,
+      completedParticipants: 0,
+      dropoutRate: 0,
+      employmentRate: 0,
+      internshipPlacementRate: 0,
+      programs: 0,
+      participantsWithDisability: 0,
+      femaleParticipants: 0,
+      maleParticipants: 0,
+    }));
+  };
+
+  useEffect(() => {
+    const fetchPartners = async () => {
+      try {
+        setIsLoadingPartners(true);
+        const apiPartners = await authApi.getPartners();
+        setPartners(mapApiPartnersToUi(apiPartners));
+      } catch (error) {
+        console.error("Failed to load partners", error);
+        toast.error("Failed to load partners");
+      } finally {
+        setIsLoadingPartners(false);
+      }
+    };
+
+    fetchPartners();
+  }, []);
+
+  const handleAddPartner = (newPartner: Partner & { branches?: Array<{ name: string; province: string; district: string; address?: string }> }): void => {
+    (async () => {
+      try {
+        const created = await authApi.createPartner({
+          name: newPartner.name,
+          email: newPartner.email,
+          phone: newPartner.phone,
+          province: newPartner.province,
+        });
+
+        // Create main center from primary location if district is provided
+        if (newPartner.district) {
+          await authApi.createCenter(created.partnerId, {
+            centerName: `${newPartner.name} Main`,
+            location: `${newPartner.province} - ${newPartner.district}`,
+            country: created.country,
+            region: created.region,
+          });
+        }
+
+        // Create centers for each branch
+        const branches = newPartner.branches || [];
+        for (const branch of branches) {
+          if (branch.name?.trim() && branch.district?.trim()) {
+            await authApi.createCenter(created.partnerId, {
+              centerName: branch.name.trim(),
+              location: `${branch.province || "Kigali City"} - ${branch.district.trim()}`,
+              country: created.country,
+              region: created.region,
+            });
+          }
+        }
+
+        const apiPartners = await authApi.getPartners();
+        setPartners(mapApiPartnersToUi(apiPartners));
+        toast.success("Partner created successfully");
+      } catch (error) {
+        console.error("Failed to create partner", error);
+        toast.error("Failed to create partner");
+      }
+    })();
   };
 
   const handleViewPartner = (id: string): void => {
@@ -40,7 +156,22 @@ export default function PartnersPage() {
 
   return (
     <div className="space-y-6">
-   
+      {/* Access Requests Button */}
+      <div className="flex justify-end">
+        <button
+          onClick={() => setAccessRequestsOpen(true)}
+          className="relative flex items-center gap-2 px-4 py-3 bg-[#0B609D] text-white rounded-2xl hover:bg-[#094d7a] transition shadow-sm"
+        >
+          <UserCheck size={18} />
+          <span className="font-medium text-sm">Access Requests</span>
+          {accessRequests.length > 0 && (
+            <span className="ml-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
+              {accessRequests.length}
+            </span>
+          )}
+        </button>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Implementation Partners</h1>
@@ -133,6 +264,15 @@ export default function PartnersPage() {
         isOpen={addModalOpen}
         onClose={() => setAddModalOpen(false)}
         onCreate={handleAddPartner}
+      />
+
+      <AccessRequestsModal
+        isOpen={accessRequestsOpen}
+        onClose={() => setAccessRequestsOpen(false)}
+        requests={accessRequests}
+        onApprove={handleApproveRequest}
+        onReject={handleRejectRequest}
+        loading={approveRequest.isPending || rejectRequest.isPending}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "./Modal";
 import { Facilitator } from "@/types/facilitator";
 
@@ -14,7 +14,7 @@ interface AssignCohortsModalProps {
   cohorts: Cohort[];
   isOpen: boolean;
   onClose: () => void;
-  onSave: (selectedIds: string[]) => void;
+  onSave: (selectedIds: string[]) => void | Promise<void>;
 }
 
 export default function AssignCohortsModal({
@@ -27,6 +27,13 @@ export default function AssignCohortsModal({
   const [selected, setSelected] = useState<string[]>(
     facilitator?.cohorts.map((c) => c.id) || []
   );
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (facilitator && isOpen) {
+      setSelected(facilitator.cohorts.map((c) => c.id));
+    }
+  }, [facilitator?.id, isOpen]);
 
   const toggle = (id: string) => {
     setSelected((prev) =>
@@ -34,9 +41,14 @@ export default function AssignCohortsModal({
     );
   };
 
-  const handleSave = () => {
-    onSave(selected);
-    onClose();
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await Promise.resolve(onSave(selected));
+      onClose();
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!facilitator) return null;
@@ -60,8 +72,8 @@ export default function AssignCohortsModal({
         <button className="px-4 py-2 rounded-md border" onClick={onClose}>
           Cancel
         </button>
-        <button className="px-4 py-2 rounded-md bg-sky-600 text-white" onClick={handleSave}>
-          Save
+        <button className="px-4 py-2 rounded-md bg-sky-600 text-white disabled:opacity-50" onClick={handleSave} disabled={saving}>
+          {saving ? "Saving…" : "Save"}
         </button>
       </div>
     </Modal>

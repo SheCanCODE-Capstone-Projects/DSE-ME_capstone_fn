@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { toast } from "react-hot-toast"
+import { getUserInitials, getDisplayName } from "@/lib/userUtils"
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -14,7 +15,7 @@ interface NavbarProps {
 export default function NavbarME({ onMenuClick, pageTitle = "Overview" }: NavbarProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -63,11 +64,11 @@ export default function NavbarME({ onMenuClick, pageTitle = "Overview" }: Navbar
         
         <div className="flex items-center gap-2 md:gap-3">
           <div className="w-8 h-8 md:w-10 md:h-10 bg-sky-700 rounded-full flex items-center justify-center text-white font-semibold text-xs md:text-sm">
-            EI
+            {getUserInitials(user)}
           </div>
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-semibold text-gray-800">Emma</p>
-            <p className="text-xs" style={{ color: '#0B609D' }}>Emma@gmail.com</p>
+            <p className="text-sm font-semibold text-gray-800">{getDisplayName(user) || 'User'}</p>
+            <p className="text-xs" style={{ color: '#0B609D' }}>{user?.email || ''}</p>
           </div>
         </div>
 

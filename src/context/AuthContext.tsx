@@ -4,8 +4,14 @@ import { useCurrentUser } from '@/hooks/auth/useCurrentUser';
 interface User {
   id: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
   role: string;
   hasAccess: boolean;
+  organizationName?: string;
+  organizationId?: string;
+  locationName?: string;
+  locationId?: string;
 }
 
 interface AuthContextType {
@@ -47,6 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const userData: User = {
         id: currentUser.id,
         email: currentUser.email,
+        firstName: currentUser.firstName,
+        lastName: currentUser.lastName,
         role: currentUser.role || 'UNASSIGNED',
         hasAccess: !!currentUser.role && currentUser.role !== 'UNASSIGNED'
       };

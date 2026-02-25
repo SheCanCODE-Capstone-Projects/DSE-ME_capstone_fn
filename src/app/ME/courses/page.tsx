@@ -4,84 +4,114 @@ import { useState } from "react";
 import { Search, Filter, Plus } from "lucide-react";
 import CourseCard from "@/components/ME/Course/CourseCard";
 import CreateCourseModal from "@/components/ME/Course/CreateCourseModal";
+import EditCourseModal from "@/components/ME/Course/EditCourseModal";
+import { useGetMeCourses } from "@/hooks/me/useMeCohorts";
+import { meApi } from "@/lib/meApi";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 interface Course {
   id: string;
   name: string;
   description: string;
   duration: string;
-  level: "Beginner" | "Intermediate" | "Advanced";
+  level: string;
   facilitatorsCount: number;
   participantsCount: number;
   isActive: boolean;
 }
 
-const mockCourses: Course[] = [
-  {
-    id: "1",
-    name: "Business Skills Fundamentals",
-    description: "Essential business skills for professional development",
-    duration: "8",
-    level: "Beginner",
-    facilitatorsCount: 3,
-    participantsCount: 45,
-    isActive: true
-  },
-  {
-    id: "2", 
-    name: "Leadership Development",
-    description: "Advanced leadership and management techniques",
-    duration: "12",
-    level: "Advanced",
-    facilitatorsCount: 2,
-    participantsCount: 28,
-    isActive: true
-  },
-  {
-    id: "3",
-    name: "Digital Marketing",
-    description: "Modern digital marketing strategies and tools",
-    duration: "6", 
-    level: "Intermediate",
-    facilitatorsCount: 1,
-    participantsCount: 32,
-    isActive: false
-  }
-];
+interface EditCourse {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  durationWeeks: number;
+  level: string;
+}
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState<Course[]>(mockCourses);
+  const queryClient = useQueryClient();
+  const { data: coursesData = [], isLoading } = useGetMeCourses();
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<EditCourse | null>(null);
   const [search, setSearch] = useState("");
   const [levelFilter, setLevelFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
 
+  const courses: Course[] = coursesData.map((c: any) => ({
+    id: c.id,
+    name: c.name,
+    description: c.description || "No description available",
+    duration: String(c.durationWeeks || 12),
+    level: c.level || "BEGINNER",
+    facilitatorsCount: c.facilitatorsCount || 0,
+    participantsCount: c.participantsCount || 0,
+    isActive: c.status === "ACTIVE",
+  }));
+
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.name.toLowerCase().includes(search.toLowerCase()) ||
                          course.description.toLowerCase().includes(search.toLowerCase());
-    const matchesLevel = levelFilter === "all" || course.level === levelFilter;
+    const matchesLevel = levelFilter === "all" || course.level.toUpperCase() === levelFilter.toUpperCase();
     const matchesStatus = statusFilter === "all" ||
                          (statusFilter === "active" && course.isActive) ||
                          (statusFilter === "inactive" && !course.isActive);
     return matchesSearch && matchesLevel && matchesStatus;
   });
 
-  const handleCreateCourse = (newCourse: Omit<Course, "id">) => {
-    const course: Course = {
-      ...newCourse,
-      id: `course_${Date.now()}`
-    };
-    setCourses(prev => [...prev, course]);
+  const handleCreateCourse = () => {
     setCreateModalOpen(false);
   };
 
-  const handleToggleActive = (id: string) => {
-    setCourses(prev =>
-      prev.map(course => 
-        course.id === id ? { ...course, isActive: !course.isActive } : course
-      )
-    );
+  const handleToggleActive = async (id: string) => {
+    try {
+      await meApi.toggleCourseStatus(id);
+      await queryClient.invalidateQueries({ queryKey: ["me", "courses"] });
+      toast.success("Course status updated");
+    } catch (error) {
+      toast.error((error as Error).message || "Failed to update course status");
+    }
   };
+
+  const handleEdit = (course: Course) => {
+    const editCourse: EditCourse = {
+      id: course.id,
+      name: course.name,
+      code: coursesData.find((c: any) => c.id === course.id)?.code || "",
+      description: course.description,
+      durationWeeks: parseInt(course.duration),
+      level: course.level,
+    };
+    setSelectedCourse(editCourse);
+    setEditModalOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this course? This action cannot be undone.")) {
+      return;
+    }
+    try {
+      await meApi.deleteCourse(id);
+      await queryClient.invalidateQueries({ queryKey: ["me", "courses"] });
+      toast.success("Course deleted successfully");
+    } catch (error) {
+      toast.error((error as Error).message || "Failed to delete course");
+    }
+  };
+
+  const handleEditSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ["me", "courses"] });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-gray-500">Loading courses…</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -139,6 +169,8 @@ export default function CoursesPage() {
             key={course.id}
             course={course}
             onToggleActive={handleToggleActive}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ))}
 
@@ -153,6 +185,13 @@ export default function CoursesPage() {
         isOpen={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onCreate={handleCreateCourse}
+      />
+
+      <EditCourseModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        course={selectedCourse}
+        onSuccess={handleEditSuccess}
       />
     </div>
   );

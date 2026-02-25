@@ -2,21 +2,13 @@
 
 import { useState } from "react";
 import Modal from "../Facilitator/Modal";
-
-interface Course {
-  name: string;
-  description: string;
-  duration: string;
-  level: "Beginner" | "Intermediate" | "Advanced";
-  facilitatorsCount: number;
-  participantsCount: number;
-  isActive: boolean;
-}
+import { useCreateMeCourse } from "@/hooks/me/useMeCohorts";
+import toast from "react-hot-toast";
 
 interface CreateCourseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (course: Course) => void;
+  onCreate: () => void;
 }
 
 export default function CreateCourseModal({
@@ -24,33 +16,42 @@ export default function CreateCourseModal({
   onClose,
   onCreate,
 }: CreateCourseModalProps) {
-  const [formData, setFormData] = useState<Course>({
+  const createCourseMutation = useCreateMeCourse();
+  const [formData, setFormData] = useState({
     name: "",
+    code: "",
     description: "",
-    duration: "",
-    level: "Beginner",
-    facilitatorsCount: 0,
-    participantsCount: 0,
-    isActive: true,
+    durationWeeks: 12,
+    level: "BEGINNER",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name && formData.description && formData.duration) {
-      onCreate(formData);
+    try {
+      await createCourseMutation.mutateAsync({
+        name: formData.name,
+        code: formData.code,
+        description: formData.description,
+        level: formData.level,
+        durationWeeks: formData.durationWeeks,
+        maxParticipants: 30,
+      });
+      toast.success("Course created successfully!");
       setFormData({
         name: "",
+        code: "",
         description: "",
-        duration: "",
-        level: "Beginner",
-        facilitatorsCount: 0,
-        participantsCount: 0,
-        isActive: true,
+        durationWeeks: 12,
+        level: "BEGINNER",
       });
+      onCreate();
+      onClose();
+    } catch (error) {
+      toast.error((error as Error).message || "Failed to create course");
     }
   };
 
-  const handleChange = (field: keyof Course, value: string | number | boolean) => {
+  const handleChange = (field: string, value: string | number) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -73,6 +74,20 @@ export default function CreateCourseModal({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
+            Course Code
+          </label>
+          <input
+            type="text"
+            value={formData.code}
+            onChange={(e) => handleChange("code", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+            placeholder="e.g., BUS101"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Description
           </label>
           <textarea
@@ -81,7 +96,6 @@ export default function CreateCourseModal({
             className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             placeholder="Enter course description"
             rows={3}
-            required
           />
         </div>
 
@@ -93,10 +107,10 @@ export default function CreateCourseModal({
             <input
               type="number"
               min="1"
-              value={formData.duration}
-              onChange={(e) => handleChange("duration", e.target.value)}
+              value={formData.durationWeeks}
+              onChange={(e) => handleChange("durationWeeks", parseInt(e.target.value))}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-              placeholder="e.g., 8"
+              placeholder="e.g., 12"
               required
             />
           </div>
@@ -107,27 +121,14 @@ export default function CreateCourseModal({
             </label>
             <select
               value={formData.level}
-              onChange={(e) => handleChange("level", e.target.value as Course["level"])}
+              onChange={(e) => handleChange("level", e.target.value)}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
             >
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Advanced">Advanced</option>
+              <option value="BEGINNER">Beginner</option>
+              <option value="INTERMEDIATE">Intermediate</option>
+              <option value="ADVANCED">Advanced</option>
             </select>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="isActive"
-            checked={formData.isActive}
-            onChange={(e) => handleChange("isActive", e.target.checked)}
-            className="rounded border-gray-300 text-sky-600 focus:ring-sky-500"
-          />
-          <label htmlFor="isActive" className="text-sm text-gray-700">
-            Active course
-          </label>
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
@@ -135,14 +136,16 @@ export default function CreateCourseModal({
             type="button"
             onClick={onClose}
             className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition"
+            disabled={createCourseMutation.isPending}
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 rounded-lg bg-[#0B609D] text-white hover:bg-[#094d7a] transition"
+            className="px-4 py-2 rounded-lg bg-[#0B609D] text-white hover:bg-[#094d7a] transition disabled:opacity-50"
+            disabled={createCourseMutation.isPending}
           >
-            Create Course
+            {createCourseMutation.isPending ? "Creating..." : "Create Course"}
           </button>
         </div>
       </form>

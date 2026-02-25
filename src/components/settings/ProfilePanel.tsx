@@ -1,18 +1,24 @@
 'use client'
-import React, { useEffect, useRef } from 'react';
-import { Camera, Mail, Phone, MapPin, Briefcase, Save, User } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Camera, Mail, Phone, MapPin, Briefcase, Save, User, Building2 } from 'lucide-react';
 import { useProfile } from "../../context/profileContext";
+import { useAuth } from '@/context/AuthContext';
+import { authApi } from '@/lib/authApi';
+import { useQueryClient } from '@tanstack/react-query';
+import { useFacilitatorProfile } from '@/hooks/useFacilitator';
 
 function Input({
   label,
   icon: Icon,
   value,
   onChange,
+  readOnly = false,
 }: {
   label: string;
   icon: React.ComponentType<{ size?: number }>;
   value: string;
   onChange: (v: string) => void;
+  readOnly?: boolean;
 }) {
   return (
     <div className="space-y-2">
@@ -26,8 +32,10 @@ function Input({
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-700
-            focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500"
+          readOnly={readOnly}
+          className={`w-full pl-11 pr-4 py-3 border rounded-xl text-slate-700
+            focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500
+            ${readOnly ? 'bg-slate-100 border-slate-200 cursor-not-allowed' : 'bg-slate-50 border-slate-200'}`}
         />
       </div>
     </div>
@@ -35,19 +43,29 @@ function Input({
 }
 function ProfilePanel() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const queryClient = useQueryClient();
 
   const { profile, setProfile } = useProfile();
+  const { user } = useAuth();
+  const { data: facilitatorProfile } = useFacilitatorProfile();
 
-  useEffect(() => {
-    const storedProfile = localStorage.getItem('profileData');
-    if (storedProfile) {
-      setProfile(JSON.parse(storedProfile));
+  const handleSave = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    try {
+      const parts = (profile.fullName || '').trim().split(/\s+/);
+      const firstName = parts[0] || user.firstName || '';
+      const lastName = parts.slice(1).join(' ') || user.lastName || '';
+      await authApi.updateProfile({ firstName, lastName });
+      await queryClient.invalidateQueries({ queryKey: ['currentUser'] });
+      localStorage.setItem('profileData', JSON.stringify(profile));
+      alert('Profile saved successfully!');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to save profile.');
+    } finally {
+      setIsSaving(false);
     }
-  }, [setProfile]);
-
-  const handleSave = () => {
-    localStorage.setItem('profileData', JSON.stringify(profile));
-    alert('Profile saved successfully!');
   };
 
   const handleAvatarChange = (file: File) => {
@@ -104,8 +122,19 @@ function ProfilePanel() {
             {profile.fullName}
           </h2>
           <p className="text-slate-500 font-medium">
-            Facilitator • SheCanCode
+            {user?.role ? `${user.role}` : ''}
           </p>
+          {facilitatorProfile?.organizationName && (
+            <div className="flex items-center gap-2 text-sm text-slate-600">
+              <Building2 size={16} />
+              <span>{facilitatorProfile.organizationName}</span>
+            </div>
+          )}
+          {facilitatorProfile?.centerName && (
+            <p className="text-sm text-slate-400">
+              {facilitatorProfile.centerName}
+            </p>
+          )}
         </div>
       </div>
 
@@ -120,7 +149,8 @@ function ProfilePanel() {
           label="Email Address"
           icon={Mail}
           value={profile.email}
-          onChange={(v) => setProfile({ ...profile, email: v })}
+          onChange={() => {}}
+          readOnly
         />
         <Input
           label="Phone Number"
@@ -152,11 +182,12 @@ function ProfilePanel() {
       <div className="flex justify-end pt-4">
         <button
           onClick={handleSave}
+          disabled={isSaving}
           className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-white
-            bg-sky-600 hover:bg-sky-700 rounded-lg shadow-md"
+            bg-sky-600 hover:bg-sky-700 rounded-lg shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
         >
           <Save size={16} />
-          Save Changes
+          {isSaving ? 'Saving...' : 'Save Changes'}
         </button>
       </div>
     </div>

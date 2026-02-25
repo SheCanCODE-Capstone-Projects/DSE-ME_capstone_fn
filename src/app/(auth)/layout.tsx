@@ -9,7 +9,20 @@ const getLeftContent = (pathname: string) => {
     case '/login':
       return (
         <div className="flex flex-col justify-center items-center md:items-start h-full space-y-4">
-          <p className=" text-sm md:text-xl leading-relaxed">
+          <div className="mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold mb-2">
+              <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.1s' }}>D</span>
+              <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.2s' }}>S</span>
+              <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.3s' }}>E</span>
+              <span className="inline-block mx-2 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>&</span>
+              <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.5s' }}>M</span>
+              <span className="inline-block animate-fade-in-up" style={{ animationDelay: '0.6s' }}>E</span>
+            </h1>
+            <p className="text-sm md:text-base opacity-90 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+              Digital Skills & Monitoring Evaluation Platform
+            </p>
+          </div>
+          <p className="text-sm md:text-xl leading-relaxed">
             Track learner progress,<br/>
             monitor cohorts,<br/>
             manage program data,<br/>
@@ -90,7 +103,41 @@ const getLeftContent = (pathname: string) => {
           </div>
         </div>
       );
-    case '/new-password':
+    case '/email-verification':
+      return (
+        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-4">
+          <p className="text-sm md:text-xl leading-relaxed">
+            Check your inbox<br/>
+            and click the link<br/>
+            to verify your email.<br/><br/>
+            Can't find it?<br/>
+            Check your spam folder.
+          </p>
+          <div className="text-sm md:text-base">
+            <p>Wrong email address?</p>
+            <Link href="/signup" className="text-white underline hover:text-gray-200 font-medium">
+              Sign up again
+            </Link>
+          </div>
+        </div>
+      );
+    case '/email-verified':
+      return (
+        <div className="flex flex-col justify-center items-center md:items-start h-full space-y-4">
+          <p className="text-sm md:text-xl leading-relaxed">
+            Your email has been<br/>
+            successfully verified!<br/><br/>
+            You can now access<br/>
+            all platform features.
+          </p>
+          <div className="text-sm md:text-base">
+            <p>Ready to get started?</p>
+            <Link href="/login" className="text-white underline hover:text-gray-200 font-medium">
+              Login now
+            </Link>
+          </div>
+        </div>
+      );
       return (
         <div className="flex flex-col justify-center items-center md:items-start h-full space-y-0 md:space-y-6  md:space-x-0">
           <p className="text-sm md:text-xl leading-relaxed">

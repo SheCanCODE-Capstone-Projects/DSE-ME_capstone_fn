@@ -4,8 +4,9 @@ import {
   Home,
   Users,
   UserCog,
-  BookOpen ,
+  BookOpen,
   FileBarChart,
+  Layers,
   Settings,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -15,9 +16,10 @@ import { usePathname } from 'next/navigation';
 const navItems = [
   { label: 'Overview', icon: Home, href: '/ME/overviews' },
   { label: 'Participants', icon: Users, href: '/ME/participantslist' },
+  { label: 'Cohorts', icon: Layers, href: '/ME/cohorts' },
   { label: 'Facilitators', icon: UserCog, href: '/ME/facilitators' },
-  { label: 'Courses', icon:  BookOpen , href: '/ME/courses' },
-  { label: 'Reports', icon:  FileBarChart, href: '/ME/reports' },
+  { label: 'Courses', icon: BookOpen, href: '/ME/courses' },
+  { label: 'Reports', icon: FileBarChart, href: '/ME/reports' },
 ];
 
 const settingsItem = { label: 'Settings', icon: Settings, href: '/ME/settings' };

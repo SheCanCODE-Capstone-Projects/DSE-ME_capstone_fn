@@ -14,7 +14,7 @@ interface AssignCoursesModalProps {
   courses: Course[];
   isOpen: boolean;
   onClose: () => void;
-  onSave: (selectedIds: string[]) => void;
+  onSave: (selectedIds: string[]) => void | Promise<void>;
 }
 
 export default function AssignCoursesModal({
@@ -27,6 +27,7 @@ export default function AssignCoursesModal({
   const [selected, setSelected] = useState<string[]>(
     facilitator?.courses.map((c) => c.id) || []
   );
+  const [saving, setSaving] = useState(false);
 
   const toggle = (id: string) => {
     setSelected((prev) =>
@@ -34,15 +35,20 @@ export default function AssignCoursesModal({
     );
   };
 
-  const handleSave = () => {
-    onSave(selected);
-    onClose();
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await Promise.resolve(onSave(selected));
+      onClose();
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (!facilitator) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Assign Courses to ${facilitator.name}`}>
+    <Modal isOpen={isOpen} onClose={onClose} title={`Assign Tracks to ${facilitator.name}`}>
       <ul className="flex flex-col gap-2 max-h-64 overflow-y-auto mb-4">
         {courses.map((course) => (
           <li
@@ -60,8 +66,8 @@ export default function AssignCoursesModal({
         <button className="px-4 py-2 rounded-md border" onClick={onClose}>
           Cancel
         </button>
-        <button className="px-4 py-2 rounded-md bg-sky-600 text-white" onClick={handleSave}>
-          Save
+        <button className="px-4 py-2 rounded-md bg-sky-600 text-white disabled:opacity-50" onClick={handleSave} disabled={saving}>
+          {saving ? "Saving…" : "Save"}
         </button>
       </div>
     </Modal>

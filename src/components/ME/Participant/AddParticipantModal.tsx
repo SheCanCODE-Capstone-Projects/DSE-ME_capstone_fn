@@ -3,14 +3,24 @@
 import { useState } from "react";
 import { X, User, Mail, Users, Briefcase } from "lucide-react";
 import { Participant } from "@/types/participant";
+import { Cohort } from "@/types/cohort";
+
+function cohortLabel(c: Cohort): string {
+  if (c.courseName || c.facilitatorName) {
+    const parts = [c.courseName, c.facilitatorName].filter(Boolean);
+    return `${c.name} (${parts.join(" • ")})`;
+  }
+  return c.name;
+}
 
 interface AddParticipantModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCreate: (participant: Omit<Participant, "id">) => void;
+  cohorts?: Cohort[];
 }
 
-export default function AddParticipantModal({ isOpen, onClose, onCreate }: AddParticipantModalProps) {
+export default function AddParticipantModal({ isOpen, onClose, onCreate, cohorts = [] }: AddParticipantModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -52,7 +62,7 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate }: AddPa
       ></div>
 
       <div className="bg-white rounded-2xl p-6 z-10 w-96 max-w-full shadow-2xl border border-gray-200 transform transition-all duration-200 scale-100 max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 flex-shrink-0">
           <h2 className="text-xl font-semibold text-gray-900">Add New Participant</h2>
           <button
             onClick={onClose}
@@ -62,7 +72,8 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate }: AddPa
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto pr-2">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="space-y-4 overflow-y-auto pr-2 max-h-[calc(90vh-200px)]" style={{scrollbarWidth: 'thin'}}>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <User size={16} className="inline mr-2" />
@@ -106,10 +117,11 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate }: AddPa
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0B609D] focus:border-transparent"
               >
                 <option value="">Select Cohort</option>
-                <option value="A-001">A-001</option>
-                <option value="A-002">A-002</option>
-                <option value="B-001">B-001</option>
-                <option value="B-002">B-002</option>
+                {cohorts.map((c) => (
+                  <option key={c.id} value={c.name}>
+                    {cohortLabel(c)}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -175,7 +187,9 @@ export default function AddParticipantModal({ isOpen, onClose, onCreate }: AddPa
             </div>
           )}
 
-          <div className="flex justify-end gap-3 pt-4">
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 mt-4 flex-shrink-0">
             <button
               type="button"
               onClick={onClose}

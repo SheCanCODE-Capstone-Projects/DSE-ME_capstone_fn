@@ -12,7 +12,7 @@ import { useRouteProtection } from "@/hooks/useRouteProtection";
 function MEContent({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-  const { isAuthorized } = useRouteProtection(['ME_OFFICER', 'ADMIN']);
+  const { isAuthorized } = useRouteProtection('ME_OFFICER');
 
   const getPageTitle = (path: string) => {
     if (path.includes('ME/overviews')) return 'Overview';
