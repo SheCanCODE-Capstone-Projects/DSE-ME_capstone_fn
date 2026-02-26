@@ -11,4 +11,6 @@ export interface Cohort {
   courseName?: string;
   /** Facilitator display name e.g. "Jane Doe" */
   facilitatorName?: string;
+  /** Multiple facilitators */
+  facilitators?: { id: string; firstName?: string; lastName?: string; email?: string }[];
 }

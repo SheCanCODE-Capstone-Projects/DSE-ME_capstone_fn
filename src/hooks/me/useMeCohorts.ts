@@ -89,6 +89,38 @@ export function useGetMeFacilitatorsForCohort() {
   });
 }
 
+export function useGetCohortFacilitators(cohortId: string) {
+  return useQuery({
+    queryKey: ['me', 'cohorts', cohortId, 'facilitators'],
+    queryFn: () => meApi.getCohortFacilitators(cohortId),
+    enabled: !!cohortId,
+  });
+}
+
+export function useAssignFacilitatorsToCohort() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ cohortId, facilitatorIds }: { cohortId: string; facilitatorIds: string[] }) =>
+      meApi.assignFacilitatorsToCohort(cohortId, facilitatorIds),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['me', 'cohorts', variables.cohortId, 'facilitators'] });
+      queryClient.invalidateQueries({ queryKey: ['me', 'cohorts'] });
+    },
+  });
+}
+
+export function useRemoveFacilitatorFromCohort() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ cohortId, facilitatorId }: { cohortId: string; facilitatorId: string }) =>
+      meApi.removeFacilitatorFromCohort(cohortId, facilitatorId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['me', 'cohorts', variables.cohortId, 'facilitators'] });
+      queryClient.invalidateQueries({ queryKey: ['me', 'cohorts'] });
+    },
+  });
+}
+
 export interface MeFacilitatorRow {
   id: string;
   firstName?: string;

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Users, Calendar, BookOpen, UserCircle } from "lucide-react";
+import { X, Users, Calendar, BookOpen } from "lucide-react";
 import { Cohort } from "@/types/cohort";
-import { useGetMeCourses, useGetMeFacilitatorsForCohort, useCreateMeCohort } from "@/hooks/me/useMeCohorts";
+import { useGetMeCourses, useCreateMeCohort } from "@/hooks/me/useMeCohorts";
 import toast from "react-hot-toast";
 
 interface AddCohortModalProps {
@@ -13,24 +13,16 @@ interface AddCohortModalProps {
   onCreate: (cohort: Cohort | null) => void;
 }
 
-
-function facilitatorLabel(firstName?: string | null, lastName?: string | null): string {
-  const parts = [firstName, lastName].filter(Boolean);
-  return parts.length ? parts.join(" ") : "— No facilitator —";
-}
-
 export default function AddCohortModal({ isOpen, onClose, onCreate }: AddCohortModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     courseId: "",
-    facilitatorId: "",
     startDate: "",
     endDate: "",
     maxParticipants: 30,
   });
 
   const { data: courses = [], isLoading: coursesLoading } = useGetMeCourses();
-  const { data: facilitators = [], isLoading: facilitatorsLoading } = useGetMeFacilitatorsForCohort();
   const createCohort = useCreateMeCohort();
 
   useEffect(() => {
@@ -38,7 +30,6 @@ export default function AddCohortModal({ isOpen, onClose, onCreate }: AddCohortM
       setFormData({
         name: "",
         courseId: "",
-        facilitatorId: "",
         startDate: "",
         endDate: "",
         maxParticipants: 30,
@@ -56,14 +47,12 @@ export default function AddCohortModal({ isOpen, onClose, onCreate }: AddCohortM
       const created = await createCohort.mutateAsync({
         name: formData.name,
         courseId: formData.courseId,
-        facilitatorId: formData.facilitatorId || undefined,
         startDate: formData.startDate,
         endDate: formData.endDate || undefined,
         maxParticipants: formData.maxParticipants,
       });
-      toast.success("Cohort created successfully.");
+      toast.success("Track created successfully. You can now assign facilitators.");
       const course = courses.find((c) => c.id === formData.courseId);
-      const fac = facilitators.find((f) => f.id === formData.facilitatorId);
       onCreate({
         id: created.id,
         name: created.name,
@@ -72,15 +61,10 @@ export default function AddCohortModal({ isOpen, onClose, onCreate }: AddCohortM
         participantCount: created.currentParticipants ?? 0,
         isActive: (created.status ?? "").toLowerCase() === "active",
         courseName: created.course?.name ?? course?.name,
-        facilitatorName: created.facilitator
-          ? facilitatorLabel(created.facilitator.firstName, created.facilitator.lastName)
-          : fac
-            ? facilitatorLabel(fac.firstName, fac.lastName)
-            : undefined,
       });
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create cohort.");
+      toast.error(err instanceof Error ? err.message : "Failed to create track.");
     }
   };
 
@@ -97,14 +81,14 @@ export default function AddCohortModal({ isOpen, onClose, onCreate }: AddCohortM
           </button>
         </div>
         <p className="text-sm text-gray-500 mb-4">
-          A cohort is one course with one facilitator. Same organization can have multiple cohorts (e.g. Web Dev with Facilitator A, Data Science with Facilitator B).
+          A track is one course within a cohort batch. You can assign multiple facilitators after creation.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Users size={16} className="inline mr-2" />
-              Cohort Name
+              Track Name
             </label>
             <input
               type="text"
@@ -112,7 +96,7 @@ export default function AddCohortModal({ isOpen, onClose, onCreate }: AddCohortM
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-              placeholder="e.g. She Can Code – Web Dev 2024"
+              placeholder="e.g. Web Development Track"
             />
           </div>
 
@@ -131,26 +115,6 @@ export default function AddCohortModal({ isOpen, onClose, onCreate }: AddCohortM
               <option value="">Select course</option>
               {courses.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}{c.code ? ` (${c.code})` : ""}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <UserCircle size={16} className="inline mr-2" />
-              Facilitator
-            </label>
-            <select
-              value={formData.facilitatorId}
-              onChange={(e) => setFormData({ ...formData, facilitatorId: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
-              disabled={facilitatorsLoading}
-            >
-              <option value="">Optional – assign later</option>
-              {facilitators.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {facilitatorLabel(f.firstName, f.lastName)}
-                </option>
               ))}
             </select>
           </div>
@@ -204,7 +168,7 @@ export default function AddCohortModal({ isOpen, onClose, onCreate }: AddCohortM
               disabled={createCohort.isPending}
               className="px-4 py-2 rounded-lg bg-[#0B609D] text-white hover:bg-[#094d7a] transition disabled:opacity-60"
             >
-              {createCohort.isPending ? "Creating…" : "Add Cohort"}
+              {createCohort.isPending ? "Creating…" : "Create Track"}
             </button>
           </div>
         </form>
