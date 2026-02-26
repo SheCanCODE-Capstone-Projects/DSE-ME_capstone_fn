@@ -53,8 +53,7 @@ function LoginPage() {
           toast('Please request access to continue', { icon: '⏳' });
           router.push('/request-access/start');
         } else {
-          // User profile will be fetched by AuthContext after login
-          // Show a generic welcome message, personalized greeting will show on overview page
+
           const roleMessages: Record<string, string> = {
             'ME_OFFICER': 'Welcome back!',
             'FACILITATOR': 'Welcome back!',
