@@ -1,0 +1,33 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "feature/prettier-setup",
+    "feature/reset-password",
+    "feature/shared-auth-layout",
+    "feature/typing-summary",
+    "main",
+    "origin",
+    "participantslist",
+    "refactor/pages-ui"
+  ],
+  "parent": {
+    "feature/prettier-setup": "main",
+    "feature/reset-password": "main",
+    "feature/shared-auth-layout": "main",
+    "feature/typing-summary": "main",
+    "main": null,
+    "origin": "main",
+    "participantslist": "main",
+    "refactor/pages-ui": "main"
+  },
+  "order": [
+    "main",
+    "feature/prettier-setup",
+    "feature/reset-password",
+    "feature/shared-auth-layout",
+    "feature/typing-summary",
+    "origin",
+    "participantslist",
+    "refactor/pages-ui"
+  ]
+}
